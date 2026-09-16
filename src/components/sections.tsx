@@ -109,7 +109,7 @@ export function StatsCounters({
                 }`}
               >
                 {s.tag ? (
-                  <span className="w-fit rounded-full bg-accent/10 px-3 py-1 font-display text-[12px] font-bold uppercase text-accent">
+                  <span className="w-fit rounded-full bg-spark/10 px-3 py-1 font-display text-[12px] font-bold uppercase text-spark">
                     {s.tag}
                   </span>
                 ) : null}

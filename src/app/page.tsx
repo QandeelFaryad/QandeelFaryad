@@ -32,7 +32,7 @@ export default function HomePage() {
           <Reveal delay={200} className="w-full max-w-[520px]">
             <div className="h-px w-full bg-white/40" />
             <div className="mt-6 flex items-start gap-4">
-              <ArrowDownRight className="size-6 shrink-0 text-accent" />
+              <ArrowDownRight className="size-6 shrink-0 text-spark" />
               <p className="text-[18px] leading-[1.5] text-white">
                 {SITE.legal.brandLine}, supporting businesses with modern websites, e-commerce
                 platforms, applications, digital marketing, brand identity, automation, AI, and
@@ -74,7 +74,7 @@ export default function HomePage() {
             className="max-w-[1120px] font-display text-[clamp(24px,4vw,52px)] font-semibold tracking-[-0.015em] leading-[1.1] text-ink"
             parts={[
               { text: "QORLIQ is a digital services brand created to help businesses grow in a fast-changing digital world." },
-              { text: "We deliver practical, professional, and result-driven solutions for startups, small businesses, and established organisations.", className: "font-medium text-[#b9b9c0]" },
+              { text: "We deliver practical, professional, and result-driven solutions for startups, small businesses, and established organisations.", className: "font-medium text-[#a8b0cc]" },
             ]}
           />
           <div className="flex flex-col items-stretch gap-12 lg:flex-row lg:items-center lg:gap-20">
@@ -115,7 +115,7 @@ export default function HomePage() {
       </section>
 
       {/* --------------------------------------------------------- MARQUEE */}
-      <Marquee items={["WEBSITES", "E-COMMERCE", "APPLICATIONS", "MICROSOFT 365", "SEO", "PAID ADS", "AI"]} />
+      <Marquee dark items={["WEBSITES", "E-COMMERCE", "APPLICATIONS", "MICROSOFT CSP", "CRM", "LEAD GENERATION", "AI"]} />
 
       {/* -------------------------------------------------------- SERVICES */}
       <section className="bg-white">

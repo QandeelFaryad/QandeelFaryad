@@ -400,7 +400,7 @@ export function ReadingProgress({ targetId = "article" }: { targetId?: string })
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-[45] h-[3px]" aria-hidden="true">
-      <div ref={bar} className="h-full origin-left bg-accent" style={{ transform: "scaleX(0)" }} />
+      <div ref={bar} className="h-full origin-left bg-spark" style={{ transform: "scaleX(0)" }} />
     </div>
   );
 }
@@ -563,7 +563,7 @@ export function PointerGlow({ size = 640 }: { size?: number }) {
       style={{
         width: size,
         height: size,
-        background: "radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(255,122,74,0.35) 35%, transparent 70%)",
+        background: "radial-gradient(circle, rgba(25,217,213,0.45) 0%, rgba(255,90,44,0.18) 38%, transparent 70%)",
       }}
     />
   );
@@ -718,7 +718,7 @@ export function BackToTop() {
           cy="24"
           r="22"
           fill="none"
-          stroke="var(--color-accent)"
+          stroke="var(--color-spark)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeDasharray={C}

@@ -20,7 +20,7 @@ export function renderOg({ eyebrow, title }: { eyebrow: string; title: string })
           justifyContent: "space-between",
           padding: 72,
           color: "white",
-          backgroundImage: "linear-gradient(120deg, #1a1440 0%, #3b1c6e 35%, #7a2a5e 65%, #c24a2c 100%)",
+          backgroundImage: "linear-gradient(120deg, #050835 0%, #0a1458 40%, #0b4a80 75%, #0b6f86 100%)",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

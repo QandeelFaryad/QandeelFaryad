@@ -40,7 +40,7 @@ export default function MicrosoftPage() {
           <Reveal>
             <div className="flex flex-wrap items-center gap-4">
               <SectionLabel>WHAT WE COVER</SectionLabel>
-              <span className="font-display text-[13px] font-bold uppercase text-accent">
+              <span className="font-display text-[13px] font-bold uppercase text-spark">
                 ( {MICROSOFT_SOLUTIONS.length} areas )
               </span>
             </div>

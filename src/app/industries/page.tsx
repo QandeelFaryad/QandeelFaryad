@@ -49,7 +49,7 @@ export default function IndustriesPage() {
           <Reveal>
             <div className="flex items-center gap-4">
               <SectionLabel>SECTOR EXPERTISE</SectionLabel>
-              <span className="font-display text-[13px] font-bold uppercase text-accent">( {SITE.stats.industries} industries served )</span>
+              <span className="font-display text-[13px] font-bold uppercase text-spark">( {SITE.stats.industries} industries served )</span>
             </div>
           </Reveal>
           <div className="grid gap-6 md:grid-cols-2">

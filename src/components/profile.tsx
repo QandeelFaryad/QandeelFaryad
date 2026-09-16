@@ -129,7 +129,7 @@ export function PartnerStrip({ dark = false }: { dark?: boolean }) {
         <Reveal>
           <div className="flex flex-wrap items-center gap-4">
             <SectionLabel dark={dark}>PARTNERSHIPS & CERTIFICATIONS</SectionLabel>
-            <span className="font-display text-[13px] font-bold uppercase text-accent">
+            <span className="font-display text-[13px] font-bold uppercase text-spark">
               ( {PARTNERS.length} partners )
             </span>
           </div>

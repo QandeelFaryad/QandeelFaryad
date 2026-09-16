@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand palette (extracted from Figma) */
-  --color-ink: #0b0b0f;
-  --color-ink-soft: #1a1a20;
-  --color-cloud: #f5f5f7;
-  --color-cloud-2: #ebebef;
-  --color-muted: #6b6b76;
-  --color-line: #e4e4ea;
+  /* Brand palette — from the QORLIQ logo (navy #090F4C, teal #19D9D5), with orange as a highlight */
+  --color-ink: #070b3b;
+  --color-ink-soft: #0e1560;
+  --color-navy: #090f4c;
+  --color-cloud: #f3f5fa;
+  --color-cloud-2: #e8ecf5;
+  --color-muted: #5a6283;
+  --color-line: #dfe4ef;
 
-  /* Gradient stops used across hero / CTA sections */
-  --color-grad-1: #1a1440;
-  --color-grad-2: #2b1857;
-  --color-grad-3: #3b1c6e;
-  --color-grad-4: #5b2366;
-  --color-grad-5: #7a2a5e;
-  --color-grad-6: #9e3a45;
-  --color-grad-7: #c24a2c;
+  /* Gradient stops for the hero / CTA sections — navy deepening into a teal glow.
+     The brightest stop still keeps white text above 4.5:1 contrast. */
+  --color-grad-1: #050835;
+  --color-grad-2: #070b3b;
+  --color-grad-3: #0a1458;
+  --color-grad-4: #0b2a73;
+  --color-grad-5: #0b4a80;
+  --color-grad-6: #0b5f86;
+  --color-grad-7: #0b6f86;
 
-  --color-accent: #ff5a2c;
-  --color-accent-2: #7a2a5e;
-  --color-on-dark: #b9b9c0;
+  /* Teal: buttons, fills, and accents on dark. The deep shade is for text on light. */
+  --color-accent: #19d9d5;
+  --color-accent-deep: #087a77;
+  /* Orange: the small spark — markers, tags, progress. Deep shade for text on light. */
+  --color-spark: #ff5a2c;
+  --color-spark-deep: #c43e15;
+  --color-accent-2: #ff5a2c;
+  --color-on-dark: #b4bcda;
 
   /* Typography */
   --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
@@ -47,7 +54,7 @@
   }
   ::selection {
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-ink);
   }
 }
 
@@ -189,7 +196,7 @@
   display: block;
   height: 100%;
   width: 100%;
-  background: var(--color-accent);
+  background: var(--color-spark);
   transform-origin: left;
   transform: scaleX(0);
   animation: intro-bar 1.5s cubic-bezier(0.45, 0, 0.15, 1) 0.15s forwards;
@@ -270,7 +277,7 @@
   background: var(--color-accent);
 }
 
-:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 3px; }
 
 /* Form step entrance */
 @keyframes step-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
@@ -316,7 +323,7 @@
 
 /* --------------------------------------------------------- Section label dot */
 @keyframes dot-ping {
-  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 55%, transparent); }
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-spark) 55%, transparent); }
   80%, 100% { box-shadow: 0 0 0 8px transparent; }
 }
 .dot-ping { animation: dot-ping 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
@@ -343,4 +350,36 @@
   .scrub-word { opacity: 1 !important; }
   .dot-ping { animation: none; }
   .group:hover .wave-letter { transform: none; }
+}
+
+/* ------------------------------------------------ Contrast-aware accent text */
+/* Teal and orange text stay vivid on dark surfaces but switch to deeper shades on
+   light ones, so small text keeps readable contrast. Unlayered, so it wins over
+   the Tailwind utilities that set these colours. */
+body,
+.bg-white,
+.bg-cloud {
+  --accent-text: var(--color-accent-deep);
+  --spark-text: var(--color-spark-deep);
+}
+.bg-ink,
+.bg-ink-soft,
+.bg-navy,
+.brand-gradient,
+.brand-gradient-animated,
+.intro,
+header,
+footer,
+#site-menu {
+  --accent-text: var(--color-accent);
+  --spark-text: var(--color-spark);
+}
+.text-accent,
+[class~="hover:text-accent"]:hover,
+.group:hover [class~="group-hover:text-accent"] {
+  color: var(--accent-text);
+}
+.text-spark,
+[class~="hover:text-spark"]:hover {
+  color: var(--spark-text);
 }

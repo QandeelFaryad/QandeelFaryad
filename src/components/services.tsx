@@ -20,7 +20,7 @@ export function Capabilities({
           <Reveal>
             <div className="flex flex-wrap items-center gap-4">
               <SectionLabel dark={dark}>{label}</SectionLabel>
-              <span className="font-display text-[13px] font-bold uppercase text-accent">
+              <span className="font-display text-[13px] font-bold uppercase text-spark">
                 ( {DELIVERED.length} areas delivered )
               </span>
             </div>

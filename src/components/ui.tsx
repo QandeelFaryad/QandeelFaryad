@@ -90,7 +90,7 @@ export function SectionLabel({
 }) {
   return (
     <div className="flex shrink-0 items-center gap-2">
-      <span className="dot-ping size-2 rounded-full bg-accent" />
+      <span className="dot-ping size-2 rounded-full bg-spark" />
       <p
         className={`font-display text-[13px] font-bold uppercase tracking-wide whitespace-nowrap ${
           dark ? "text-white" : "text-ink"
@@ -139,11 +139,11 @@ export function ImageFill({
     );
   }
   const gradients = [
-    "linear-gradient(135deg,#2b1857,#c24a2c)",
-    "linear-gradient(135deg,#1a1440,#7a2a5e)",
-    "linear-gradient(160deg,#3b1c6e,#ff5a2c)",
+    "linear-gradient(135deg,#070b3b,#0b6f86)",
+    "linear-gradient(135deg,#050835,#0b2a73)",
+    "linear-gradient(160deg,#0a1458,#19d9d5)",
     "linear-gradient(135deg,#0b0b0f,#5b2366)",
-    "linear-gradient(200deg,#9e3a45,#2b1857)",
+    "linear-gradient(200deg,#0b4a80,#070b3b)",
   ];
   return (
     <div
@@ -185,7 +185,7 @@ export function Marquee({
             >
               {it}
             </span>
-            <span className={`size-3 rotate-45 ${dark ? "bg-accent" : "bg-ink"}`} />
+            <span className={`size-3 rotate-45 ${dark ? "bg-spark" : "bg-ink"}`} />
           </span>
         ))}
       </MarqueeTrack>
