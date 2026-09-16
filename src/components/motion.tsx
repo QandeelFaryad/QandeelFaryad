@@ -134,12 +134,15 @@ export function SplitReveal({
   as: Tag = "span",
   delay = 0,
   stagger = 70,
+  highlight = [],
   className = "",
 }: {
   text: string;
   as?: ElementType;
   delay?: number;
   stagger?: number;
+  /** Words that get an orange underline drawn in after they appear. */
+  highlight?: string[];
   className?: string;
 }) {
   const ref = useRef<HTMLElement | null>(null);
@@ -170,8 +173,16 @@ export function SplitReveal({
       <span aria-hidden="true">
         {words.map((w, i) => (
           <span key={i}>
-            <span className="split-word">
-              <span className="split-inner" style={{ transitionDelay: `${offset + delay + i * stagger}ms` }}>
+            <span className={`split-word ${highlight.includes(w) ? "split-hl" : ""}`}>
+              <span
+                className="split-inner"
+                style={{
+                  // Two delays for highlighted words: the rise, then the underline.
+                  transitionDelay: highlight.includes(w)
+                    ? `${offset + delay + i * stagger}ms, ${offset + delay + i * stagger + 650}ms`
+                    : `${offset + delay + i * stagger}ms`,
+                }}
+              >
                 {w}
               </span>
             </span>

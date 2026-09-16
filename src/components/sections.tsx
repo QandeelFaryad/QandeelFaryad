@@ -54,7 +54,7 @@ export function DesignProcess({
                 >
                   {s.no}
                 </span>
-                <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-accent">{s.no}</span>
+                <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-spark">{s.no}</span>
                 <div
                   className={`h-px w-full origin-left transition-transform duration-500 group-hover:scale-x-50 ${
                     dark ? "bg-white/15" : "bg-line"

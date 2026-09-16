@@ -62,7 +62,7 @@ export default function ServicesPage() {
                     className="flex h-full scroll-mt-28 flex-col gap-4 rounded-3xl border border-line bg-white p-8"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-display text-[18px] font-bold text-accent">{s.no}</span>
+                      <span className="font-display text-[18px] font-bold text-spark">{s.no}</span>
                       {s.slug === "microsoft-csp" ? (
                         <Link
                           href="/microsoft-csp"

@@ -330,13 +330,14 @@
 
 /* ------------------------------------------------------------ Link underline */
 .link-sweep {
-  background-image: linear-gradient(currentColor, currentColor);
-  background-size: 0% 1px;
+  background-image: linear-gradient(var(--color-spark), var(--color-spark));
+  background-size: 0% 2px;
   background-position: 100% 100%;
   background-repeat: no-repeat;
   transition: background-size 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
 }
-.link-sweep:hover { background-size: 100% 1px; background-position: 0% 100%; }
+.link-sweep:hover,
+.link-sweep[aria-current="page"] { background-size: 100% 2px; background-position: 0% 100%; }
 
 /* ------------------------------------------------------------ Letter wave */
 .wave-letter {
@@ -382,4 +383,44 @@ footer,
 .text-spark,
 [class~="hover:text-spark"]:hover {
   color: var(--spark-text);
+}
+
+/* ------------------------------------------------------------- Orange hints */
+/* A warm glow sitting low in the navy/teal gradient sections. */
+.brand-gradient-animated {
+  isolation: isolate;
+}
+.brand-gradient-animated::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 50% at 90% 95%, rgb(255 90 44 / 0.28), transparent 70%),
+    radial-gradient(22% 30% at 6% 8%, rgb(255 90 44 / 0.12), transparent 70%);
+  animation: warm-drift 18s ease-in-out infinite alternate;
+}
+@keyframes warm-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-5%, -6%, 0); }
+}
+
+/* Orange underline drawn under highlighted headline words (see SplitReveal). */
+.split-hl .split-inner {
+  background-image: linear-gradient(var(--color-spark), var(--color-spark));
+  background-repeat: no-repeat;
+  background-position: 0 92%;
+  background-size: 0% 0.075em;
+  transition:
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    background-size 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.split.is-visible .split-hl .split-inner {
+  background-size: 100% 0.075em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-gradient-animated::after { animation: none; }
+  .split-hl .split-inner { background-size: 100% 0.075em; transition: none; }
 }

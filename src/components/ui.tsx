@@ -21,7 +21,7 @@ function PillInner({ children }: { children: ReactNode }) {
           {children}
         </span>
       </span>
-      <span className="flex size-7 items-center justify-center rounded-[14px] bg-ink text-white transition-transform duration-200 group-hover:rotate-45">
+      <span className="flex size-7 items-center justify-center rounded-[14px] bg-ink text-white transition-[transform,background-color,color] duration-300 group-hover:rotate-45 group-hover:bg-spark group-hover:text-ink">
         <ArrowUpRight className="size-3" />
       </span>
     </>

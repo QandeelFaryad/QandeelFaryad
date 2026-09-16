@@ -22,6 +22,7 @@ export default function HomePage() {
                 key={line}
                 text={line}
                 delay={i * 140}
+                highlight={["GROWTH"]}
                 className="block font-display text-[clamp(26px,7.6vw,110px)] font-semibold tracking-[-0.015em] leading-[0.95] text-white"
               />
             ))}
@@ -136,7 +137,7 @@ export default function HomePage() {
                   >
                     <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
                       <div className="flex min-w-0 items-center gap-6">
-                        <span className="font-display text-[18px] font-bold text-accent">{s.no}</span>
+                        <span className="font-display text-[18px] font-bold text-spark">{s.no}</span>
                         <h3 className="font-display text-[clamp(20px,2.3vw,30px)] font-semibold tracking-[-0.015em] leading-[1.05] text-ink transition-colors group-hover:text-accent">
                           {s.title}
                         </h3>

@@ -101,7 +101,7 @@ export function CustomCursor() {
       style={{ transform: "translate3d(-100px,-100px,0)" }}
     >
       <div
-        className={`flex size-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-accent font-display text-[13px] font-bold uppercase text-ink transition-[scale,opacity] duration-300 ease-out ${
+        className={`flex size-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-spark font-display text-[13px] font-bold uppercase text-ink transition-[scale,opacity] duration-300 ease-out ${
           label ? "scale-100 opacity-100" : "scale-0 opacity-0"
         }`}
       >

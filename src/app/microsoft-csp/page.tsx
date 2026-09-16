@@ -50,7 +50,7 @@ export default function MicrosoftPage() {
               <Reveal key={m.title} delay={(i % 4) * 80} scale>
                 <Tilt max={5}>
                   <div className="flex h-full flex-col gap-3 rounded-3xl border border-line bg-white p-8">
-                    <span className="font-display text-[18px] font-bold text-accent">
+                    <span className="font-display text-[18px] font-bold text-spark">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <h2 className="font-display text-[20px] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink">
@@ -73,7 +73,7 @@ export default function MicrosoftPage() {
             {STEPS.map((s, i) => (
               <Reveal key={s.no} delay={i * 90}>
                 <div className="flex flex-col gap-4">
-                  <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-accent">{s.no}</span>
+                  <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-spark">{s.no}</span>
                   <div className="h-px w-full bg-white/15" />
                   <h3 className="font-display text-[22px] font-semibold tracking-[-0.015em] uppercase text-white">{s.title}</h3>
                   <p className="text-[15px] leading-[1.6] text-on-dark">{s.body}</p>

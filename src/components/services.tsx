@@ -37,7 +37,7 @@ export function Capabilities({
             <Reveal key={c.title} delay={(i % 3) * 80} scale>
               <Tilt max={4}>
                 <div className={`flex h-full flex-col gap-3 rounded-3xl p-8 ${dark ? "bg-white/[0.04]" : "bg-white"}`}>
-                  <span className="font-display text-[18px] font-bold text-accent">
+                  <span className="font-display text-[18px] font-bold text-spark">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <h3 className={`font-display text-[clamp(18px,2vw,22px)] font-semibold tracking-[-0.015em] uppercase leading-[1.15] ${dark ? "text-white" : "text-ink"}`}>

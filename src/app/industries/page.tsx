@@ -58,7 +58,7 @@ export default function IndustriesPage() {
                 <Tilt max={4}>
                 <div className="group flex h-full flex-col gap-5 rounded-3xl border border-line bg-white p-8 transition-colors duration-300 hover:border-accent">
                   <div className="flex items-center justify-between">
-                    <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-accent">{s.no}</span>
+                    <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-spark">{s.no}</span>
                   </div>
                   <h3 className="font-display text-[clamp(20px,2.4vw,28px)] font-semibold tracking-[-0.015em] uppercase text-ink transition-colors group-hover:text-accent">
                     {s.title}
@@ -92,7 +92,7 @@ export default function IndustriesPage() {
             {WHY.map((w, i) => (
               <Reveal key={w.no} delay={i * 80}>
                 <div className="flex flex-col gap-4">
-                  <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-accent">{w.no}</span>
+                  <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-spark">{w.no}</span>
                   <h3 className="font-display text-[22px] font-semibold tracking-[-0.015em] uppercase text-white">{w.title}</h3>
                   <p className="text-[15px] leading-[1.6] text-on-dark">{w.body}</p>
                 </div>

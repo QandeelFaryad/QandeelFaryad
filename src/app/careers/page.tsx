@@ -44,7 +44,7 @@ export default function CareersPage() {
             {CULTURE.map((c, i) => (
               <Reveal key={c.no} delay={i * 90}>
                 <div className="flex flex-col gap-4">
-                  <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-accent">{c.no}</span>
+                  <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-spark">{c.no}</span>
                   <h3 className="font-display text-[22px] font-semibold tracking-[-0.015em] uppercase text-ink">{c.title}</h3>
                   <p className="text-[15px] leading-[1.6] text-muted">{c.body}</p>
                 </div>
