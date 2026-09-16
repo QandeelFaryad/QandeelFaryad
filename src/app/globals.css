@@ -1,0 +1,299 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand palette (extracted from Figma) */
+  --color-ink: #0b0b0f;
+  --color-ink-soft: #1a1a20;
+  --color-cloud: #f5f5f7;
+  --color-cloud-2: #ebebef;
+  --color-muted: #6b6b76;
+  --color-line: #e4e4ea;
+
+  /* Gradient stops used across hero / CTA sections */
+  --color-grad-1: #1a1440;
+  --color-grad-2: #2b1857;
+  --color-grad-3: #3b1c6e;
+  --color-grad-4: #5b2366;
+  --color-grad-5: #7a2a5e;
+  --color-grad-6: #9e3a45;
+  --color-grad-7: #c24a2c;
+
+  --color-accent: #ff5a2c;
+  --color-accent-2: #7a2a5e;
+  --color-on-dark: #b9b9c0;
+
+  /* Typography */
+  --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  html,
+  body {
+    overflow-x: clip;
+  }
+  body {
+    background: var(--color-cloud);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: #fff;
+  }
+}
+
+/* Reusable gradient the hero + CTA share */
+.brand-gradient {
+  background-image: radial-gradient(
+    120% 120% at 20% 80%,
+    var(--color-grad-1) 0%,
+    var(--color-grad-2) 17.5%,
+    var(--color-grad-3) 35%,
+    var(--color-grad-4) 52.5%,
+    var(--color-grad-5) 70%,
+    var(--color-grad-6) 85%,
+    var(--color-grad-7) 100%
+  );
+}
+
+/* Marquee animation for the scrolling strip */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+.marquee-slow { animation-duration: 45s; }
+
+/* Scroll-reveal: elements start hidden, .is-visible releases them */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-scale.is-visible { opacity: 1; transform: none; }
+
+/* Slowly drifting gradient for the hero background */
+@keyframes gradientDrift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.brand-gradient-animated {
+  background-image: linear-gradient(
+    120deg,
+    var(--color-grad-1), var(--color-grad-3), var(--color-grad-5),
+    var(--color-grad-7), var(--color-grad-4), var(--color-grad-1)
+  );
+  background-size: 300% 300%;
+  animation: gradientDrift 18s ease infinite;
+}
+
+/* Floating bob for accent chips / bubbles */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-scale { opacity: 1 !important; transform: none !important; }
+  .animate-marquee, .animate-float, .brand-gradient-animated { animation: none !important; }
+}
+
+/* Utility: outer container padding used site-wide */
+.container-x {
+  padding-left: clamp(20px, 5.5vw, 80px);
+  padding-right: clamp(20px, 5.5vw, 80px);
+}
+
+/* ------------------------------------------------------------ Split headline */
+.split-word {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.split-inner {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  transform: translateY(110%);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.split.is-visible .split-inner { transform: none; }
+
+/* -------------------------------------------------------------- Intro overlay */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-ink);
+  animation: intro-out 0.8s cubic-bezier(0.76, 0, 0.24, 1) 1.05s forwards;
+}
+.intro-seen .intro { display: none; }
+.intro-logo {
+  animation: intro-logo 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes intro-logo {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes intro-out {
+  to { transform: translateY(-100%); visibility: hidden; }
+}
+
+/* ---------------------------------------------------------- View transitions */
+::view-transition { pointer-events: none; }
+
+::view-transition-group(site-header) { animation: none; z-index: 100; }
+::view-transition-old(site-header) { display: none; }
+::view-transition-new(site-header) { animation: none; }
+
+::view-transition-old(.page-out) {
+  animation: 180ms ease-in both vt-fade reverse, 180ms ease-in both vt-rise reverse;
+}
+::view-transition-new(.page-in) {
+  animation: 320ms ease-out 120ms both vt-fade, 420ms cubic-bezier(0.16, 1, 0.3, 1) both vt-rise;
+}
+::view-transition-group(.morph) {
+  animation-duration: 520ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+::view-transition-image-pair(.morph) { animation-name: vt-blur; }
+
+@keyframes vt-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes vt-rise { from { transform: translateY(16px); } to { transform: none; } }
+@keyframes vt-blur { 30% { filter: blur(3px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .split-inner { transform: none !important; transition: none !important; }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* ------------------------------------------------------------- Article prose */
+.prose-qorliq p { font-size: 18px; line-height: 1.75; color: color-mix(in srgb, var(--color-ink) 82%, transparent); }
+.prose-qorliq h2 {
+  margin-top: 0.75em;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-ink);
+}
+.prose-qorliq ul { display: flex; flex-direction: column; gap: 0.6em; }
+.prose-qorliq li { position: relative; padding-left: 1.6em; font-size: 18px; line-height: 1.6; }
+.prose-qorliq li::before {
+  content: "";
+  position: absolute;
+  left: 0.2em;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+  background: var(--color-accent);
+}
+
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+/* Form step entrance */
+@keyframes step-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+.animate-step { animation: step-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@media (prefers-reduced-motion: reduce) { .animate-step { animation: none; } }
+
+/* ------------------------------------------------------- Curtain image reveal */
+.reveal-clip-inner {
+  width: 100%;
+  height: 100%;
+  clip-path: inset(100% 0 0 0 round 24px);
+  transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.18, 1);
+}
+.reveal-clip-inner > * {
+  transform: scale(1.18);
+  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: inherit;
+}
+.is-visible > .reveal-clip-inner { clip-path: inset(0 0 0 0 round 24px); }
+.is-visible > .reveal-clip-inner > * { transform: none; }
+
+/* --------------------------------------------------------- Scroll-scrub text */
+.scrub-word {
+  opacity: clamp(0.14, calc(var(--p, 0) * (var(--n) + 4) - var(--i)), 1);
+  transition: opacity 0.15s linear;
+}
+
+/* ---------------------------------------------------------------- Tilt glare */
+.tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(420px circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, 0.35), transparent 45%);
+  mix-blend-mode: soft-light;
+  transition: opacity 0.4s ease;
+}
+.tilt[data-tilting]::after { opacity: 1; }
+.tilt,
+.tilt > * { border-radius: 24px; }
+
+/* --------------------------------------------------------- Section label dot */
+@keyframes dot-ping {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 55%, transparent); }
+  80%, 100% { box-shadow: 0 0 0 8px transparent; }
+}
+.dot-ping { animation: dot-ping 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+
+/* ------------------------------------------------------------ Link underline */
+.link-sweep {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
+}
+.link-sweep:hover { background-size: 100% 1px; background-position: 0% 100%; }
+
+/* ------------------------------------------------------------ Letter wave */
+.wave-letter {
+  display: inline-block;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s;
+}
+.group:hover .wave-letter { transform: translateY(-0.12em); color: var(--color-accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-clip-inner, .reveal-clip-inner > * { clip-path: none !important; transform: none !important; transition: none !important; }
+  .scrub-word { opacity: 1 !important; }
+  .dot-ping { animation: none; }
+  .group:hover .wave-letter { transform: none; }
+}
