@@ -10,6 +10,36 @@ const TABS = ["ALL INSIGHTS", ...POST_CATEGORIES];
 
 export default function BlogIndex() {
   const [tab, setTab] = useState("ALL INSIGHTS");
+
+  if (POSTS.length === 0) {
+    return (
+      <section className="bg-white">
+        <div className="container-x flex flex-col items-start gap-6 [padding-block:120px]">
+          <Reveal><SectionLabel>COMING SOON</SectionLabel></Reveal>
+          <Reveal delay={80}>
+            <h2 className="max-w-[760px] font-display text-[clamp(26px,3.6vw,44px)] font-semibold tracking-[-0.015em] uppercase leading-[1.08] text-ink">
+              Our first articles are on the way
+            </h2>
+          </Reveal>
+          <Reveal delay={140}>
+            <p className="max-w-[560px] text-[17px] leading-[1.7] text-muted">
+              We&apos;re writing about the work we do — Microsoft CSP, automation, lead generation,
+              and the projects behind them. Subscribe below and we&apos;ll send the first one over.
+            </p>
+          </Reveal>
+          <Reveal delay={200}>
+            <Link
+              href="/case-studies"
+              className="font-display text-[14px] font-bold uppercase text-ink underline-offset-4 transition-colors hover:text-accent hover:underline"
+            >
+              See our case studies instead →
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+    );
+  }
+
   const featured = POSTS.find((p) => p.featured) ?? POSTS[0];
   const rest = POSTS.filter((p) => p !== featured);
   const shown = tab === "ALL INSIGHTS" ? rest : rest.filter((p) => p.cat.toUpperCase() === tab);
@@ -34,7 +64,7 @@ export default function BlogIndex() {
                   <span className="rounded-full bg-accent px-3 py-1 font-display text-[12px] font-bold uppercase text-ink">{featured.cat}</span>
                   <span className="text-[13px] text-muted">• {featured.date} • {featured.readTime}</span>
                 </div>
-                <h2 className="font-display text-[clamp(28px,3.6vw,44px)] font-bold leading-[1.1] text-ink transition-colors group-hover:text-accent">
+                <h2 className="font-display text-[clamp(28px,3.6vw,44px)] font-semibold tracking-[-0.015em] leading-[1.1] text-ink transition-colors group-hover:text-accent">
                   {featured.title}
                 </h2>
                 <p className="text-[17px] leading-[1.6] text-muted">{featured.excerpt}</p>
@@ -97,7 +127,7 @@ export function PostCard({ post, seed }: { post: (typeof POSTS)[number]; seed: n
         <span className="font-display text-[12px] font-bold uppercase text-accent">{post.cat}</span>
         <span className="text-[12px] text-muted">{post.date} · {post.readTime}</span>
       </div>
-      <h3 className="font-display text-[21px] font-bold leading-[1.15] text-ink transition-colors group-hover:text-accent">
+      <h3 className="font-display text-[21px] font-semibold tracking-[-0.015em] leading-[1.15] text-ink transition-colors group-hover:text-accent">
         {post.title}
       </h3>
       <p className="text-[14px] leading-[1.6] text-muted">{post.excerpt}</p>

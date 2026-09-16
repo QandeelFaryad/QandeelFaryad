@@ -25,7 +25,7 @@ export function Accordion({ items }: { items: { q: string; a: string }[] }) {
                 onClick={() => setOpen(isOpen ? null : i)}
                 className="flex w-full items-center justify-between gap-6 py-7 text-left"
               >
-                <span className="font-display text-[clamp(18px,2.2vw,24px)] font-bold text-ink">
+                <span className="font-display text-[clamp(18px,2.2vw,24px)] font-semibold tracking-[-0.015em] text-ink">
                   {it.q}
                 </span>
                 <PlusIcon
@@ -59,6 +59,54 @@ export function Accordion({ items }: { items: { q: string; a: string }[] }) {
 
 /* ------------------------------------------------------------------- helpers */
 type Status = "idle" | "sending" | "sent" | "error";
+
+const TURNSTILE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+/**
+ * Cloudflare Turnstile. Renders only when a site key is configured; the API
+ * route skips verification when its secret is absent, so forms keep working
+ * either way.
+ */
+function Turnstile() {
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!TURNSTILE_KEY || !ref.current) return;
+    const id = "cf-turnstile-script";
+    if (!document.getElementById(id)) {
+      const script = document.createElement("script");
+      script.id = id;
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }, []);
+
+  if (!TURNSTILE_KEY) return null;
+  return <div ref={ref} className="cf-turnstile" data-sitekey={TURNSTILE_KEY} data-theme="light" />;
+}
+
+/** The token Turnstile writes into the form, if it is active. */
+function turnstileToken(form: HTMLFormElement) {
+  const input = form.querySelector<HTMLInputElement>('input[name="cf-turnstile-response"]');
+  return input?.value ?? "";
+}
+
+/** Where the lead came from: the page they were on, plus any campaign tags. */
+function leadContext() {
+  if (typeof window === "undefined") return {};
+  const params = new URLSearchParams(window.location.search);
+  const utm = [...params.entries()]
+    .filter(([k]) => k.startsWith("utm_") || k === "gclid" || k === "fbclid")
+    .map(([k, v]) => `${k}=${v}`)
+    .join(" · ");
+  return {
+    page: window.location.pathname + window.location.search,
+    referrer: document.referrer || "",
+    utm,
+  };
+}
 
 async function submit(payload: Record<string, unknown>) {
   const res = await fetch("/api/contact", {
@@ -197,7 +245,7 @@ export function ContactForm() {
     setStatus("sending");
     setError("");
     try {
-      await submit({ kind: "project", services, budget, timeline, ...data });
+      await submit({ kind: "project", services, budget, timeline, ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) });
       setName(String(data.name ?? "").split(" ")[0]);
       moved.current = true;
       setStatus("sent");
@@ -210,11 +258,11 @@ export function ContactForm() {
   if (status === "sent") {
     return (
       <div className="flex flex-col gap-8 rounded-3xl bg-cloud p-8 sm:p-12" aria-live="polite">
-        <span className="flex size-14 items-center justify-center rounded-full bg-accent font-display text-[24px] font-bold text-ink">
+        <span className="flex size-14 items-center justify-center rounded-full bg-accent font-display text-[24px] font-semibold tracking-[-0.015em] text-ink">
           ✓
         </span>
         <div className="flex flex-col gap-4">
-          <h3 ref={heading} tabIndex={-1} className="font-display text-[clamp(28px,4vw,44px)] font-bold uppercase leading-[1.05] text-ink outline-none">
+          <h3 ref={heading} tabIndex={-1} className="font-display text-[clamp(28px,4vw,44px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] text-ink outline-none">
             Thanks{name ? `, ${name}` : ""}. We&apos;re on it.
           </h3>
           <p className="max-w-[520px] text-[17px] leading-[1.6] text-muted">
@@ -259,7 +307,7 @@ export function ContactForm() {
       <h3
         ref={heading}
         tabIndex={-1}
-        className="font-display text-[clamp(24px,3vw,34px)] font-bold uppercase leading-[1.1] text-ink outline-none"
+        className="font-display text-[clamp(24px,3vw,34px)] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink outline-none"
       >
         {STEPS[step]}
       </h3>
@@ -343,6 +391,7 @@ export function ContactForm() {
         </p>
       ) : null}
       {status === "error" ? <ErrorNote message={error} /> : null}
+      {step === STEPS.length - 1 ? <Turnstile /> : null}
 
       <div className="flex flex-wrap items-center gap-6">
         {step < STEPS.length - 1 ? (
@@ -375,7 +424,7 @@ export function ApplicationForm({ role }: { role: string }) {
     const data = Object.fromEntries(new FormData(e.currentTarget));
     setStatus("sending");
     try {
-      await submit({ kind: "application", role, ...data });
+      await submit({ kind: "application", role, ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) });
       setStatus("sent");
     } catch (err) {
       setStatus("error");
@@ -386,8 +435,8 @@ export function ApplicationForm({ role }: { role: string }) {
   if (status === "sent") {
     return (
       <div className="flex flex-col gap-5" aria-live="polite">
-        <span className="flex size-12 items-center justify-center rounded-full bg-accent font-display text-[20px] font-bold text-ink">✓</span>
-        <h3 className="font-display text-[28px] font-bold uppercase leading-[1.05] text-ink">Application received</h3>
+        <span className="flex size-12 items-center justify-center rounded-full bg-accent font-display text-[20px] font-semibold tracking-[-0.015em] text-ink">✓</span>
+        <h3 className="font-display text-[28px] font-semibold tracking-[-0.015em] uppercase leading-[1.05] text-ink">Application received</h3>
         <p className="text-[16px] leading-[1.6] text-muted">
           Thanks for applying. Our team reviews every application and will get back to you within two weeks.
         </p>
@@ -417,6 +466,7 @@ export function ApplicationForm({ role }: { role: string }) {
         <textarea id={`${id}-message`} name="message" className={`${field} min-h-[120px] resize-y`} />
       </Field>
       {status === "error" ? <ErrorNote message={error} /> : null}
+      <Turnstile />
       <PillSubmit disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Submit Application"}</PillSubmit>
     </form>
   );
@@ -432,7 +482,7 @@ export function NewsletterForm() {
     const data = Object.fromEntries(new FormData(e.currentTarget));
     setStatus("sending");
     try {
-      await submit({ kind: "newsletter", ...data });
+      await submit({ kind: "newsletter", ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) });
       setStatus("sent");
     } catch (err) {
       setStatus("error");
@@ -466,6 +516,7 @@ export function NewsletterForm() {
         />
         <PillSubmit disabled={status === "sending"}>{status === "sending" ? "…" : "Subscribe"}</PillSubmit>
       </div>
+      <Turnstile />
       {status === "error" ? (
         <p role="alert" className="text-[14px] text-white/80">
           {error}

@@ -124,7 +124,7 @@ function prefersReducedMotion() {
 /** How long the first-visit intro (see IntroOverlay) still covers the page. */
 function introRemaining() {
   if (document.documentElement.classList.contains("intro-seen")) return 0;
-  return Math.max(0, 1250 - performance.now());
+  return Math.max(0, 2100 - performance.now());
 }
 
 /* -------------------------------------------------------------- SplitReveal */

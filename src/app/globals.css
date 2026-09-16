@@ -144,7 +144,7 @@
 }
 .split.is-visible .split-inner { transform: none; }
 
-/* -------------------------------------------------------------- Intro overlay */
+/* ------------------------------------------------------------- Intro loader */
 .intro {
   position: fixed;
   inset: 0;
@@ -153,15 +153,62 @@
   align-items: center;
   justify-content: center;
   background: var(--color-ink);
-  animation: intro-out 0.8s cubic-bezier(0.76, 0, 0.24, 1) 1.05s forwards;
+  animation: intro-out 0.75s cubic-bezier(0.76, 0, 0.24, 1) 1.65s forwards;
 }
 .intro-seen .intro { display: none; }
-.intro-logo {
-  animation: intro-logo 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+.intro-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
 }
-@keyframes intro-logo {
-  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+
+/* One logo, revealed left to right: the mark lands first, then the wordmark */
+.intro-logo {
+  width: min(62vw, 440px);
+  animation: intro-rise 0.6s cubic-bezier(0.34, 1.35, 0.5, 1) both;
+}
+.intro-logo-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  clip-path: inset(0 100% 0 0);
+  animation: intro-wipe 1.35s cubic-bezier(0.65, 0, 0.2, 1) 0.15s forwards;
+}
+
+/* Loading bar underneath */
+.intro-bar {
+  width: clamp(160px, 34vw, 280px);
+  height: 2px;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.14);
+  border-radius: 2px;
+}
+.intro-bar > span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--color-accent);
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: intro-bar 1.5s cubic-bezier(0.45, 0, 0.15, 1) 0.15s forwards;
+}
+
+@keyframes intro-rise {
+  from { opacity: 0; transform: translateY(12px) scale(0.94); }
   to { opacity: 1; transform: none; }
+}
+@keyframes intro-wipe {
+  0% { clip-path: inset(0 100% 0 0); }
+  28% { clip-path: inset(0 72% 0 0); }   /* the mark alone */
+  42% { clip-path: inset(0 72% 0 0); }   /* brief hold */
+  100% { clip-path: inset(0 0 0 0); }
+}
+@keyframes intro-bar {
+  0% { transform: scaleX(0); }
+  65% { transform: scaleX(0.72); }
+  100% { transform: scaleX(1); }
 }
 @keyframes intro-out {
   to { transform: translateY(-100%); visibility: hidden; }

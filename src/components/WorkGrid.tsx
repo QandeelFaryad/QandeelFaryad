@@ -59,7 +59,7 @@ export default function WorkGrid() {
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="font-display text-[13px] font-bold uppercase tracking-wide text-accent">{w.sector}</p>
-                    <h2 className="mt-1 font-display text-[clamp(22px,2.6vw,30px)] font-bold uppercase text-ink transition-colors group-hover:text-accent">
+                    <h2 className="mt-1 font-display text-[clamp(22px,2.6vw,30px)] font-semibold tracking-[-0.015em] uppercase text-ink transition-colors group-hover:text-accent">
                       {w.name}
                     </h2>
                   </div>

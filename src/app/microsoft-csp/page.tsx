@@ -53,7 +53,7 @@ export default function MicrosoftPage() {
                     <span className="font-display text-[18px] font-bold text-accent">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <h2 className="font-display text-[20px] font-bold uppercase leading-[1.1] text-ink">
+                    <h2 className="font-display text-[20px] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink">
                       {m.title}
                     </h2>
                     <p className="text-[15px] leading-[1.6] text-muted">{m.body}</p>
@@ -73,9 +73,9 @@ export default function MicrosoftPage() {
             {STEPS.map((s, i) => (
               <Reveal key={s.no} delay={i * 90}>
                 <div className="flex flex-col gap-4">
-                  <span className="font-display text-[20px] font-bold text-accent">{s.no}</span>
+                  <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-accent">{s.no}</span>
                   <div className="h-px w-full bg-white/15" />
-                  <h3 className="font-display text-[22px] font-bold uppercase text-white">{s.title}</h3>
+                  <h3 className="font-display text-[22px] font-semibold tracking-[-0.015em] uppercase text-white">{s.title}</h3>
                   <p className="text-[15px] leading-[1.6] text-on-dark">{s.body}</p>
                 </div>
               </Reveal>
@@ -96,7 +96,7 @@ export default function MicrosoftPage() {
             <div className="flex flex-col gap-6">
               <Reveal><SectionLabel>CASE STUDY</SectionLabel></Reveal>
               <Reveal delay={80}>
-                <h2 className="font-display text-[clamp(26px,3.4vw,40px)] font-bold uppercase leading-[1.05] text-ink">
+                <h2 className="font-display text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] text-ink">
                   {study.name}
                 </h2>
               </Reveal>

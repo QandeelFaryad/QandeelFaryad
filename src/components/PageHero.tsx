@@ -28,7 +28,7 @@ export default function PageHero({
             key={line}
             text={line}
             delay={i * 120}
-            className="block font-display text-[clamp(36px,8.5vw,104px)] font-bold uppercase leading-[0.95] text-white"
+            className="block font-display text-[clamp(36px,8.5vw,104px)] font-semibold tracking-[-0.015em] uppercase leading-[0.95] text-white"
           />
         ))}
       </h1>
@@ -46,7 +46,7 @@ export default function PageHero({
           <div className="mt-14 flex flex-wrap gap-12">
             {stats.map((s) => (
               <div key={s.label} className="flex flex-col gap-1">
-                <span className="font-display text-[clamp(36px,5vw,56px)] font-bold text-white">
+                <span className="font-display text-[clamp(36px,5vw,56px)] font-semibold tracking-[-0.015em] text-white">
                   <Counter value={s.value} suffix={s.suffix} />
                 </span>
                 <span className="text-[14px] font-medium uppercase tracking-wide text-white/70">

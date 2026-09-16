@@ -8,7 +8,7 @@ import { PillButton } from "./ui";
 import { getLenis } from "./experience";
 import { HEADER_LINKS, NAV_LINKS, SITE } from "@/lib/site";
 
-const HEADER_HEIGHT = 88;
+const HEADER_HEIGHT = 96;
 
 function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
@@ -99,19 +99,19 @@ export default function Header() {
         } ${solid ? "bg-ink/80 backdrop-blur-md" : "bg-transparent"}`}
         style={{ viewTransitionName: "site-header" }}
       >
-        <div className={`container-x flex items-center justify-between transition-[padding] duration-500 ${solid ? "py-3" : "py-5"}`}>
+        <div className={`container-x flex items-center justify-between transition-[padding] duration-500 ${solid ? "py-3" : "py-4"}`}>
           <Link href="/" className="flex shrink-0 items-center" aria-label="QORLIQ home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/assets/brand/qorliq-logo-white.svg"
               alt="QORLIQ"
-              className={`w-auto transition-[height] duration-500 ${solid ? "h-8" : "h-9"}`}
-              style={{ height: solid ? 32 : 36 }}
+              className="w-auto transition-[height] duration-500"
+              style={{ height: solid ? 40 : 52 }}
             />
           </Link>
 
           <div className="flex items-center gap-4 md:gap-6">
-            <nav aria-label="Primary" className="hidden items-center gap-6 md:flex lg:gap-8">
+            <nav aria-label="Primary" className="hidden items-center gap-5 md:flex lg:gap-7">
               {HEADER_LINKS.map((l) => {
                 const active = isActive(pathname, l.href);
                 return (
@@ -160,7 +160,7 @@ export default function Header() {
         >
           <div className="flex items-center justify-between">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/assets/brand/qorliq-logo-white.svg" alt="QORLIQ" className="h-8 w-auto" />
+            <img src="/assets/brand/qorliq-logo-white.svg" alt="QORLIQ" className="h-10 w-auto" />
             <button
               ref={closeButton}
               aria-label="Close menu"

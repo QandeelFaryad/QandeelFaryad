@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PillButton } from "./ui";
 import { SITE } from "@/lib/site";
+import CookieSettingsLink from "./CookieSettingsLink";
 
 const COLS = [
   {
@@ -21,6 +22,14 @@ const COLS = [
       ["Brand Identity", "/services#brand-identity"],
       ["Lead Generation", "/services#lead-generation"],
       ["Industries", "/industries"],
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      ["Privacy Policy", "/legal/privacy"],
+      ["Cookie Policy", "/legal/cookies"],
+      ["Terms of Use", "/legal/terms"],
     ],
   },
   {
@@ -45,7 +54,7 @@ export default function Footer() {
         {/* CTA row */}
         <div className="flex flex-wrap items-center justify-between gap-8">
           <Link href="/contact" data-cursor="Let's talk" className="group" aria-label="Let's work together — start a project">
-            <h2 aria-hidden="true" className="max-w-[1303px] whitespace-pre-wrap font-display text-[clamp(40px,7vw,80px)] font-bold uppercase leading-[0.95] text-white">
+            <h2 aria-hidden="true" className="max-w-[1303px] whitespace-pre-wrap font-display text-[clamp(40px,7vw,80px)] font-semibold tracking-[-0.015em] uppercase leading-[0.95] text-white">
               {"Let's work together".split("").map((ch, i) => (
                 <span key={i} className="wave-letter" style={{ transitionDelay: `${i * 18}ms` }}>
                   {ch}
@@ -63,7 +72,7 @@ export default function Footer() {
           <div className="flex w-full max-w-[280px] flex-col gap-6">
             <Link href="/" className="flex items-center" aria-label="QORLIQ home">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/brand/qorliq-logo-white.svg" alt="QORLIQ" className="h-9 w-auto" />
+              <img src="/assets/brand/qorliq-logo-white.svg" alt="QORLIQ" className="h-12 w-auto" />
             </Link>
             <p className="text-[14px] leading-[1.6] text-on-dark">
               {SITE.legal.brandLine}. We help businesses build a stronger digital presence,
@@ -91,6 +100,7 @@ export default function Footer() {
                     {label}
                   </Link>
                 ))}
+                {col.title === "Legal" ? <CookieSettingsLink /> : null}
               </div>
             ))}
           </div>

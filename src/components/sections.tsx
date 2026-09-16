@@ -54,13 +54,13 @@ export function DesignProcess({
                 >
                   {s.no}
                 </span>
-                <span className="font-display text-[20px] font-bold text-accent">{s.no}</span>
+                <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-accent">{s.no}</span>
                 <div
                   className={`h-px w-full origin-left transition-transform duration-500 group-hover:scale-x-50 ${
                     dark ? "bg-white/15" : "bg-line"
                   }`}
                 />
-                <h3 className={`font-display text-[clamp(22px,2.2vw,28px)] font-bold uppercase ${dark ? "text-white" : "text-ink"}`}>
+                <h3 className={`font-display text-[clamp(22px,2.2vw,28px)] font-semibold tracking-[-0.015em] uppercase ${dark ? "text-white" : "text-ink"}`}>
                   {s.title}
                 </h3>
                 <p className={`max-w-[420px] text-[15px] leading-[1.6] ${dark ? "text-on-dark" : "text-muted"}`}>
@@ -206,7 +206,7 @@ export function CtaBanner({
         <div className="brand-gradient-animated relative isolate overflow-hidden rounded-[32px] px-8 py-20 text-center sm:px-16">
           <PointerGlow />
           <div className="relative mx-auto flex max-w-[840px] flex-col items-center gap-8">
-            <h2 className="font-display text-[clamp(32px,5.5vw,60px)] font-bold uppercase leading-[1.02] text-white">
+            <h2 className="font-display text-[clamp(32px,5.5vw,60px)] font-semibold tracking-[-0.015em] uppercase leading-[1.02] text-white">
               {heading}
             </h2>
             <p className="max-w-[520px] text-[17px] leading-[1.6] text-white/85">{sub}</p>

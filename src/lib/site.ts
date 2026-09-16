@@ -64,6 +64,7 @@ export const NAV_LINKS: NavLink[] = [
 /** Shown directly in the header bar (desktop); everything else is in the menu. */
 export const HEADER_LINKS: NavLink[] = [
   { label: "Home", href: "/" },
+  { label: "Services", href: "/services" },
   { label: "Microsoft CSP", href: "/microsoft-csp" },
 ];
 

@@ -8,7 +8,7 @@ import Newsletter from "@/components/Newsletter";
 import { PostCard } from "@/components/BlogIndex";
 import { ImageFill, SectionLabel } from "@/components/ui";
 import { ReadingProgress, Reveal } from "@/components/motion";
-import { POSTS, avatar, getPost, relatedPosts } from "@/lib/content";
+import { POSTS, getPost, relatedPosts } from "@/lib/content";
 import { pageMeta } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -36,9 +36,6 @@ export default async function PostPage({ params }: Props) {
       <ReadingProgress />
       <PageHero eyebrow={`${post.cat.toUpperCase()} · ${post.readTime.toUpperCase()}`} titleLines={[post.title]}>
         <div className="mt-10 flex items-center gap-4">
-          <span className="size-12 overflow-hidden rounded-2xl">
-            <ImageFill label={post.author} src={avatar(POSTS.indexOf(post))} rounded="rounded-2xl" />
-          </span>
           <div>
             <p className="font-display text-[16px] font-bold text-white">{post.author}</p>
             <p className="text-[14px] text-white/70">{post.date}</p>
@@ -67,7 +64,7 @@ export default async function PostPage({ params }: Props) {
               ) : b.type === "quote" ? (
                 <blockquote
                   key={i}
-                  className="my-4 border-l-4 border-accent pl-6 font-display text-[clamp(22px,2.6vw,30px)] font-bold leading-[1.25] text-ink"
+                  className="my-4 border-l-4 border-accent pl-6 font-display text-[clamp(22px,2.6vw,30px)] font-semibold tracking-[-0.015em] leading-[1.25] text-ink"
                 >
                   {b.text}
                 </blockquote>
@@ -84,7 +81,7 @@ export default async function PostPage({ params }: Props) {
 
             <div className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-cloud p-8">
               <div>
-                <p className="font-display text-[20px] font-bold text-ink">Working on something similar?</p>
+                <p className="font-display text-[20px] font-semibold tracking-[-0.015em] text-ink">Working on something similar?</p>
                 <p className="text-[15px] text-muted">We&apos;d love to hear about it.</p>
               </div>
               <Link href="/contact" className="font-display text-[14px] font-bold uppercase text-accent hover:underline">

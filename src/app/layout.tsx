@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { CustomCursor, SmoothScroll } from "@/components/experience";
 import { BackToTop } from "@/components/motion";
+import Consent from "@/components/Consent";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -42,14 +43,18 @@ export default function RootLayout({
       <body>
         {/* First-visit brand intro (pure CSS; hidden via .intro-seen) */}
         <div className="intro" aria-hidden="true">
-          <div className="intro-logo">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/assets/brand/qorliq-logo-white.svg" alt="" className="w-[min(60vw,460px)]" />
+          <div className="intro-stage">
+            <div className="intro-logo">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/assets/brand/qorliq-logo-white.svg" alt="" className="intro-logo-img" />
+            </div>
+            <div className="intro-bar"><span /></div>
           </div>
         </div>
 
         <Header />
         {children}
+        <Consent />
         <BackToTop />
         <CustomCursor />
         <SmoothScroll />

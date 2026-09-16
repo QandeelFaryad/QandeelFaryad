@@ -316,142 +316,11 @@ export type Post = {
   body: PostBlock[];
 };
 
-export const POSTS: Post[] = [
-  {
-    slug: "future-of-digital-design-2026",
-    image: "/assets/journal/future-of-digital-design-2026.jpg",
-    cat: "Design",
-    date: "Feb 14, 2026",
-    readTime: "8 min read",
-    title: "The Future of Digital Design in 2026",
-    excerpt: "An exhaustive study on generative tools, semantic layouts, and how high-contrast spatial systems are shifting consumer expectations.",
-    author: "Hana Vester",
-    featured: true,
-    body: [
-      { type: "p", text: "Every year brings a new wave of tools, and every year the fundamentals matter more. In 2026 the gap between a generated layout and a designed experience has never been easier to see." },
-      { type: "h2", text: "Generative tools are the new grid" },
-      { type: "p", text: "Generative tools now produce competent layouts in seconds. That hasn't made designers less relevant — it has moved the craft up a level, from arranging boxes to deciding what deserves attention in the first place." },
-      { type: "quote", text: "When anyone can produce a layout, the value is in knowing which layout is true to the product." },
-      { type: "h2", text: "Semantic layouts" },
-      { type: "p", text: "Interfaces increasingly adapt to context: the device, the moment, and what the person is trying to do. Designing the rules behind a layout is now as important as designing the layout itself." },
-      { type: "list", items: ["Design tokens that describe intent, not just values", "Components that know their priority on the page", "Content models that travel across screens and surfaces"] },
-      { type: "h2", text: "High contrast, high clarity" },
-      { type: "p", text: "Bold type, strong contrast, and fewer decorative layers are winning — not as a trend, but because they hold up across dark mode, small screens, and accessibility settings." },
-    ],
-  },
-  {
-    slug: "why-motion-design-matters",
-    image: "/assets/journal/why-motion-design-matters.jpg",
-    cat: "Design",
-    date: "Feb 10, 2026",
-    readTime: "6 min read",
-    title: "Why Motion Design Matters More Than Ever",
-    excerpt: "In a world of short attention spans, motion guides eyes, drives narrative, and breathes living energy into layouts.",
-    author: "Elena Rostova",
-    body: [
-      { type: "p", text: "Motion is often treated as polish — something added at the end if there's time. We think that's backwards. Motion is how an interface explains itself." },
-      { type: "h2", text: "Motion communicates continuity" },
-      { type: "p", text: "When a thumbnail grows into a full page, the user understands they're looking at the same thing, closer. Without that transition, they have to re-orient on every click." },
-      { type: "quote", text: "Good motion answers the question: where did that come from, and where did it go?" },
-      { type: "h2", text: "Restraint is part of the craft" },
-      { type: "list", items: ["Keep transitions under 400ms for navigation", "Move small things more than big things", "Always honour reduced-motion preferences"] },
-      { type: "p", text: "The best motion is felt more than noticed. If people comment on your animations, they may be doing too much." },
-    ],
-  },
-  {
-    slug: "building-scalable-design-systems",
-    image: "/assets/journal/building-scalable-design-systems.jpg",
-    cat: "Development",
-    date: "Feb 04, 2026",
-    readTime: "10 min read",
-    title: "Building Scalable Design Systems",
-    excerpt: "How we approach multi-brand design tokens, components and standard alignment rules for enterprise-level teams.",
-    author: "Marc Vester",
-    body: [
-      { type: "p", text: "A design system isn't a Figma file or a component library. It's an agreement between teams about how decisions get made — and the tools are there to make that agreement easy to keep." },
-      { type: "h2", text: "Start with an audit" },
-      { type: "p", text: "Before designing anything new, catalogue what already exists. Most organisations discover dozens of variants of the same component, each solving a slightly different problem." },
-      { type: "h2", text: "Tokens before components" },
-      { type: "list", items: ["Primitive tokens: the raw palette and scales", "Semantic tokens: what a value means (surface, danger, focus)", "Component tokens: the few overrides a component truly needs"] },
-      { type: "quote", text: "If a token name describes a colour instead of a purpose, it will be wrong the day you add a second brand." },
-      { type: "h2", text: "Govern lightly" },
-      { type: "p", text: "The systems that last have clear owners, a simple contribution path, and a changelog people actually read. Heavy approval processes push teams back to building their own." },
-    ],
-  },
-  {
-    slug: "art-of-brand-storytelling",
-    image: "/assets/journal/art-of-brand-storytelling.jpg",
-    cat: "Branding",
-    date: "Jan 28, 2026",
-    readTime: "7 min read",
-    title: "The Art of Brand Storytelling",
-    excerpt: "Behind the curtain of crafting timeless visual narratives that make digital software products feel deeply human.",
-    author: "Tariq Mahmood",
-    body: [
-      { type: "p", text: "Software brands often describe features. Memorable ones describe a change in someone's day. That shift — from what it does to what it makes possible — is where storytelling starts." },
-      { type: "h2", text: "Find the tension" },
-      { type: "p", text: "Every good story has a problem worth solving. We start brand work by writing down the frustration a customer feels before they find the product, in their own words." },
-      { type: "quote", text: "A brand is the promise. The product is the proof." },
-      { type: "h2", text: "Make it visual" },
-      { type: "p", text: "Typography, colour, and motion should carry the same story as the words. If the copy says calm and the interface shouts, people believe the interface." },
-    ],
-  },
-  {
-    slug: "ux-research-methods-that-work",
-    image: "/assets/journal/ux-research-methods-that-work.jpg",
-    cat: "Strategy",
-    date: "Jan 15, 2026",
-    readTime: "9 min read",
-    title: "UX Research Methods That Work",
-    excerpt: "Ditch the generic surveys. We explore concrete field-testing methods that yield high-density, actionable insights.",
-    author: "Sarah Jenkins",
-    body: [
-      { type: "p", text: "Surveys tell you what people say. Research that changes products shows you what people do. Here are the methods we reach for first." },
-      { type: "h2", text: "Contextual inquiry" },
-      { type: "p", text: "Sit with people while they do the real task, in the real place. You'll see the sticky notes, the workarounds, and the second monitor nobody mentioned." },
-      { type: "h2", text: "Five-second tests" },
-      { type: "p", text: "Show a page for five seconds, then ask what it was for. It's a fast, brutal check on whether your hierarchy is doing its job." },
-      { type: "list", items: ["Recruit from real customers, not just colleagues", "Watch more, ask less", "Share raw clips, not just summaries"] },
-      { type: "quote", text: "The most valuable research finding is the one that surprises the team." },
-    ],
-  },
-  {
-    slug: "web-performance-best-practices",
-    image: "/assets/journal/web-performance-best-practices.jpg",
-    cat: "Development",
-    date: "Dec 18, 2025",
-    readTime: "8 min read",
-    title: "Web Performance Best Practices",
-    excerpt: "Engineered speed models. Learn about NextJS rendering paths, asset compression, and optimal core web metrics.",
-    author: "Nils Sjöberg",
-    body: [
-      { type: "p", text: "Speed is a feature people feel before they can name it. A fast site feels trustworthy; a slow one feels broken, even when it isn't." },
-      { type: "h2", text: "Render as little as possible, as early as possible" },
-      { type: "p", text: "Static generation and server components let most of a marketing site ship as plain HTML. Save client-side JavaScript for the parts that are genuinely interactive." },
-      { type: "h2", text: "Images do the heavy lifting" },
-      { type: "list", items: ["Serve modern formats at the size they're displayed", "Reserve space to avoid layout shift", "Lazy-load anything below the fold"] },
-      { type: "quote", text: "Performance budgets only work when they're checked on every pull request." },
-    ],
-  },
-  {
-    slug: "color-psychology-in-digital-design",
-    image: "/assets/journal/color-psychology-in-digital-design.jpg",
-    cat: "Design",
-    date: "Nov 30, 2025",
-    readTime: "5 min read",
-    title: "Color Psychology in Digital Design",
-    excerpt: "How strategic chromatic registers map to user trust, actions, and overall aesthetic longevity across SaaS products.",
-    author: "Hana Vester",
-    body: [
-      { type: "p", text: "Colour sets expectations before a single word is read. Used well, it guides action. Used carelessly, it creates noise that people learn to ignore." },
-      { type: "h2", text: "One signal colour" },
-      { type: "p", text: "Pick a single colour for action and protect it. When everything is highlighted, nothing is." },
-      { type: "h2", text: "Meaning is cultural" },
-      { type: "p", text: "Red means danger in one market and celebration in another. Test colour choices with the people who will actually use the product." },
-      { type: "quote", text: "Contrast is not a style choice. It's whether someone can read your interface at all." },
-    ],
-  },
-];
+/**
+ * Journal posts. Empty until real articles are written — the blog page shows a
+ * "coming soon" state while this is empty.
+ */
+export const POSTS: Post[] = [];
 
 export const POST_CATEGORIES = ["DESIGN", "DEVELOPMENT", "BRANDING", "STRATEGY"];
 
@@ -467,28 +336,12 @@ export function relatedPosts(slug: string, count = 3) {
   return [...same, ...rest].slice(0, count);
 }
 
-/* ---------------------------------------------------------------------- Team */
-/** Placeholder team: replace names, roles, and photos with the real team. */
-export const TEAM = [
-  { name: "ALEX CHEN", role: "Creative Director", image: "/assets/team/person-1.jpg" },
-  { name: "SARAH KIM", role: "Lead Designer", image: "/assets/team/person-2.jpg" },
-  { name: "MARCUS RIVERA", role: "Head of Development", image: "/assets/team/person-3.jpg" },
-  { name: "PRIYA PATEL", role: "Strategy Lead", image: "/assets/team/person-4.jpg" },
-  { name: "JAMES OKAFOR", role: "Brand Director", image: "/assets/team/person-5.jpg" },
-  { name: "LENA MÜLLER", role: "UX Research Lead", image: "/assets/team/person-6.jpg" },
-];
-
 /** Standalone photography used around the site. */
 export const PHOTOS = {
   team: { src: "/assets/office/team.jpg", alt: "The QORLIQ team working together" },
   studio: { src: "/assets/office/studio.jpg", alt: "A designer at work in the studio" },
   culture: { src: "/assets/office/culture.jpg", alt: "Life at QORLIQ: a team working session" },
 };
-
-/** Small round avatars, reusing the team portraits. */
-export function avatar(i: number) {
-  return TEAM[((i % TEAM.length) + TEAM.length) % TEAM.length].image;
-}
 
 /* --------------------------------------------------------------------- Roles */
 export type Role = {
@@ -501,53 +354,8 @@ export type Role = {
   requirements: string[];
 };
 
-export const ROLES: Role[] = [
-  {
-    slug: "senior-product-designer",
-    title: "Senior Product Designer",
-    dept: "Design",
-    loc: "Remote / Full-Time",
-    summary: "Lead end-to-end product design for SaaS and fintech clients, from discovery workshops to shipped design systems.",
-    responsibilities: ["Run discovery and research with client teams", "Design flows, prototypes, and high-fidelity UI", "Contribute to and maintain client design systems", "Mentor mid-level designers through critique"],
-    requirements: ["6+ years designing digital products", "A portfolio showing shipped, complex work", "Fluency in Figma and prototyping tools", "Comfort presenting to founders and executives"],
-  },
-  {
-    slug: "frontend-engineer",
-    title: "Frontend Engineer (React / NextJS)",
-    dept: "Engineering",
-    loc: "Remote / Full-Time",
-    summary: "Build fast, accessible, beautifully animated websites and product interfaces with our design team.",
-    responsibilities: ["Build marketing sites and product UI in Next.js", "Implement motion and interaction with care for performance", "Own accessibility and Core Web Vitals on your projects", "Pair closely with designers on the details"],
-    requirements: ["4+ years with React and TypeScript", "Strong CSS and animation skills", "Experience with the Next.js App Router", "An eye for design detail"],
-  },
-  {
-    slug: "brand-strategist",
-    title: "Brand Strategist",
-    dept: "Strategy",
-    loc: "New York City / Hybrid",
-    summary: "Shape positioning, messaging, and brand narratives that give our identity work a clear foundation.",
-    responsibilities: ["Lead brand workshops with client leadership", "Develop positioning and messaging frameworks", "Brief and collaborate with identity designers", "Present strategy with clarity and conviction"],
-    requirements: ["5+ years in brand strategy", "Experience with technology or B2B brands", "Excellent writing and facilitation skills", "Comfort working in a design-led team"],
-  },
-  {
-    slug: "motion-designer",
-    title: "Motion Designer",
-    dept: "Design",
-    loc: "London Office / Hybrid",
-    summary: "Bring brands and interfaces to life with motion systems, launch films, and interaction prototypes.",
-    responsibilities: ["Create motion guidelines for brand systems", "Produce launch and social animations", "Prototype UI interactions with engineers", "Keep motion accessible and purposeful"],
-    requirements: ["3+ years in motion design", "After Effects plus a UI prototyping tool", "A reel showing brand and product work", "Understanding of easing and timing principles"],
-  },
-  {
-    slug: "project-manager",
-    title: "Project Manager",
-    dept: "Operations",
-    loc: "Remote / Contract",
-    summary: "Keep ambitious design and development projects on track, on budget, and enjoyable for everyone involved.",
-    responsibilities: ["Plan milestones and manage timelines", "Be the day-to-day contact for clients", "Remove blockers for designers and engineers", "Report clearly on scope, budget, and risk"],
-    requirements: ["3+ years managing digital projects", "Agency or consultancy experience", "Calm, clear communication", "Familiarity with design and dev workflows"],
-  },
-];
+/** Open positions. Empty until real vacancies exist. */
+export const ROLES: Role[] = [];
 
 export const OPEN_APPLICATION: Role = {
   slug: "open-application",

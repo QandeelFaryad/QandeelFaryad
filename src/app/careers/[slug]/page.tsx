@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 function List({ title, items }: { title: string; items: string[] }) {
   return (
     <div className="flex flex-col gap-5">
-      <h2 className="font-display text-[22px] font-bold uppercase text-ink">{title}</h2>
+      <h2 className="font-display text-[22px] font-semibold tracking-[-0.015em] uppercase text-ink">{title}</h2>
       <ul className="prose-qorliq">
         {items.map((it) => (
           <li key={it}>{it}</li>
@@ -66,7 +66,7 @@ export default async function RolePage({ params }: Props) {
             </Reveal>
             <Reveal delay={120}>
               <div className="rounded-3xl bg-cloud p-8">
-                <p className="font-display text-[20px] font-bold text-ink">Remote-first, output-focused.</p>
+                <p className="font-display text-[20px] font-semibold tracking-[-0.015em] text-ink">Remote-first, output-focused.</p>
                 <p className="mt-2 text-[15px] leading-[1.6] text-muted">
                   Flexible hours, a $3k learning budget, premium healthcare, equipment allowance, and two team retreats a year.
                 </p>
@@ -99,7 +99,7 @@ export default async function RolePage({ params }: Props) {
                   href={`/careers/${r.slug}`}
                   className="group flex flex-col gap-2 border-t border-line py-6 sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <span className="font-display text-[clamp(20px,2.4vw,26px)] font-bold text-ink transition-colors group-hover:text-accent">
+                  <span className="font-display text-[clamp(20px,2.4vw,26px)] font-semibold tracking-[-0.015em] text-ink transition-colors group-hover:text-accent">
                     {r.title}
                   </span>
                   <span className="text-[13px] font-semibold uppercase tracking-wide text-muted">

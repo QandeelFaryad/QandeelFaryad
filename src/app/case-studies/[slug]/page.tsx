@@ -77,7 +77,7 @@ export default async function CaseStudyPage({ params }: Props) {
               </Reveal>
               {i === 0 ? (
                 <ScrubText
-                  className="max-w-[900px] font-display text-[clamp(20px,2.6vw,32px)] font-bold leading-[1.3] text-ink"
+                  className="max-w-[900px] font-display text-[clamp(20px,2.6vw,32px)] font-semibold tracking-[-0.015em] leading-[1.3] text-ink"
                   parts={[{ text: s.body }]}
                 />
               ) : (
@@ -120,7 +120,7 @@ export default async function CaseStudyPage({ params }: Props) {
             <SectionLabel dark>RESULTS ACHIEVED</SectionLabel>
           </Reveal>
           <Reveal delay={80}>
-            <p className="max-w-[900px] font-display text-[clamp(20px,2.6vw,32px)] font-bold leading-[1.35] text-white">
+            <p className="max-w-[900px] font-display text-[clamp(20px,2.6vw,32px)] font-semibold tracking-[-0.015em] leading-[1.35] text-white">
               {study.results}
             </p>
           </Reveal>
@@ -141,7 +141,7 @@ export default async function CaseStudyPage({ params }: Props) {
             </span>
           </div>
           <div className="flex items-end justify-between gap-6">
-            <span className="min-w-0 font-display text-[clamp(24px,4.4vw,64px)] font-bold uppercase leading-[0.95] text-ink transition-colors duration-300 group-hover:text-accent">
+            <span className="min-w-0 font-display text-[clamp(24px,4.4vw,64px)] font-semibold tracking-[-0.015em] uppercase leading-[0.95] text-ink transition-colors duration-300 group-hover:text-accent">
               {next.name}
             </span>
             <span className="shrink-0 font-display text-[clamp(30px,5vw,72px)] leading-[0.9] text-accent transition-transform duration-500 group-hover:translate-x-3">

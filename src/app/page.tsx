@@ -22,7 +22,7 @@ export default function HomePage() {
                 key={line}
                 text={line}
                 delay={i * 140}
-                className="block font-display text-[clamp(26px,7.6vw,110px)] font-bold leading-[0.95] text-white"
+                className="block font-display text-[clamp(26px,7.6vw,110px)] font-semibold tracking-[-0.015em] leading-[0.95] text-white"
               />
             ))}
           </h1>
@@ -54,7 +54,7 @@ export default function HomePage() {
                   { value: SITE.stats.satisfaction, suffix: "%", label: "Client satisfaction" },
                 ].map((s) => (
                   <div key={s.label}>
-                    <p className="font-display text-[28px] font-bold leading-none text-ink">
+                    <p className="font-display text-[28px] font-semibold tracking-[-0.015em] leading-none text-ink">
                       <Counter value={s.value} suffix={s.suffix} />
                     </p>
                     <p className="mt-1 text-[12px] leading-[1.3] text-muted">{s.label}</p>
@@ -71,7 +71,7 @@ export default function HomePage() {
         <div className="container-x flex flex-col gap-16 [padding-block:120px]">
           <Reveal><SectionLabel>WHO WE ARE</SectionLabel></Reveal>
           <ScrubText
-            className="max-w-[1120px] font-display text-[clamp(24px,4vw,52px)] font-bold leading-[1.1] text-ink"
+            className="max-w-[1120px] font-display text-[clamp(24px,4vw,52px)] font-semibold tracking-[-0.015em] leading-[1.1] text-ink"
             parts={[
               { text: "QORLIQ is a digital services brand created to help businesses grow in a fast-changing digital world." },
               { text: "We deliver practical, professional, and result-driven solutions for startups, small businesses, and established organisations.", className: "font-medium text-[#b9b9c0]" },
@@ -88,13 +88,13 @@ export default function HomePage() {
               <div className="h-px w-full bg-line" />
               <div className="flex flex-wrap gap-10">
                 <div className="flex flex-col gap-2">
-                  <span className="font-display text-[clamp(40px,6vw,60px)] font-bold text-accent">
+                  <span className="font-display text-[clamp(40px,6vw,60px)] font-semibold tracking-[-0.015em] text-accent">
                     <Counter value={SITE.stats.satisfaction} suffix="%" />
                   </span>
                   <span className="text-[15px] font-medium text-ink">Client satisfaction rate</span>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="font-display text-[clamp(40px,6vw,60px)] font-bold text-ink">
+                  <span className="font-display text-[clamp(40px,6vw,60px)] font-semibold tracking-[-0.015em] text-ink">
                     <Counter value={SITE.stats.projects} />
                   </span>
                   <span className="text-[15px] font-medium text-ink">
@@ -137,7 +137,7 @@ export default function HomePage() {
                     <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
                       <div className="flex min-w-0 items-center gap-6">
                         <span className="font-display text-[18px] font-bold text-accent">{s.no}</span>
-                        <h3 className="font-display text-[clamp(20px,2.3vw,30px)] font-bold leading-[1.05] text-ink transition-colors group-hover:text-accent">
+                        <h3 className="font-display text-[clamp(20px,2.3vw,30px)] font-semibold tracking-[-0.015em] leading-[1.05] text-ink transition-colors group-hover:text-accent">
                           {s.title}
                         </h3>
                       </div>
@@ -163,7 +163,7 @@ export default function HomePage() {
           <div className="flex flex-col gap-6 lg:max-w-[640px]">
             <Reveal><SectionLabel dark>MICROSOFT CSP</SectionLabel></Reveal>
             <Reveal delay={80}>
-              <h2 className="font-display text-[clamp(28px,4.4vw,52px)] font-bold uppercase leading-[1.05] text-white">
+              <h2 className="font-display text-[clamp(28px,4.4vw,52px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] text-white">
                 Microsoft licensing, Azure, and a secure cloud workplace
               </h2>
             </Reveal>
@@ -203,7 +203,7 @@ export default function HomePage() {
                   </ViewTransition>
                   <div>
                     <p className="font-display text-[13px] font-bold uppercase tracking-wide text-accent">{c.sector}</p>
-                    <h3 className="mt-2 font-display text-[clamp(20px,2.4vw,28px)] font-bold uppercase leading-[1.1] text-ink transition-colors group-hover:text-accent">
+                    <h3 className="mt-2 font-display text-[clamp(20px,2.4vw,28px)] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink transition-colors group-hover:text-accent">
                       {c.name}
                     </h3>
                   </div>

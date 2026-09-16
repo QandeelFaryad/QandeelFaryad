@@ -92,7 +92,7 @@ export default function ContactPage() {
             </div>
 
             <div className="rounded-3xl bg-cloud p-8">
-              <p className="font-display text-[20px] font-bold text-ink">Prefer a real-time call?</p>
+              <p className="font-display text-[20px] font-semibold tracking-[-0.015em] text-ink">Prefer a real-time call?</p>
               <p className="mt-2 text-[15px] leading-[1.6] text-muted">
                 {SITE.bookingUrl ? "Pick a 30-minute slot that suits you." : "Email us and we'll find a time that works."}
               </p>
@@ -108,7 +108,7 @@ export default function ContactPage() {
       <section className="bg-cloud">
         <div className="container-x py-6">
           <div className="brand-gradient-animated relative flex h-[220px] items-center justify-center overflow-hidden rounded-3xl px-6 text-center">
-            <span className="font-display text-[clamp(14px,2vw,20px)] font-bold uppercase tracking-widest text-white/85">
+            <span className="font-display text-[clamp(14px,2vw,20px)] font-semibold tracking-[-0.015em] uppercase tracking-widest text-white/85">
               {SITE.location}
             </span>
           </div>
