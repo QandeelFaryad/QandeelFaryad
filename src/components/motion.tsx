@@ -91,7 +91,7 @@ export function Counter({
         io.disconnect();
         const start = performance.now();
         const tick = (now: number) => {
-          const p = Math.min((now - start) / duration, 1);
+          const p = Math.min(Math.max((now - start) / duration, 0), 1);
           const eased = 1 - Math.pow(1 - p, 3);
           setDisplay(Math.round(eased * value));
           if (p < 1) raf = requestAnimationFrame(tick);
@@ -121,10 +121,18 @@ function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/** How long the first-visit intro (see IntroOverlay) still covers the page. */
-function introRemaining() {
-  if (document.documentElement.classList.contains("intro-seen")) return 0;
-  return Math.max(0, 2100 - performance.now());
+let revealHold = 0;
+/** Delay headline reveals until `time` (performance.now()), e.g. while RouteLoader covers the page. */
+export function holdRevealsUntil(time: number) {
+  revealHold = time;
+}
+
+/** How long the first-visit intro or the route loader still covers the page. */
+function coverRemaining() {
+  const now = performance.now();
+  const loader = Math.max(0, revealHold - now);
+  if (document.documentElement.classList.contains("intro-seen")) return loader;
+  return Math.max(loader, 2100 - now);
 }
 
 /* -------------------------------------------------------------- SplitReveal */
@@ -152,7 +160,7 @@ export function SplitReveal({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    setOffset(introRemaining());
+    setOffset(coverRemaining());
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -177,10 +185,14 @@ export function SplitReveal({
               <span
                 className="split-inner"
                 style={{
-                  // Two delays for highlighted words: the rise, then the underline.
+                  // Two delays for highlighted words: the rise, then the underline
+                  // (whose glint starts once it has been drawn).
                   transitionDelay: highlight.includes(w)
                     ? `${offset + delay + i * stagger}ms, ${offset + delay + i * stagger + 650}ms`
                     : `${offset + delay + i * stagger}ms`,
+                  ...(highlight.includes(w)
+                    ? ({ "--glint-delay": `${offset + delay + i * stagger + 1600}ms` } as React.CSSProperties)
+                    : null),
                 }}
               >
                 {w}
@@ -190,6 +202,57 @@ export function SplitReveal({
           </span>
         ))}
       </span>
+    </Tag>
+  );
+}
+
+/* ---------------------------------------------------------------- FadeWords */
+/** Fades a paragraph in word by word, each word sharpening out of a blur. */
+export function FadeWords({
+  text,
+  as: Tag = "p",
+  delay = 0,
+  stagger = 22,
+  className = "",
+}: {
+  text: string;
+  as?: ElementType;
+  delay?: number;
+  stagger?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLElement | null>(null);
+  const [shown, setShown] = useState(false);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    setOffset(coverRemaining());
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const words = text.split(" ").filter(Boolean);
+  return (
+    <Tag ref={ref} className={`fade-words ${shown ? "is-visible" : ""} ${className}`}>
+      {words.map((w, i) => (
+        <span key={i}>
+          <span className="fade-word" style={{ transitionDelay: `${offset + delay + i * stagger}ms` }}>
+            {w}
+          </span>
+          {i < words.length - 1 ? " " : null}
+        </span>
+      ))}
     </Tag>
   );
 }

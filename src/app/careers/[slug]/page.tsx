@@ -6,17 +6,19 @@ import PageHero from "@/components/PageHero";
 import { SectionLabel } from "@/components/ui";
 import { Reveal } from "@/components/motion";
 import { ApplicationForm } from "@/components/forms";
-import { OPEN_APPLICATION, ROLES, getRole } from "@/lib/content";
+import { OPEN_APPLICATION } from "@/lib/content";
+import { getRole, getRoles } from "@/lib/data";
+import { isServiceConfigured } from "@/lib/supabase/service";
 import { pageMeta } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return [...ROLES, OPEN_APPLICATION].map((r) => ({ slug: r.slug }));
+export async function generateStaticParams() {
+  return [...(await getRoles()), OPEN_APPLICATION].map((r) => ({ slug: r.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const role = getRole((await params).slug);
+  const role = await getRole((await params).slug);
   if (!role) return {};
   return pageMeta(`${role.title} · Careers`, role.summary);
 }
@@ -36,9 +38,9 @@ function List({ title, items }: { title: string; items: string[] }) {
 
 export default async function RolePage({ params }: Props) {
   const { slug } = await params;
-  const role = getRole(slug);
+  const [role, roles] = await Promise.all([getRole(slug), getRoles()]);
   if (!role) notFound();
-  const others = ROLES.filter((r) => r.slug !== slug).slice(0, 3);
+  const others = roles.filter((r) => r.slug !== slug).slice(0, 3);
 
   return (
     <PageShell>
@@ -81,7 +83,7 @@ export default async function RolePage({ params }: Props) {
             <div className="rounded-3xl border border-line p-8">
               <SectionLabel>APPLY</SectionLabel>
               <div className="mt-6">
-                <ApplicationForm role={role.title} />
+                <ApplicationForm role={role.title} allowCv={isServiceConfigured()} />
               </div>
             </div>
           </Reveal>

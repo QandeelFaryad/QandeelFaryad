@@ -6,13 +6,15 @@ import { StatsCounters, CtaBanner } from "@/components/sections";
 import { CeoMessage, CompanyOverview, PartnerStrip, VisionMissionValues } from "@/components/profile";
 import { ABOUT, PHOTOS } from "@/lib/content";
 import { SITE, pageMeta } from "@/lib/site";
+import { getStats } from "@/lib/data";
 
 export const metadata = pageMeta(
   "About",
   "QORLIQ is a digital services brand operated by HOORAB GROUP OF COMPANIES LTD, helping businesses grow through practical, professional digital solutions.",
 );
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const stats = await getStats();
   return (
     <PageShell>
       <PageHero
@@ -73,10 +75,10 @@ export default function AboutPage() {
       <StatsCounters
         label="COMPANY STATISTICS"
         stats={[
-          { tag: "( Delivered )", value: SITE.stats.projects, label: "Projects completed" },
-          { tag: "( Global )", value: SITE.stats.countries, label: "Countries served" },
-          { tag: "( Sectors )", value: SITE.stats.industries, label: "Industries served" },
-          { tag: "( Rated )", value: SITE.stats.satisfaction, suffix: "%", label: "Client satisfaction rate", accent: true },
+          { tag: "( Delivered )", value: stats.projects, label: "Projects completed" },
+          { tag: "( Global )", value: stats.countries, label: "Countries served" },
+          { tag: "( Sectors )", value: stats.industries, label: "Industries served" },
+          { tag: "( Rated )", value: stats.satisfaction, suffix: "%", label: "Client satisfaction rate", accent: true },
           { tag: "( Since )", raw: SITE.legal.established, value: 0, label: "Year established" },
         ]}
       />

@@ -60,9 +60,6 @@ export default function ContactPage() {
               <a href={`mailto:${SITE.email}`} className="text-[18px] font-medium text-ink hover:text-accent">
                 {SITE.email}
               </a>
-              <a href={SITE.phone.href} className="text-[18px] font-medium text-ink hover:text-accent">
-                {SITE.phone.label}
-              </a>
               <a
                 href={SITE.url}
                 className="text-[18px] font-medium text-ink hover:text-accent"
@@ -94,7 +91,7 @@ export default function ContactPage() {
             <div className="rounded-3xl bg-cloud p-8">
               <p className="font-display text-[20px] font-semibold tracking-[-0.015em] text-ink">Prefer a real-time call?</p>
               <p className="mt-2 text-[15px] leading-[1.6] text-muted">
-                {SITE.bookingUrl ? "Pick a 30-minute slot that suits you." : "Email us and we'll find a time that works."}
+                Email us and we&apos;ll find a time that works.
               </p>
               <div className="mt-5">
                 <PillButton href={callHref()}>Book a Call</PillButton>

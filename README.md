@@ -32,7 +32,6 @@ Copy `.env.example` to `.env.local` and fill in:
 | `RESEND_API_KEY`          | Sends form submissions via [Resend](https://resend.com)        |
 | `CONTACT_TO_EMAIL`        | Inbox that receives inquiries, applications, and sign-ups      |
 | `CONTACT_FROM_EMAIL`      | Verified sender address                                        |
-| `NEXT_PUBLIC_BOOKING_URL` | Calendly / Cal.com link for "Book a Call" (falls back to email) |
 | `NEXT_PUBLIC_SITE_URL`    | Production URL for social previews and the sitemap             |
 
 Without Resend configured, submissions are logged to the terminal in development

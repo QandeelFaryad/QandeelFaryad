@@ -2,14 +2,16 @@ import Link from "next/link";
 import { ViewTransition } from "react";
 import PageShell from "@/components/PageShell";
 import { PillButton, SectionLabel, ImageFill, Marquee } from "@/components/ui";
-import { Reveal, Counter, SplitReveal, Parallax, PointerGlow, ScrollFade, ScrubText, Tilt } from "@/components/motion";
+import { Reveal, Counter, FadeWords, SplitReveal, Parallax, PointerGlow, ScrollFade, ScrubText, Tilt } from "@/components/motion";
 import { StatsCounters, CtaBanner } from "@/components/sections";
 import { PartnerStrip, ProjectAreas, Strengths } from "@/components/profile";
 import { ArrowDownRight } from "@/components/icons";
-import { ABOUT, BADGES, CASE_STUDIES, PHOTOS, SERVICES } from "@/lib/content";
+import { ABOUT, BADGES, PHOTOS, SERVICES } from "@/lib/content";
+import { getCaseStudies, getStats } from "@/lib/data";
 import { SITE } from "@/lib/site";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [caseStudies, stats] = await Promise.all([getCaseStudies(), getStats()]);
   return (
     <PageShell>
       {/* ------------------------------------------------------------- HERO */}
@@ -23,7 +25,7 @@ export default function HomePage() {
                 text={line}
                 delay={i * 140}
                 highlight={["GROWTH"]}
-                className="block font-display text-[clamp(26px,7.6vw,110px)] font-semibold tracking-[-0.015em] leading-[0.95] text-white"
+                className="block font-display text-[clamp(24px,6.2vw,88px)] font-semibold tracking-[-0.015em] leading-[0.95] text-white"
               />
             ))}
           </h1>
@@ -34,11 +36,11 @@ export default function HomePage() {
             <div className="h-px w-full bg-white/40" />
             <div className="mt-6 flex items-start gap-4">
               <ArrowDownRight className="size-6 shrink-0 text-spark" />
-              <p className="text-[18px] leading-[1.5] text-white">
-                {SITE.legal.brandLine}, supporting businesses with modern websites, e-commerce
-                platforms, applications, digital marketing, brand identity, automation, AI, and
-                Microsoft cloud services.
-              </p>
+              <FadeWords
+                delay={500}
+                className="text-[18px] leading-[1.5] text-white"
+                text={`${SITE.legal.brandLine}, supporting businesses with modern websites, e-commerce platforms, applications, digital marketing, brand identity, automation, AI, and Microsoft cloud services.`}
+              />
             </div>
           </Reveal>
 
@@ -49,10 +51,10 @@ export default function HomePage() {
               </p>
               <div className="mt-4 grid grid-cols-2 gap-4">
                 {[
-                  { value: SITE.stats.projects, label: "Projects completed" },
-                  { value: SITE.stats.countries, label: "Countries served" },
-                  { value: SITE.stats.industries, label: "Industries served" },
-                  { value: SITE.stats.satisfaction, suffix: "%", label: "Client satisfaction" },
+                  { value: stats.projects, label: "Projects completed" },
+                  { value: stats.countries, label: "Countries served" },
+                  { value: stats.industries, label: "Industries served" },
+                  { value: stats.satisfaction, suffix: "%", label: "Client satisfaction" },
                 ].map((s) => (
                   <div key={s.label}>
                     <p className="font-display text-[28px] font-semibold tracking-[-0.015em] leading-none text-ink">
@@ -90,16 +92,16 @@ export default function HomePage() {
               <div className="flex flex-wrap gap-10">
                 <div className="flex flex-col gap-2">
                   <span className="font-display text-[clamp(40px,6vw,60px)] font-semibold tracking-[-0.015em] text-accent">
-                    <Counter value={SITE.stats.satisfaction} suffix="%" />
+                    <Counter value={stats.satisfaction} suffix="%" />
                   </span>
                   <span className="text-[15px] font-medium text-ink">Client satisfaction rate</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className="font-display text-[clamp(40px,6vw,60px)] font-semibold tracking-[-0.015em] text-ink">
-                    <Counter value={SITE.stats.projects} />
+                    <Counter value={stats.projects} />
                   </span>
                   <span className="text-[15px] font-medium text-ink">
-                    Projects across {SITE.stats.countries} countries
+                    Projects across {stats.countries} countries
                   </span>
                 </div>
               </div>
@@ -192,7 +194,7 @@ export default function HomePage() {
             </div>
           </Reveal>
           <div className="grid gap-8 md:grid-cols-2">
-            {CASE_STUDIES.map((c, i) => (
+            {caseStudies.slice(0, 4).map((c, i) => (
               <Reveal key={c.slug} delay={i * 90} scale>
                 <Link href={`/case-studies/${c.slug}`} data-cursor="View" className="group flex h-full flex-col gap-5">
                   <ViewTransition name={`work-${c.slug}`} share="morph" default="none">
@@ -227,9 +229,9 @@ export default function HomePage() {
       <StatsCounters
         label="COMPANY AT A GLANCE"
         stats={[
-          { tag: "( Delivered )", value: SITE.stats.projects, label: "Projects completed" },
-          { tag: "( Global )", value: SITE.stats.countries, label: "Countries served" },
-          { tag: "( Reach )", value: SITE.stats.industries, label: "Industries served" },
+          { tag: "( Delivered )", value: stats.projects, label: "Projects completed" },
+          { tag: "( Global )", value: stats.countries, label: "Countries served" },
+          { tag: "( Reach )", value: stats.industries, label: "Industries served" },
         ]}
       />
 

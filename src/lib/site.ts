@@ -12,11 +12,7 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.qorliq.com",
 
   email: "support@qorliq.com",
-  phone: { label: "+44 7401921690", href: "tel:+447401921690" },
   location: "United Kingdom / Serving Clients Internationally",
-
-  /** Calendly / Cal.com link for "Book a Call". Set NEXT_PUBLIC_BOOKING_URL. */
-  bookingUrl: process.env.NEXT_PUBLIC_BOOKING_URL ?? "",
 
   /** Set me: social profile URLs. Entries with an empty href are not shown. */
   socials: [
@@ -83,7 +79,7 @@ export function pageMeta(title: string, description: string) {
   };
 }
 
-/** Where to send someone who wants to talk, preferring a booking link. */
+/** Where to send someone who wants to talk: an email to arrange a time. */
 export function callHref() {
-  return SITE.bookingUrl || `mailto:${SITE.email}?subject=${encodeURIComponent("Let's book a call")}`;
+  return `mailto:${SITE.email}?subject=${encodeURIComponent("Let's book a call")}`;
 }

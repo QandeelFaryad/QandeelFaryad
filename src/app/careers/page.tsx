@@ -3,7 +3,8 @@ import PageHero from "@/components/PageHero";
 import { SectionLabel, ImageFill, PillButton } from "@/components/ui";
 import Link from "next/link";
 import { Reveal, Parallax, Tilt } from "@/components/motion";
-import { ROLES, OPEN_APPLICATION, PHOTOS } from "@/lib/content";
+import { OPEN_APPLICATION, PHOTOS } from "@/lib/content";
+import { getRoles } from "@/lib/data";
 import { pageMeta } from "@/lib/site";
 
 const CULTURE = [
@@ -27,7 +28,8 @@ export const metadata = pageMeta(
   "Join a remote-first team of designers, engineers, and strategists crafting work for leading global brands.",
 );
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const ROLES = await getRoles();
   return (
     <PageShell>
       <PageHero

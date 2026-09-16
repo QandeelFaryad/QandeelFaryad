@@ -80,7 +80,6 @@ export default function Footer() {
             </p>
             <div className="flex flex-col gap-1 text-[14px] text-on-dark">
               <a href={`mailto:${SITE.email}`} className="hover:text-white">{SITE.email}</a>
-              <a href={SITE.phone.href} className="hover:text-white">{SITE.phone.label}</a>
               <span>{SITE.location}</span>
             </div>
           </div>

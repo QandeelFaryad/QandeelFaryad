@@ -5,6 +5,8 @@ import Header from "@/components/Header";
 import { CustomCursor, SmoothScroll } from "@/components/experience";
 import { BackToTop } from "@/components/motion";
 import Consent from "@/components/Consent";
+import RouteLoader from "@/components/RouteLoader";
+import SiteOnly from "@/components/SiteOnly";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -41,23 +43,29 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {/* First-visit brand intro (pure CSS; hidden via .intro-seen) */}
-        <div className="intro" aria-hidden="true">
-          <div className="intro-stage">
-            <div className="intro-logo">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/brand/qorliq-logo-white.svg" alt="" className="intro-logo-img" />
+        <SiteOnly>
+          {/* First-visit brand intro (pure CSS; hidden via .intro-seen) */}
+          <div className="intro" aria-hidden="true">
+            <div className="intro-stage">
+              <div className="intro-logo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/assets/brand/qorliq-logo-white.svg" alt="" className="intro-logo-img" />
+              </div>
+              <div className="intro-bar"><span /></div>
             </div>
-            <div className="intro-bar"><span /></div>
           </div>
-        </div>
 
-        <Header />
+          {/* Before the page so its effect can hold the page's reveals */}
+          <RouteLoader />
+          <Header />
+        </SiteOnly>
         {children}
-        <Consent />
-        <BackToTop />
-        <CustomCursor />
-        <SmoothScroll />
+        <SiteOnly>
+          <Consent />
+          <BackToTop />
+          <CustomCursor />
+          <SmoothScroll />
+        </SiteOnly>
       </body>
     </html>
   );

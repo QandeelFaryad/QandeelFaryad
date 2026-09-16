@@ -70,10 +70,6 @@ export default function LegalPage({
                 <br />
                 <a href={`mailto:${SITE.email}`} className="font-semibold text-ink hover:text-accent">
                   {SITE.email}
-                </a>{" "}
-                ·{" "}
-                <a href={SITE.phone.href} className="font-semibold text-ink hover:text-accent">
-                  {SITE.phone.label}
                 </a>
               </p>
             </div>

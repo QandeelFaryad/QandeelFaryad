@@ -22,6 +22,40 @@ export const SERVICE_OPTIONS = [
   { slug: "automation-ai", label: "AI & Automation" },
 ];
 
+/** How far along the project is — shapes the kind of quote more than anything else. */
+export const PROJECT_STAGES = ["New build", "Redesign / rebuild", "Improve existing", "Ongoing support"];
+
+/**
+ * Follow-up questions shown only for the services a visitor picks. All optional.
+ * Questions with `options` render as chips (`multi` allows several); the rest are short text.
+ */
+export type ServiceQuestion = { id: string; label: string; options?: string[]; multi?: boolean; placeholder?: string };
+
+export const SERVICE_QUESTIONS: Record<string, ServiceQuestion[]> = {
+  "microsoft-csp": [
+    { id: "seats", label: "How many users or seats?", options: ["1 – 10", "11 – 50", "51 – 250", "250+"] },
+    { id: "tenant", label: "Do you already have a Microsoft 365 tenant?", options: ["Yes", "No", "Not sure"] },
+  ],
+  "ecommerce-store": [
+    { id: "platform", label: "Preferred platform", options: ["Shopify", "WooCommerce", "Custom build", "Not sure"] },
+    { id: "products", label: "Roughly how many products?", options: ["Under 50", "50 – 500", "500 – 5,000", "5,000+"] },
+  ],
+  "application-development": [
+    { id: "platforms", label: "Where should it run?", options: ["Web", "iOS", "Android", "Cross-platform"], multi: true },
+  ],
+  crm: [
+    { id: "current", label: "What do you use today?", options: ["Nothing yet", "Spreadsheets", "HubSpot", "Salesforce", "Zoho", "Other"] },
+  ],
+  "government-api": [
+    { id: "api", label: "Which API or service?", placeholder: "e.g. HMRC MTD, Companies House, GOV.UK Pay" },
+  ],
+  "seo-ranking": [{ id: "market", label: "Which country or region are you targeting?", placeholder: "e.g. United Kingdom" }],
+  "paid-ads": [
+    { id: "market", label: "Which country or region are you targeting?", placeholder: "e.g. United Kingdom" },
+    { id: "spend", label: "Current monthly ad spend", options: ["Not started yet", "Under $1k", "$1k – $5k", "$5k – $20k", "$20k+"] },
+  ],
+};
+
 export type Service = { slug: string; no: string; title: string; body: string; tags: string[] };
 
 /** Products & services (Company Profile, page 5). */
@@ -286,14 +320,6 @@ export function detailImage(i: number) {
   return DETAIL_IMAGES[((i % DETAIL_IMAGES.length) + DETAIL_IMAGES.length) % DETAIL_IMAGES.length];
 }
 
-export function getCaseStudy(slug: string) {
-  return CASE_STUDIES.find((c) => c.slug === slug);
-}
-
-export function nextCaseStudy(slug: string) {
-  const i = CASE_STUDIES.findIndex((c) => c.slug === slug);
-  return CASE_STUDIES[(i + 1) % CASE_STUDIES.length];
-}
 
 /* --------------------------------------------------------------------- Posts */
 export type PostBlock =
@@ -317,24 +343,13 @@ export type Post = {
 };
 
 /**
- * Journal posts. Empty until real articles are written — the blog page shows a
- * "coming soon" state while this is empty.
+ * Journal posts used when Supabase isn't connected (see lib/data.ts). Empty
+ * until real articles are written — the blog page shows a "coming soon" state.
  */
 export const POSTS: Post[] = [];
 
 export const POST_CATEGORIES = ["DESIGN", "DEVELOPMENT", "BRANDING", "STRATEGY"];
 
-export function getPost(slug: string) {
-  return POSTS.find((p) => p.slug === slug);
-}
-
-export function relatedPosts(slug: string, count = 3) {
-  const post = getPost(slug);
-  const others = POSTS.filter((p) => p.slug !== slug);
-  const same = others.filter((p) => p.cat === post?.cat);
-  const rest = others.filter((p) => p.cat !== post?.cat);
-  return [...same, ...rest].slice(0, count);
-}
 
 /** Standalone photography used around the site. */
 export const PHOTOS = {
@@ -366,7 +381,3 @@ export const OPEN_APPLICATION: Role = {
   responsibilities: ["Tell us the kind of work you want to do", "Share projects you're proud of", "Let us know where and how you like to work"],
   requirements: ["A portfolio, GitHub, or case studies", "Evidence of craft and care", "Curiosity about what we do"],
 };
-
-export function getRole(slug: string) {
-  return slug === OPEN_APPLICATION.slug ? OPEN_APPLICATION : ROLES.find((r) => r.slug === slug);
-}

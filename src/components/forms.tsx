@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { PlusIcon } from "./icons";
-import { PillButton, PillSubmit } from "./ui";
-import { SERVICE_OPTIONS } from "@/lib/content";
+import { PillSubmit } from "./ui";
+import { PROJECT_STAGES, SERVICE_OPTIONS, SERVICE_QUESTIONS } from "@/lib/content";
 import { SITE } from "@/lib/site";
 
 /* ----------------------------------------------------------------- Accordion */
@@ -108,12 +108,18 @@ function leadContext() {
   };
 }
 
-async function submit(payload: Record<string, unknown>) {
-  const res = await fetch("/api/contact", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+async function submit(payload: Record<string, unknown>, file?: File | null) {
+  let init: RequestInit;
+  if (file && file.size > 0) {
+    // Files need multipart; everything else rides along as a JSON field.
+    const body = new FormData();
+    body.set("payload", JSON.stringify(payload));
+    body.set("cv", file);
+    init = { method: "POST", body };
+  } else {
+    init = { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) };
+  }
+  const res = await fetch("/api/contact", init);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "Something went wrong.");
 }
@@ -196,14 +202,26 @@ function Chip({
 }
 
 /* ----------------------------------------------------------- ProjectInquiry */
-const BUDGETS = ["$5k – $15k", "$15k – $40k", "$40k – $100k", "$100k+"];
+const BUDGETS = ["$0 – $1k", "$1k – $5k", "$5k – $15k", "$15k – $40k", "$40k – $100k", "$100k+"];
 const TIMELINES = ["As soon as possible", "1 – 3 months", "3 – 6 months", "Flexible"];
-const STEPS = ["What do you need?", "Budget & timeline", "About you"];
+const STEP_TITLES = {
+  services: "What do you need?",
+  specifics: "A few specifics",
+  scope: "Scope & budget",
+  you: "About you",
+};
+type StepKey = keyof typeof STEP_TITLES;
+/** Service slug → question id → answer (several for multi-choice questions). */
+type Answers = Record<string, Record<string, string | string[]>>;
 
-/** Three-step project inquiry with a confirmation screen. */
+const optionalTag = <span className="font-sans text-[12px] font-medium normal-case text-muted">(optional)</span>;
+
+/** Multi-step project inquiry with a confirmation screen. The specifics step only appears when a picked service has follow-up questions. */
 export function ContactForm() {
   const [step, setStep] = useState(0);
   const [services, setServices] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<Answers>({});
+  const [stage, setStage] = useState("");
   const [budget, setBudget] = useState("");
   const [timeline, setTimeline] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -213,6 +231,11 @@ export function ContactForm() {
   const heading = useRef<HTMLHeadingElement | null>(null);
   const moved = useRef(false);
   const id = useId();
+
+  const asked = SERVICE_OPTIONS.filter((s) => services.includes(s.label) && SERVICE_QUESTIONS[s.slug]);
+  const steps: StepKey[] = ["services", ...(asked.length ? (["specifics"] as const) : []), "scope", "you"];
+  const current = steps[step];
+  const last = step === steps.length - 1;
 
   // Pre-select a service when arriving from e.g. /contact?service=branding.
   useEffect(() => {
@@ -233,19 +256,34 @@ export function ContactForm() {
   };
 
   const nextFromStep = () => {
-    if (step === 0 && services.length === 0) return setHint("Pick at least one service to continue.");
-    if (step === 1 && !budget) return setHint("Choose a budget range to continue.");
+    if (current === "services" && services.length === 0) return setHint("Pick at least one service to continue.");
+    if (current === "scope" && !budget) return setHint("Choose a budget range to continue.");
     go(step + 1);
   };
 
+  const answer = (slug: string, qid: string, value: string | string[]) =>
+    setAnswers((cur) => ({ ...cur, [slug]: { ...cur[slug], [qid]: value } }));
+
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (step < STEPS.length - 1) return nextFromStep();
+    if (!last) return nextFromStep();
     const data = Object.fromEntries(new FormData(e.currentTarget));
+    // Only send answers for services that are still selected.
+    const details = Object.fromEntries(asked.map((s) => [s.slug, answers[s.slug] ?? {}]));
     setStatus("sending");
     setError("");
     try {
-      await submit({ kind: "project", services, budget, timeline, ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) });
+      await submit({
+        kind: "project",
+        services,
+        details,
+        stage,
+        budget,
+        timeline,
+        ...leadContext(),
+        ...data,
+        turnstileToken: turnstileToken(e.currentTarget),
+      });
       setName(String(data.name ?? "").split(" ")[0]);
       moved.current = true;
       setStatus("sent");
@@ -267,11 +305,9 @@ export function ContactForm() {
           </h3>
           <p className="max-w-[520px] text-[17px] leading-[1.6] text-muted">
             A strategist will reply within one business day with next steps.
-            {SITE.bookingUrl ? " Want to skip the back-and-forth? Grab a time that suits you." : ""}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-6">
-          {SITE.bookingUrl ? <PillButton href={SITE.bookingUrl}>Book a Call Now</PillButton> : null}
           <Link href="/case-studies" className="font-display text-[14px] font-bold uppercase text-ink underline-offset-4 hover:text-accent hover:underline">
             Browse our work while you wait →
           </Link>
@@ -281,20 +317,20 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="relative flex flex-col gap-8" noValidate={step < 2}>
+    <form onSubmit={onSubmit} className="relative flex flex-col gap-8" noValidate={!last}>
       <Honeypot />
 
       {/* Progress */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between text-[13px] font-semibold uppercase tracking-wide text-muted">
           <span>
-            Step {step + 1} of {STEPS.length}
+            Step {step + 1} of {steps.length}
           </span>
-          <span className="hidden sm:inline">{STEPS.map((s, i) => (i === step ? s : null))}</span>
+          <span className="hidden sm:inline">{STEP_TITLES[current]}</span>
         </div>
         <div className="flex gap-2" aria-hidden="true">
-          {STEPS.map((_, i) => (
-            <span key={i} className="h-1 flex-1 overflow-hidden rounded-full bg-line">
+          {steps.map((key, i) => (
+            <span key={key} className="h-1 flex-1 overflow-hidden rounded-full bg-line">
               <span
                 className="block h-full origin-left bg-accent transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                 style={{ transform: `scaleX(${i <= step ? 1 : 0})` }}
@@ -309,11 +345,11 @@ export function ContactForm() {
         tabIndex={-1}
         className="font-display text-[clamp(24px,3vw,34px)] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink outline-none"
       >
-        {STEPS[step]}
+        {STEP_TITLES[current]}
       </h3>
 
-      <div key={step} className="animate-step flex flex-col gap-6">
-        {step === 0 ? (
+      <div key={current} className="animate-step flex flex-col gap-6">
+        {current === "services" ? (
           <div role="group" aria-label="Services" className="grid gap-3 sm:grid-cols-2">
             {SERVICE_OPTIONS.map((s) => (
               <Chip
@@ -329,8 +365,73 @@ export function ContactForm() {
           </div>
         ) : null}
 
-        {step === 1 ? (
+        {current === "specifics" ? (
           <>
+            <p className="text-[15px] text-muted">All optional — answer what you can so our first reply is more useful.</p>
+            {asked.map((s) => (
+              <div key={s.slug} className="flex flex-col gap-5 border-t border-line pt-6">
+                <p className="text-[12px] font-semibold uppercase tracking-wide text-accent">{s.label}</p>
+                {SERVICE_QUESTIONS[s.slug].map((q) => {
+                  const value = answers[s.slug]?.[q.id];
+                  const qid = `${id}-${s.slug}-${q.id}`;
+                  if (!q.options) {
+                    return (
+                      <Field key={q.id} label={q.label} htmlFor={qid}>
+                        <input
+                          id={qid}
+                          className={field}
+                          placeholder={q.placeholder}
+                          maxLength={200}
+                          value={typeof value === "string" ? value : ""}
+                          onChange={(e) => answer(s.slug, q.id, e.target.value)}
+                        />
+                      </Field>
+                    );
+                  }
+                  const picked = Array.isArray(value) ? value : value ? [value] : [];
+                  return (
+                    <div key={q.id} className="flex flex-col gap-3">
+                      <p className={labelClass}>{q.label}</p>
+                      <div role={q.multi ? "group" : "radiogroup"} aria-label={q.label} className="flex flex-wrap gap-3">
+                        {q.options.map((o) => (
+                          <Chip
+                            key={o}
+                            role={q.multi ? "checkbox" : "radio"}
+                            selected={picked.includes(o)}
+                            onClick={() =>
+                              answer(
+                                s.slug,
+                                q.id,
+                                q.multi
+                                  ? picked.includes(o) ? picked.filter((x) => x !== o) : [...picked, o]
+                                  : value === o ? "" : o,
+                              )
+                            }
+                          >
+                            {o}
+                          </Chip>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </>
+        ) : null}
+
+        {current === "scope" ? (
+          <>
+            <div className="flex flex-col gap-3">
+              <p className={labelClass}>Is this a new project? {optionalTag}</p>
+              <div role="radiogroup" aria-label="Project stage" className="grid gap-3 sm:grid-cols-2">
+                {PROJECT_STAGES.map((p) => (
+                  <Chip key={p} role="radio" selected={stage === p} onClick={() => setStage(stage === p ? "" : p)}>
+                    {p}
+                  </Chip>
+                ))}
+              </div>
+            </div>
             <div className="flex flex-col gap-3">
               <p className={labelClass}>Project budget</p>
               <div role="radiogroup" aria-label="Project budget" className="grid gap-3 sm:grid-cols-2">
@@ -342,9 +443,7 @@ export function ContactForm() {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <p className={labelClass}>
-                Timeline <span className="font-sans text-[12px] font-medium normal-case text-muted">(optional)</span>
-              </p>
+              <p className={labelClass}>Timeline {optionalTag}</p>
               <div role="radiogroup" aria-label="Timeline" className="grid gap-3 sm:grid-cols-2">
                 {TIMELINES.map((t) => (
                   <Chip key={t} role="radio" selected={timeline === t} onClick={() => setTimeline(timeline === t ? "" : t)}>
@@ -356,7 +455,7 @@ export function ContactForm() {
           </>
         ) : null}
 
-        {step === 2 ? (
+        {current === "you" ? (
           <>
             <Field label="Your name" htmlFor={`${id}-name`}>
               <input id={`${id}-name`} name="name" className={field} placeholder="Full name" autoComplete="name" required />
@@ -369,6 +468,37 @@ export function ContactForm() {
                 <input id={`${id}-company`} name="company" className={field} placeholder="e.g. Acme Corp" autoComplete="organization" />
               </Field>
             </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="flex flex-col gap-3">
+                <Field label="Phone" htmlFor={`${id}-phone`} optional>
+                  <input
+                    id={`${id}-phone`}
+                    name="phone"
+                    type="tel"
+                    className={field}
+                    placeholder="+44 7700 900123"
+                    autoComplete="tel"
+                    maxLength={30}
+                  />
+                </Field>
+                <label className="flex items-center gap-2.5 text-[14px] text-muted">
+                  <input type="checkbox" name="whatsapp" className="size-4 accent-accent" />
+                  This number is on WhatsApp
+                </label>
+              </div>
+              <Field label="Current website" htmlFor={`${id}-site`} optional>
+                {/* Not type="url": that would reject "example.com" without https://. The server normalises it. */}
+                <input
+                  id={`${id}-site`}
+                  name="site_url"
+                  inputMode="url"
+                  className={field}
+                  placeholder="yourcompany.com"
+                  autoComplete="url"
+                  maxLength={300}
+                />
+              </Field>
+            </div>
             <Field label="Tell us about the project" htmlFor={`${id}-message`} optional>
               <textarea
                 id={`${id}-message`}
@@ -377,10 +507,7 @@ export function ContactForm() {
                 placeholder="Goals, links, anything that helps us understand what you're building…"
               />
             </Field>
-            <p className="text-[13px] text-muted">
-              {services.join(", ")} · {budget}
-              {timeline ? ` · ${timeline}` : ""}
-            </p>
+            <p className="text-[13px] text-muted">{[services.join(", "), stage, budget, timeline].filter(Boolean).join(" · ")}</p>
           </>
         ) : null}
       </div>
@@ -391,10 +518,10 @@ export function ContactForm() {
         </p>
       ) : null}
       {status === "error" ? <ErrorNote message={error} /> : null}
-      {step === STEPS.length - 1 ? <Turnstile /> : null}
+      {last ? <Turnstile /> : null}
 
       <div className="flex flex-wrap items-center gap-6">
-        {step < STEPS.length - 1 ? (
+        {!last ? (
           <PillSubmit>Continue</PillSubmit>
         ) : (
           <PillSubmit disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Send Inquiry"}</PillSubmit>
@@ -414,17 +541,29 @@ export function ContactForm() {
 }
 
 /* ---------------------------------------------------------- ApplicationForm */
-export function ApplicationForm({ role }: { role: string }) {
+const CV_TYPES = ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const CV_MAX_MB = 10;
+
+export function ApplicationForm({ role, allowCv = false }: { role: string; allowCv?: boolean }) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const id = useId();
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
+    const form = new FormData(e.currentTarget);
+    const cv = form.get("cv");
+    form.delete("cv");
+    const file = cv instanceof File && cv.size > 0 ? cv : null;
+    if (file && file.size > CV_MAX_MB * 1024 * 1024) {
+      setStatus("error");
+      setError(`Your CV is larger than ${CV_MAX_MB}MB. Please upload a smaller file or share a link instead.`);
+      return;
+    }
+    const data = Object.fromEntries(form);
     setStatus("sending");
     try {
-      await submit({ kind: "application", role, ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) });
+      await submit({ kind: "application", role, ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) }, file);
       setStatus("sent");
     } catch (err) {
       setStatus("error");
@@ -462,6 +601,18 @@ export function ApplicationForm({ role }: { role: string }) {
       <Field label="LinkedIn" htmlFor={`${id}-linkedin`} optional>
         <input id={`${id}-linkedin`} name="linkedin" type="url" className={field} placeholder="https://" />
       </Field>
+      {allowCv ? (
+        <Field label="CV" htmlFor={`${id}-cv`} optional>
+          <input
+            id={`${id}-cv`}
+            name="cv"
+            type="file"
+            accept={CV_TYPES}
+            className={`${field} file:mr-4 file:rounded-full file:border-0 file:bg-cloud file:px-4 file:py-2 file:font-display file:text-[12px] file:font-bold file:uppercase file:text-ink`}
+          />
+          <span className="text-[12px] text-muted">PDF or Word, up to {CV_MAX_MB}MB.</span>
+        </Field>
+      ) : null}
       <Field label="Why QORLIQ?" htmlFor={`${id}-message`} optional>
         <textarea id={`${id}-message`} name="message" className={`${field} min-h-[120px] resize-y`} />
       </Field>

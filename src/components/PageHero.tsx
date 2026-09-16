@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Reveal, Counter, SplitReveal, PointerGlow, ScrollFade } from "./motion";
+import { Reveal, Counter, FadeWords, SplitReveal, PointerGlow, ScrollFade } from "./motion";
 import { SectionLabel } from "./ui";
 
 export type HeroStat = { value: number; suffix?: string; label: string };
@@ -34,11 +34,11 @@ export default function PageHero({
       </h1>
       </ScrollFade>
       {sub ? (
-        <Reveal delay={220}>
-          <p className="mt-8 max-w-[720px] text-[clamp(16px,1.6vw,20px)] leading-[1.55] text-white/85">
-            {sub}
-          </p>
-        </Reveal>
+        <FadeWords
+          text={sub}
+          delay={titleLines.length * 120 + 250}
+          className="mt-8 max-w-[720px] text-[clamp(16px,1.6vw,20px)] leading-[1.55] text-white/85"
+        />
       ) : null}
 
       {stats ? (

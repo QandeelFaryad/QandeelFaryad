@@ -1,10 +1,11 @@
 import { SectionLabel, PillButton } from "./ui";
-import { Reveal, Counter, HorizontalScroll, PointerGlow, Tilt } from "./motion";
+import { Reveal, Counter, PointerGlow, Tilt } from "./motion";
+import BookProcess from "./BookProcess";
 
 /* -------------------------------------------------------------- DesignProcess */
 export type ProcessStep = { no: string; title: string; body: string };
 
-/** Process steps; on desktop the steps scroll sideways while the section is pinned. */
+/** Process steps as a book whose pages turn while the section is pinned. */
 export function DesignProcess({
   steps,
   label = "HOW WE WORK",
@@ -17,11 +18,11 @@ export function DesignProcess({
   dark?: boolean;
 }) {
   const header = (
-    <div className="container-x flex flex-col gap-10">
+    <div className="container-x flex flex-col gap-6 lg:gap-8">
       <Reveal><SectionLabel dark={dark}>{label}</SectionLabel></Reveal>
       <Reveal delay={80}>
         <h2
-          className={`max-w-[900px] font-display text-[clamp(32px,5vw,56px)] font-bold uppercase leading-[1.05] ${
+          className={`max-w-[900px] font-display text-[clamp(28px,4.2vw,52px)] font-bold uppercase leading-[1.05] ${
             dark ? "text-white" : "text-ink"
           }`}
         >
@@ -33,44 +34,7 @@ export function DesignProcess({
 
   return (
     <section className={dark ? "bg-ink" : "bg-cloud"}>
-      <div className="[padding-block:120px] lg:[padding-block:0]">
-        <HorizontalScroll
-          header={header}
-          gridClassName="container-x grid gap-x-10 gap-y-12 sm:grid-cols-2"
-          trackClassName="gap-6 pl-[clamp(20px,5.5vw,80px)] pr-[clamp(20px,5.5vw,80px)]"
-        >
-          {steps.map((s, i) => (
-            <Reveal key={s.no} delay={i * 90} className="lg:w-[min(36vw,520px)] lg:shrink-0">
-              <div
-                className={`group relative flex h-full flex-col gap-4 overflow-hidden rounded-3xl p-8 lg:min-h-[340px] lg:justify-end lg:p-10 ${
-                  dark ? "bg-white/[0.04]" : "bg-white"
-                }`}
-              >
-                <span
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute -right-4 -top-8 font-display text-[160px] font-bold leading-none transition-transform duration-700 group-hover:-translate-y-2 ${
-                    dark ? "text-white/[0.05]" : "text-ink/[0.05]"
-                  }`}
-                >
-                  {s.no}
-                </span>
-                <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-spark">{s.no}</span>
-                <div
-                  className={`h-px w-full origin-left transition-transform duration-500 group-hover:scale-x-50 ${
-                    dark ? "bg-white/15" : "bg-line"
-                  }`}
-                />
-                <h3 className={`font-display text-[clamp(22px,2.2vw,28px)] font-semibold tracking-[-0.015em] uppercase ${dark ? "text-white" : "text-ink"}`}>
-                  {s.title}
-                </h3>
-                <p className={`max-w-[420px] text-[15px] leading-[1.6] ${dark ? "text-on-dark" : "text-muted"}`}>
-                  {s.body}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </HorizontalScroll>
-      </div>
+      <BookProcess steps={steps} header={header} />
     </section>
   );
 }

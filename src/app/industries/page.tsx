@@ -4,7 +4,8 @@ import { SectionLabel } from "@/components/ui";
 import { Reveal, Tilt } from "@/components/motion";
 import { CtaBanner } from "@/components/sections";
 import { PartnerStrip } from "@/components/profile";
-import { SITE, pageMeta } from "@/lib/site";
+import { pageMeta } from "@/lib/site";
+import { getStats } from "@/lib/data";
 
 const SECTORS = [
   { no: "01", title: "TECHNOLOGY & SAAS", body: "We partner with hyper-growth tech companies and enterprise SaaS giants to build intuitive product interfaces, marketing websites, and high-performance design systems.", tags: ["Product Design", "Next.js Dev", "Design Systems"] },
@@ -30,7 +31,8 @@ export const metadata = pageMeta(
   "From seed-stage SaaS to global healthcare platforms, we translate industry complexity into clear, award-winning interfaces.",
 );
 
-export default function IndustriesPage() {
+export default async function IndustriesPage() {
+  const stats = await getStats();
   return (
     <PageShell>
       <PageHero
@@ -38,8 +40,8 @@ export default function IndustriesPage() {
         titleLines={["DESIGNING FOR THE", "WORLD'S CORE SECTORS"]}
         sub="We work with startups, small businesses, growing companies, and established organisations across a wide range of sectors, adapting each solution to how that industry actually operates."
         stats={[
-          { value: SITE.stats.projects, label: "Projects Delivered" },
-          { value: SITE.stats.industries, label: "Industries Served" },
+          { value: stats.projects, label: "Projects Delivered" },
+          { value: stats.industries, label: "Industries Served" },
         ]}
       />
 
@@ -49,7 +51,7 @@ export default function IndustriesPage() {
           <Reveal>
             <div className="flex items-center gap-4">
               <SectionLabel>SECTOR EXPERTISE</SectionLabel>
-              <span className="font-display text-[13px] font-bold uppercase text-spark">( {SITE.stats.industries} industries served )</span>
+              <span className="font-display text-[13px] font-bold uppercase text-spark">( {stats.industries} industries served )</span>
             </div>
           </Reveal>
           <div className="grid gap-6 md:grid-cols-2">

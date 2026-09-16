@@ -4,7 +4,8 @@ import PageHero from "@/components/PageHero";
 import { PillButton, SectionLabel, ImageFill } from "@/components/ui";
 import { Reveal, Tilt, Parallax } from "@/components/motion";
 import { CtaBanner } from "@/components/sections";
-import { MICROSOFT_SOLUTIONS, getCaseStudy } from "@/lib/content";
+import { MICROSOFT_SOLUTIONS } from "@/lib/content";
+import { getCaseStudy } from "@/lib/data";
 import { pageMeta } from "@/lib/site";
 
 export const metadata = pageMeta(
@@ -19,8 +20,8 @@ const STEPS = [
   { no: "04", title: "SUPPORT", body: "Guidance, admin support, and improvements as your team and requirements grow." },
 ];
 
-export default function MicrosoftPage() {
-  const study = getCaseStudy("microsoft-cloud-productivity-transformation");
+export default async function MicrosoftPage() {
+  const study = await getCaseStudy("microsoft-cloud-productivity-transformation");
 
   return (
     <PageShell>
@@ -37,22 +38,12 @@ export default function MicrosoftPage() {
       {/* Solutions grid */}
       <section className="bg-white">
         <div className="container-x flex flex-col gap-14 [padding-block:120px]">
-          <Reveal>
-            <div className="flex flex-wrap items-center gap-4">
-              <SectionLabel>WHAT WE COVER</SectionLabel>
-              <span className="font-display text-[13px] font-bold uppercase text-spark">
-                ( {MICROSOFT_SOLUTIONS.length} areas )
-              </span>
-            </div>
-          </Reveal>
+          <Reveal><SectionLabel>WHAT WE COVER</SectionLabel></Reveal>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {MICROSOFT_SOLUTIONS.map((m, i) => (
               <Reveal key={m.title} delay={(i % 4) * 80} scale>
                 <Tilt max={5}>
                   <div className="flex h-full flex-col gap-3 rounded-3xl border border-line bg-white p-8">
-                    <span className="font-display text-[18px] font-bold text-spark">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
                     <h2 className="font-display text-[20px] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink">
                       {m.title}
                     </h2>

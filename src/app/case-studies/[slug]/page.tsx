@@ -7,28 +7,30 @@ import PageHero from "@/components/PageHero";
 import { ImageFill, SectionLabel } from "@/components/ui";
 import { Parallax, Reveal, ScrubText } from "@/components/motion";
 import { CtaBanner } from "@/components/sections";
-import { CASE_STUDIES, detailImage, getCaseStudy, nextCaseStudy } from "@/lib/content";
+import { detailImage } from "@/lib/content";
+import { getCaseStudies } from "@/lib/data";
 import { pageMeta } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return CASE_STUDIES.map((c) => ({ slug: c.slug }));
+export async function generateStaticParams() {
+  return (await getCaseStudies()).map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const study = getCaseStudy((await params).slug);
+  const slug = (await params).slug;
+  const study = (await getCaseStudies()).find((c) => c.slug === slug);
   if (!study) return {};
   return pageMeta(study.subtitle, study.summary);
 }
 
 export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
-  const study = getCaseStudy(slug);
-  if (!study) notFound();
-
-  const index = CASE_STUDIES.indexOf(study);
-  const next = nextCaseStudy(slug);
+  const CASE_STUDIES = await getCaseStudies();
+  const index = CASE_STUDIES.findIndex((c) => c.slug === slug);
+  if (index === -1) notFound();
+  const study = CASE_STUDIES[index];
+  const next = CASE_STUDIES[(index + 1) % CASE_STUDIES.length];
   const sections = [
     { label: "CLIENT CHALLENGE", body: study.challenge },
     { label: "SERVICES DELIVERED", body: study.delivered },

@@ -6,7 +6,7 @@ import { ImageFill, SectionLabel } from "@/components/ui";
 import { Reveal } from "@/components/motion";
 import { CtaBanner } from "@/components/sections";
 import { ProjectAreas } from "@/components/profile";
-import { CASE_STUDIES } from "@/lib/content";
+import { getCaseStudies } from "@/lib/data";
 import { pageMeta } from "@/lib/site";
 
 export const metadata = pageMeta(
@@ -14,7 +14,8 @@ export const metadata = pageMeta(
   "How QORLIQ helped clients modernise their workplace with Microsoft 365 and build a website, brand identity, and lead generation foundation.",
 );
 
-export default function CaseStudiesPage() {
+export default async function CaseStudiesPage() {
+  const caseStudies = await getCaseStudies();
   return (
     <PageShell>
       <PageHero
@@ -27,7 +28,7 @@ export default function CaseStudiesPage() {
         <div className="container-x flex flex-col gap-10 [padding-block:120px]">
           <Reveal><SectionLabel>SELECTED PROJECTS</SectionLabel></Reveal>
           <div className="grid gap-8 md:grid-cols-2">
-            {CASE_STUDIES.map((c, i) => (
+            {caseStudies.map((c, i) => (
               <Reveal key={c.slug} delay={i * 90} scale>
                 <Link href={`/case-studies/${c.slug}`} data-cursor="View" className="group flex h-full flex-col gap-5">
                   <ViewTransition name={`work-${c.slug}`} share="morph" default="none">

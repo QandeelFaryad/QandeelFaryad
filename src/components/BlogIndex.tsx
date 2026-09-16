@@ -4,11 +4,11 @@ import Link from "next/link";
 import { useState, ViewTransition } from "react";
 import { SectionLabel, ImageFill } from "./ui";
 import { Reveal } from "./motion";
-import { POSTS, POST_CATEGORIES } from "@/lib/content";
+import { POST_CATEGORIES, type Post } from "@/lib/content";
 
 const TABS = ["ALL INSIGHTS", ...POST_CATEGORIES];
 
-export default function BlogIndex() {
+export default function BlogIndex({ posts: POSTS }: { posts: Post[] }) {
   const [tab, setTab] = useState("ALL INSIGHTS");
 
   if (POSTS.length === 0) {
@@ -113,7 +113,7 @@ export default function BlogIndex() {
   );
 }
 
-export function PostCard({ post, seed }: { post: (typeof POSTS)[number]; seed: number }) {
+export function PostCard({ post, seed }: { post: Post; seed: number }) {
   return (
     <Link href={`/blog/${post.slug}`} data-cursor="Read" className="group flex h-full flex-col gap-4">
       <ViewTransition name={`post-${post.slug}`} share="morph" default="none">

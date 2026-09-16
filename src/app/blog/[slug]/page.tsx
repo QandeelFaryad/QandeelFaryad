@@ -8,17 +8,17 @@ import Newsletter from "@/components/Newsletter";
 import { PostCard } from "@/components/BlogIndex";
 import { ImageFill, SectionLabel } from "@/components/ui";
 import { ReadingProgress, Reveal } from "@/components/motion";
-import { POSTS, getPost, relatedPosts } from "@/lib/content";
+import { getPost, getPosts, getRelatedPosts } from "@/lib/data";
 import { pageMeta } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return POSTS.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return (await getPosts()).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = getPost((await params).slug);
+  const post = await getPost((await params).slug);
   if (!post) return {};
   const meta = pageMeta(post.title, post.excerpt);
   return { ...meta, openGraph: { ...meta.openGraph, type: "article", authors: [post.author] } };
@@ -26,10 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const [post, posts, related] = await Promise.all([getPost(slug), getPosts(), getRelatedPosts(slug)]);
   if (!post) notFound();
-  const related = relatedPosts(slug);
-  const seed = post.featured ? POSTS.indexOf(post) + 2 : POSTS.indexOf(post);
+  const index = posts.findIndex((p) => p.slug === post.slug);
+  const seed = post.featured ? index + 2 : index;
 
   return (
     <PageShell>
@@ -105,7 +105,7 @@ export default async function PostPage({ params }: Props) {
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {related.map((p, i) => (
               <Reveal key={p.slug} delay={i * 80} scale>
-                <PostCard post={p} seed={POSTS.indexOf(p)} />
+                <PostCard post={p} seed={posts.findIndex((x) => x.slug === p.slug)} />
               </Reveal>
             ))}
           </div>

@@ -13,13 +13,26 @@
  *   CRM_WEBHOOK_URL                 — POSTed a JSON copy of every submission
  *   CRM_WEBHOOK_TOKEN               — sent as a bearer token with that request
  *
- * Without Resend configured, submissions are logged in development and rejected
- * in production.
+ * Storage (Supabase, see supabase/README.md):
+ *   NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SECRET_KEY — every submission is saved to
+ *   the database for the admin panel, and CVs go to the private "cvs" bucket.
+ *
+ * A submission succeeds when it is saved or emailed. With neither configured,
+ * submissions are logged in development and rejected in production.
  */
+
+import { PROJECT_STAGES, SERVICE_OPTIONS, SERVICE_QUESTIONS } from "@/lib/content";
+import { createServiceClient, isServiceConfigured } from "@/lib/supabase/service";
 
 type Kind = "project" | "application" | "newsletter";
 
 const LIMITS: Record<string, number> = { message: 5000 };
+const CV_MAX_BYTES = 10 * 1024 * 1024;
+const CV_TYPES: Record<string, string> = {
+  "application/pdf": "pdf",
+  "application/msword": "doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+};
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Best-effort, per-instance throttle: 5 submissions per IP per minute.
@@ -35,6 +48,46 @@ function throttled(ip: string) {
 
 function clean(value: unknown, max = 300) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+/** A loose phone check: optional +, then 6–15 digits with common separators. */
+function validPhone(phone: string) {
+  const digits = phone.replace(/\D/g, "").length;
+  return /^\+?[\d\s().-]+$/.test(phone) && digits >= 6 && digits <= 15;
+}
+
+/** Accepts "example.com" as well as full URLs; returns "" for blank and null when invalid. */
+function normaliseUrl(value: string) {
+  if (!value) return "";
+  try {
+    const url = new URL(/^[a-z][a-z\d+.-]*:\/\//i.test(value) ? value : `https://${value}`);
+    if (!["http:", "https:"].includes(url.protocol) || !url.hostname.includes(".")) return null;
+    return url.href.replace(/\/$/, "");
+  } catch {
+    return null;
+  }
+}
+
+type Detail = { service: string; question: string; answer: string };
+
+/** Keep only answers to questions we actually ask, for services the visitor picked. */
+function serviceDetails(body: Record<string, unknown>): Detail[] {
+  const picked = Array.isArray(body.services) ? body.services : [];
+  const raw = body.details && typeof body.details === "object" ? (body.details as Record<string, unknown>) : {};
+  const out: Detail[] = [];
+  for (const service of SERVICE_OPTIONS) {
+    const questions = SERVICE_QUESTIONS[service.slug];
+    const given = raw[service.slug];
+    if (!questions || !picked.includes(service.label) || !given || typeof given !== "object") continue;
+    for (const q of questions) {
+      const value = (given as Record<string, unknown>)[q.id];
+      const answer = q.options
+        ? (Array.isArray(value) ? value : [value]).filter((v): v is string => q.options!.includes(v as string)).join(", ")
+        : clean(value, 200);
+      if (answer) out.push({ service: service.label, question: q.label, answer });
+    }
+  }
+  return out;
 }
 
 /** Verify the Cloudflare Turnstile token, when bot protection is configured. */
@@ -89,6 +142,70 @@ async function toCrm(body: Record<string, unknown>) {
   }
 }
 
+/**
+ * Save the submission for the admin panel. Returns "skipped" when Supabase isn't
+ * configured, so email alone can still deliver it.
+ */
+async function save(
+  kind: Kind,
+  body: Record<string, unknown>,
+  who: { name: string; email: string },
+  cv: File | null,
+  project?: { phone: string; whatsapp: boolean; siteUrl: string; stage: string; details: Detail[] },
+): Promise<"saved" | "skipped" | "failed"> {
+  if (!isServiceConfigured()) return "skipped";
+  const db = createServiceClient();
+  try {
+    if (kind === "project") {
+      const { error } = await db.from("inquiries").insert({
+        name: who.name,
+        email: who.email,
+        company: clean(body.company) || null,
+        phone: project?.phone || null,
+        whatsapp: project?.whatsapp ?? false,
+        site_url: project?.siteUrl || null,
+        stage: project?.stage || null,
+        details: project?.details ?? [],
+        services: Array.isArray(body.services) ? body.services.map((s) => clean(s, 60)).filter(Boolean) : [],
+        budget: clean(body.budget) || null,
+        timeline: clean(body.timeline) || null,
+        message: clean(body.message, LIMITS.message) || null,
+        page: clean(body.page, 500) || null,
+        referrer: clean(body.referrer, 500) || null,
+        utm: clean(body.utm, 500) || null,
+      });
+      if (error) throw error;
+    } else if (kind === "application") {
+      let cvPath: string | null = null;
+      if (cv) {
+        const base = (cv.name.replace(/\.[^.]+$/, "") || "cv").replace(/[^a-z0-9-_]+/gi, "-").slice(0, 60);
+        cvPath = `${new Date().toISOString().slice(0, 7)}/${crypto.randomUUID()}-${base}.${CV_TYPES[cv.type]}`;
+        const { error } = await db.storage.from("cvs").upload(cvPath, cv, { contentType: cv.type });
+        if (error) throw error;
+      }
+      const { error } = await db.from("applications").insert({
+        role: clean(body.role) || null,
+        name: who.name,
+        email: who.email,
+        portfolio: clean(body.portfolio) || null,
+        linkedin: clean(body.linkedin) || null,
+        message: clean(body.message, LIMITS.message) || null,
+        cv_path: cvPath,
+      });
+      if (error) throw error;
+    } else {
+      const { error } = await db
+        .from("subscribers")
+        .upsert({ email: who.email.toLowerCase(), page: clean(body.page, 500) || null }, { onConflict: "email", ignoreDuplicates: true });
+      if (error) throw error;
+    }
+    return "saved";
+  } catch (err) {
+    console.error(`[contact] Saving ${kind} to Supabase failed`, err);
+    return "failed";
+  }
+}
+
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
   if (throttled(ip)) {
@@ -96,8 +213,16 @@ export async function POST(request: Request) {
   }
 
   let body: Record<string, unknown>;
+  let cv: File | null = null;
   try {
-    body = await request.json();
+    if (request.headers.get("content-type")?.includes("multipart/form-data")) {
+      const form = await request.formData();
+      body = JSON.parse(String(form.get("payload") ?? "{}"));
+      const file = form.get("cv");
+      cv = file instanceof File && file.size > 0 ? file : null;
+    } else {
+      body = await request.json();
+    }
   } catch {
     return Response.json({ error: "Invalid request." }, { status: 400 });
   }
@@ -122,14 +247,44 @@ export async function POST(request: Request) {
   if (kind !== "newsletter" && !name) {
     return Response.json({ error: "Please tell us your name." }, { status: 400 });
   }
+  if (cv && (kind !== "application" || !CV_TYPES[cv.type])) {
+    return Response.json({ error: "Please upload your CV as a PDF or Word document." }, { status: 400 });
+  }
+  if (cv && cv.size > CV_MAX_BYTES) {
+    return Response.json({ error: "Your CV is larger than 10MB. Please upload a smaller file." }, { status: 400 });
+  }
+
+  let project: Parameters<typeof save>[4];
+  if (kind === "project") {
+    const phone = clean(body.phone, 30);
+    if (phone && !validPhone(phone)) {
+      return Response.json({ error: "Please check your phone number, including the country code." }, { status: 400 });
+    }
+    const siteUrl = normaliseUrl(clean(body.site_url));
+    if (siteUrl === null) {
+      return Response.json({ error: "Please check your website address, e.g. yourcompany.com." }, { status: 400 });
+    }
+    const stage = clean(body.stage);
+    project = {
+      phone,
+      whatsapp: Boolean(phone) && (body.whatsapp === "on" || body.whatsapp === true),
+      siteUrl,
+      stage: PROJECT_STAGES.includes(stage) ? stage : "",
+      details: serviceDetails(body),
+    };
+  }
 
   const fields: [string, string][] =
-    kind === "project"
+    kind === "project" && project
       ? [
           ["Name", name],
           ["Email", email],
+          ["Phone", project.phone && `${project.phone}${project.whatsapp ? " (WhatsApp)" : ""}`],
           ["Company", clean(body.company)],
+          ["Website", project.siteUrl],
           ["Services", Array.isArray(body.services) ? body.services.map((s) => clean(s, 60)).join(", ") : ""],
+          ...project.details.map((d): [string, string] => [`${d.service} — ${d.question}`, d.answer]),
+          ["Project stage", project.stage],
           ["Budget", clean(body.budget)],
           ["Timeline", clean(body.timeline)],
           ["Message", clean(body.message, LIMITS.message)],
@@ -156,6 +311,12 @@ export async function POST(request: Request) {
       : kind === "application"
         ? `Application: ${clean(body.role) || "Open application"} — ${name}`
         : `Newsletter sign-up — ${email}`;
+  const stored = await save(kind, body, { name, email }, cv, project);
+  if (stored === "failed" && cv) {
+    return Response.json({ error: "We couldn't upload your CV. Please try again, or share a link instead." }, { status: 502 });
+  }
+  if (cv && stored === "saved") fields.push(["CV", "Uploaded — download it from the admin panel"]);
+
   const text = fields
     .filter(([, v]) => v)
     .map(([k, v]) => `${k}: ${v}`)
@@ -167,11 +328,12 @@ export async function POST(request: Request) {
   const from = CONTACT_FROM_EMAIL || "QORLIQ <onboarding@resend.dev>";
 
   if (!RESEND_API_KEY || !CONTACT_TO_EMAIL) {
+    if (stored === "saved") return Response.json({ ok: true });
     if (process.env.NODE_ENV !== "production") {
       console.info(`[contact] Email not configured — would send:\n${subject}\n\n${text}`);
       return Response.json({ ok: true });
     }
-    console.error("[contact] RESEND_API_KEY / CONTACT_TO_EMAIL are not set");
+    console.error("[contact] Neither Supabase nor RESEND_API_KEY / CONTACT_TO_EMAIL are set");
     return Response.json({ error: "Our form is temporarily unavailable." }, { status: 503 });
   }
 
@@ -185,7 +347,8 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     console.error("[contact] Resend error", err);
-    return Response.json({ error: "We couldn't send your message." }, { status: 502 });
+    // Already saved for the admin panel, so the visitor's submission still counts.
+    if (stored !== "saved") return Response.json({ error: "We couldn't send your message." }, { status: 502 });
   }
 
   // Acknowledge the sender so they know it arrived. Never block on this.
@@ -193,7 +356,7 @@ export async function POST(request: Request) {
     const first = name.split(" ")[0];
     const acknowledgement =
       kind === "project"
-        ? `Hi ${first},\n\nThanks for getting in touch with QORLIQ. We've received your enquiry and a member of our team will reply within one business day.\n\nHere's what you sent us:\n\n${text}\n\nIf anything changes in the meantime, just reply to this email.\n\n— QORLIQ\nsupport@qorliq.com · +44 7401921690\nA digital services brand operated by HOORAB GROUP OF COMPANIES LTD`
+        ? `Hi ${first},\n\nThanks for getting in touch with QORLIQ. We've received your enquiry and a member of our team will reply within one business day.\n\nHere's what you sent us:\n\n${text}\n\nIf anything changes in the meantime, just reply to this email.\n\n— QORLIQ\nsupport@qorliq.com\nA digital services brand operated by HOORAB GROUP OF COMPANIES LTD`
         : `Hi ${first},\n\nThanks for applying to QORLIQ. We've received your application and review every one — we'll be in touch within two weeks.\n\n— QORLIQ\nsupport@qorliq.com`;
     try {
       await send({
