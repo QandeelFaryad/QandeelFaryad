@@ -30,10 +30,22 @@ export function openCookieSettings() {
  *   NEXT_PUBLIC_GA_ID           — e.g. "G-XXXXXXXXXX"
  *   NEXT_PUBLIC_GTM_ID          — overrides the site's Google Tag Manager container
  *
- * GTM has no <noscript> iframe: without JavaScript this banner can't ask, and the
- * iframe would track those visitors without consent.
+ * Google Tag Manager runs in Consent Mode v2: the container loads on every page
+ * (so Google can detect it) with all storage denied, and "Accept analytics" grants
+ * analytics_storage only — the banner never asks about advertising, so ad_* stay
+ * denied. Tags inside the container must respect these consent signals (GA4 tags
+ * do by default). There is no <noscript> iframe: without JavaScript this banner
+ * can't ask, and the iframe ignores consent.
  */
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "GTM-TB8D8JWQ";
+
+/** Consent Mode's gtag(): the dataLayer expects the arguments object itself, not an array. */
+function gtag(..._args: unknown[]) {
+  const w = window as unknown as { dataLayer?: unknown[] };
+  w.dataLayer = w.dataLayer || [];
+  // eslint-disable-next-line prefer-rest-params
+  w.dataLayer.push(arguments);
+}
 
 export default function Consent() {
   const [choice, setChoice] = useState<Choice>(null);
@@ -62,6 +74,7 @@ export default function Consent() {
     }
     setChoice(value);
     setVisible(false);
+    gtag("consent", "update", { analytics_storage: value === "accepted" ? "granted" : "denied" });
   }, []);
 
   return (
@@ -84,9 +97,11 @@ export default function Consent() {
         </>
       ) : null}
 
-      {choice === "accepted" && gtm ? (
+      {gtm ? (
+        // One script so the consent defaults are guaranteed to reach the dataLayer before
+        // the container loads. A returning visitor's stored choice is applied up front.
         <Script id="gtm" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`}
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}var c=null;try{c=localStorage.getItem('${KEY}')}catch(e){}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:c==='accepted'?'granted':'denied',wait_for_update:500});(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`}
         </Script>
       ) : null}
 
