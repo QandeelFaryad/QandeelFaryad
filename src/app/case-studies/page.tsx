@@ -42,7 +42,7 @@ export default async function CaseStudiesPage() {
                     <p className="font-display text-[13px] font-bold uppercase tracking-wide text-accent">
                       {c.industry}
                     </p>
-                    <h2 className="mt-2 font-display text-[clamp(20px,2.4vw,28px)] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink transition-colors group-hover:text-accent">
+                    <h2 className="mt-2 font-display text-[clamp(20px,2.4vw,28px)] font-bold tracking-[-0.015em] uppercase leading-[1.1] text-ink transition-colors group-hover:text-accent">
                       {c.name}
                     </h2>
                     <p className="mt-1 text-[14px] font-medium text-muted">{c.subtitle}</p>

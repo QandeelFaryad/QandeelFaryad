@@ -37,7 +37,7 @@ export default function LegalPage({
 
             {sections.map((s, i) => (
               <section key={s.heading} className="flex flex-col gap-4">
-                <h2 className="font-display text-[clamp(20px,2.4vw,28px)] font-semibold tracking-[-0.015em] uppercase leading-[1.15] text-ink">
+                <h2 className="font-display text-[clamp(20px,2.4vw,28px)] font-bold tracking-[-0.015em] uppercase leading-[1.15] text-ink">
                   <span className="mr-3 text-spark">{String(i + 1).padStart(2, "0")}</span>
                   {s.heading}
                 </h2>

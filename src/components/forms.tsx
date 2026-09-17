@@ -25,7 +25,7 @@ export function Accordion({ items }: { items: { q: string; a: string }[] }) {
                 onClick={() => setOpen(isOpen ? null : i)}
                 className="flex w-full items-center justify-between gap-6 py-7 text-left"
               >
-                <span className="font-display text-[clamp(18px,2.2vw,24px)] font-semibold tracking-[-0.015em] text-ink">
+                <span className="font-display text-[clamp(18px,2.2vw,24px)] font-bold tracking-[-0.015em] text-ink">
                   {it.q}
                 </span>
                 <PlusIcon
@@ -306,7 +306,7 @@ export function ContactForm() {
           ✓
         </span>
         <div className="flex flex-col gap-4">
-          <h3 ref={heading} tabIndex={-1} className="font-display text-[clamp(28px,4vw,44px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] text-ink outline-none">
+          <h3 ref={heading} tabIndex={-1} className="font-display text-[clamp(28px,4vw,44px)] font-bold tracking-[-0.015em] uppercase leading-[1.05] text-ink outline-none">
             Thanks{name ? `, ${name}` : ""}. We&apos;re on it.
           </h3>
           <p className="max-w-[520px] text-[17px] leading-[1.6] text-muted">
@@ -349,7 +349,7 @@ export function ContactForm() {
       <h3
         ref={heading}
         tabIndex={-1}
-        className="font-display text-[clamp(24px,3vw,34px)] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink outline-none"
+        className="font-display text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.015em] uppercase leading-[1.1] text-ink outline-none"
       >
         {STEP_TITLES[current]}
       </h3>
@@ -596,7 +596,7 @@ export function ApplicationForm({ role, allowCv = false }: { role: string; allow
     return (
       <div className="flex flex-col gap-5" aria-live="polite">
         <span className="flex size-12 items-center justify-center rounded-full bg-accent font-display text-[20px] font-semibold tracking-[-0.015em] text-ink">✓</span>
-        <h3 className="font-display text-[28px] font-semibold tracking-[-0.015em] uppercase leading-[1.05] text-ink">Application received</h3>
+        <h3 className="font-display text-[28px] font-bold tracking-[-0.015em] uppercase leading-[1.05] text-ink">Application received</h3>
         <p className="text-[16px] leading-[1.6] text-muted">
           Thanks for applying. Our team reviews every application and will get back to you within two weeks.
         </p>

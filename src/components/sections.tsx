@@ -170,7 +170,7 @@ export function CtaBanner({
         <div className="brand-gradient-animated relative isolate overflow-hidden rounded-[32px] px-8 py-20 text-center sm:px-16">
           <PointerGlow />
           <div className="relative mx-auto flex max-w-[840px] flex-col items-center gap-8">
-            <h2 className="font-display text-[clamp(32px,5.5vw,60px)] font-semibold tracking-[-0.015em] uppercase leading-[1.02] text-white">
+            <h2 className="font-display text-[clamp(32px,5.5vw,60px)] font-bold tracking-[-0.015em] uppercase leading-[1.02] text-white">
               {heading}
             </h2>
             <p className="max-w-[520px] text-[17px] leading-[1.6] text-white/85">{sub}</p>

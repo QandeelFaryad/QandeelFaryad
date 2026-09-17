@@ -26,7 +26,7 @@ export function Capabilities({
             </div>
           </Reveal>
           <Reveal delay={80}>
-            <h2 className={`max-w-[900px] font-display text-[clamp(28px,4.4vw,52px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] ${dark ? "text-white" : "text-ink"}`}>
+            <h2 className={`max-w-[900px] font-display text-[clamp(28px,4.4vw,52px)] font-bold tracking-[-0.015em] uppercase leading-[1.05] ${dark ? "text-white" : "text-ink"}`}>
               {heading}
             </h2>
           </Reveal>
@@ -40,7 +40,7 @@ export function Capabilities({
                   <span className="font-display text-[18px] font-bold text-spark">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <h3 className={`font-display text-[clamp(18px,2vw,22px)] font-semibold tracking-[-0.015em] uppercase leading-[1.15] ${dark ? "text-white" : "text-ink"}`}>
+                  <h3 className={`font-display text-[clamp(18px,2vw,22px)] font-bold tracking-[-0.015em] uppercase leading-[1.15] ${dark ? "text-white" : "text-ink"}`}>
                     {c.title}
                   </h3>
                   <p className={`text-[15px] leading-[1.65] ${dark ? "text-on-dark" : "text-muted"}`}>{c.body}</p>

@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 function List({ title, items }: { title: string; items: string[] }) {
   return (
     <div className="flex flex-col gap-5">
-      <h2 className="font-display text-[22px] font-semibold tracking-[-0.015em] uppercase text-ink">{title}</h2>
+      <h2 className="font-display text-[22px] font-bold tracking-[-0.015em] uppercase text-ink">{title}</h2>
       <ul className="prose-qorliq">
         {items.map((it) => (
           <li key={it}>{it}</li>

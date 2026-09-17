@@ -54,7 +54,7 @@ export default function Footer() {
         {/* CTA row */}
         <div className="flex flex-wrap items-center justify-between gap-8">
           <Link href="/contact" data-cursor="Let's talk" className="group" aria-label="Let's work together — start a project">
-            <h2 aria-hidden="true" className="max-w-[1303px] whitespace-pre-wrap font-display text-[clamp(40px,7vw,80px)] font-semibold tracking-[-0.015em] uppercase leading-[0.95] text-white">
+            <h2 aria-hidden="true" className="max-w-[1303px] whitespace-pre-wrap font-display text-[clamp(40px,7vw,80px)] font-bold tracking-[-0.015em] uppercase leading-[0.95] text-white">
               {"Let's work together".split("").map((ch, i) => (
                 <span key={i} className="wave-letter" style={{ transitionDelay: `${i * 18}ms` }}>
                   {ch}

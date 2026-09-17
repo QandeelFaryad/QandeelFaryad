@@ -96,7 +96,7 @@ function Recent({
   return (
     <Card className="flex flex-col">
       <div className="flex items-center justify-between border-b border-line px-5 py-4">
-        <h2 className="font-display text-[15px] font-semibold uppercase text-ink">{title}</h2>
+        <h2 className="font-display text-[15px] font-bold uppercase text-ink">{title}</h2>
         <Link href={href} className="text-[12px] font-bold uppercase tracking-wide text-accent-deep hover:text-ink">
           View all →
         </Link>

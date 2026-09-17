@@ -47,7 +47,7 @@ export default async function CareersPage() {
               <Reveal key={c.no} delay={i * 90}>
                 <div className="flex flex-col gap-4">
                   <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-spark">{c.no}</span>
-                  <h3 className="font-display text-[22px] font-semibold tracking-[-0.015em] uppercase text-ink">{c.title}</h3>
+                  <h3 className="font-display text-[22px] font-bold tracking-[-0.015em] uppercase text-ink">{c.title}</h3>
                   <p className="text-[15px] leading-[1.6] text-muted">{c.body}</p>
                 </div>
               </Reveal>
@@ -65,7 +65,7 @@ export default async function CareersPage() {
               <Reveal key={p.title} delay={(i % 3) * 80} scale>
                 <Tilt>
                 <div className="flex h-full flex-col gap-3 rounded-3xl bg-white p-8">
-                  <h3 className="font-display text-[20px] font-semibold tracking-[-0.015em] text-ink">{p.title}</h3>
+                  <h3 className="font-display text-[20px] font-bold tracking-[-0.015em] text-ink">{p.title}</h3>
                   <p className="text-[15px] leading-[1.6] text-muted">{p.body}</p>
                 </div>
                 </Tilt>
@@ -103,7 +103,7 @@ export default async function CareersPage() {
               <Reveal key={r.slug} delay={i * 70}>
                 <div className="group relative flex flex-col gap-4 border-t border-line py-7 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-col gap-1">
-                    <h3 className="font-display text-[clamp(20px,2.4vw,26px)] font-semibold tracking-[-0.015em] text-ink transition-colors group-hover:text-accent">
+                    <h3 className="font-display text-[clamp(20px,2.4vw,26px)] font-bold tracking-[-0.015em] text-ink transition-colors group-hover:text-accent">
                       <Link href={`/careers/${r.slug}`} className="after:absolute after:inset-0">
                         {r.title}
                       </Link>
@@ -133,7 +133,7 @@ export default async function CareersPage() {
             </Parallax>
           </Reveal>
           <Reveal delay={120} className="flex flex-col gap-6">
-            <h2 className="font-display text-[clamp(28px,4vw,44px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] text-white">
+            <h2 className="font-display text-[clamp(28px,4vw,44px)] font-bold tracking-[-0.015em] uppercase leading-[1.05] text-white">
               Don&apos;t see your specific role?
             </h2>
             <p className="max-w-[520px] text-[16px] leading-[1.6] text-on-dark">

@@ -48,7 +48,7 @@ export default function ServicesPage() {
             <Reveal><SectionLabel>WHAT WE OFFER</SectionLabel></Reveal>
             <ScrubText
               as="h2"
-              className="max-w-[900px] font-display text-[clamp(26px,3.8vw,46px)] font-semibold tracking-[-0.015em] uppercase leading-[1.08] text-ink"
+              className="max-w-[900px] font-display text-[clamp(26px,3.8vw,46px)] font-bold tracking-[-0.015em] uppercase leading-[1.08] text-ink"
               parts={[{ text: "Understand the business, identify the goal, build the right solution." }]}
             />
           </div>
@@ -72,7 +72,7 @@ export default function ServicesPage() {
                         </Link>
                       ) : null}
                     </div>
-                    <h3 className="font-display text-[clamp(20px,2.2vw,26px)] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink">
+                    <h3 className="font-display text-[clamp(20px,2.2vw,26px)] font-bold tracking-[-0.015em] uppercase leading-[1.1] text-ink">
                       {s.title}
                     </h3>
                     <p className="text-[15px] leading-[1.65] text-muted">{s.body}</p>

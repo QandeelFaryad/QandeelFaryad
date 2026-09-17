@@ -130,7 +130,7 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
           {steps.map((s) => (
             <div key={s.no} className="flex flex-col gap-4 rounded-3xl bg-white p-8">
               <span className="font-display text-[20px] font-semibold text-spark">{s.no}</span>
-              <h3 className="font-display text-[clamp(22px,2.2vw,28px)] font-semibold uppercase tracking-[-0.015em] text-ink">
+              <h3 className="font-display text-[clamp(22px,2.2vw,28px)] font-bold uppercase tracking-[-0.015em] text-ink">
                 {s.title}
               </h3>
               <p className="max-w-[420px] text-[15px] leading-[1.6] text-muted">{s.body}</p>
@@ -279,7 +279,7 @@ function LeftPage({ step, index, total }: { step: BookStep; index: number; total
           {step.no}
         </span>
         <span className="h-[3px] w-12 rounded-full bg-spark" />
-        <h3 className="font-display text-[clamp(22px,2.1vw,32px)] font-semibold uppercase leading-[1.02] [overflow-wrap:anywhere] tracking-[-0.015em] text-ink">
+        <h3 className="font-display text-[clamp(22px,2.1vw,32px)] font-bold uppercase leading-[1.02] [overflow-wrap:anywhere] tracking-[-0.015em] text-ink">
           {step.title}
         </h3>
       </div>
@@ -309,7 +309,7 @@ function RightPage({ step, index, next, total }: { step: BookStep; index: number
       <div className="relative flex flex-col gap-6">
         <div className="flex flex-col gap-3 lg:hidden">
           <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-spark-deep">Chapter {step.no}</span>
-          <h3 className="font-display text-[clamp(26px,7vw,34px)] font-semibold uppercase leading-[1.02] tracking-[-0.015em] text-ink">
+          <h3 className="font-display text-[clamp(26px,7vw,34px)] font-bold uppercase leading-[1.02] tracking-[-0.015em] text-ink">
             {step.title}
           </h3>
         </div>

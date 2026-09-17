@@ -19,7 +19,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <div className="w-full max-w-[420px] rounded-3xl bg-white p-8 sm:p-10">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/assets/brand/qorliq-logo.svg" alt="QORLIQ" className="h-9 w-auto" />
-        <h1 className="mt-8 font-display text-[24px] font-semibold uppercase leading-[1.1] text-ink">Admin sign in</h1>
+        <h1 className="mt-8 font-display text-[24px] font-bold uppercase leading-[1.1] text-ink">Admin sign in</h1>
         {signedInNotAdmin && session?.userId ? (
           <div className="mt-6 flex flex-col gap-4">
             <p className="text-[14px] leading-[1.6] text-muted">

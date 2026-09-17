@@ -35,7 +35,7 @@ export function Strengths({
         <div className="flex flex-col gap-6">
           <Reveal><SectionLabel dark={dark}>{label}</SectionLabel></Reveal>
           <Reveal delay={80}>
-            <h2 className={`max-w-[900px] font-display text-[clamp(28px,4.4vw,52px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] ${dark ? "text-white" : "text-ink"}`}>
+            <h2 className={`max-w-[900px] font-display text-[clamp(28px,4.4vw,52px)] font-bold tracking-[-0.015em] uppercase leading-[1.05] ${dark ? "text-white" : "text-ink"}`}>
               {heading}
             </h2>
           </Reveal>
@@ -92,7 +92,7 @@ export function ProjectAreas({ dark = false }: { dark?: boolean }) {
         <div className="flex flex-col gap-6 lg:w-[380px] lg:shrink-0">
           <Reveal><SectionLabel dark={dark}>OUR PROJECTS</SectionLabel></Reveal>
           <Reveal delay={80}>
-            <h2 className={`font-display text-[clamp(28px,3.6vw,44px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] ${dark ? "text-white" : "text-ink"}`}>
+            <h2 className={`font-display text-[clamp(28px,3.6vw,44px)] font-bold tracking-[-0.015em] uppercase leading-[1.05] ${dark ? "text-white" : "text-ink"}`}>
               Our project areas
             </h2>
           </Reveal>
@@ -162,7 +162,7 @@ export function VisionMissionValues() {
             <Reveal key={b.title} delay={i * 100} scale>
               <Tilt max={4}>
                 <div className="flex h-full flex-col gap-4 rounded-3xl bg-ink p-8 sm:p-10">
-                  <h3 className="font-display text-[22px] font-semibold tracking-[-0.015em] uppercase text-white">{b.title}</h3>
+                  <h3 className="font-display text-[22px] font-bold tracking-[-0.015em] uppercase text-white">{b.title}</h3>
                   <p className="text-[16px] leading-[1.7] text-on-dark">{b.body}</p>
                 </div>
               </Tilt>
@@ -173,7 +173,7 @@ export function VisionMissionValues() {
         <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16">
           <div className="flex flex-1 flex-col gap-8">
             <Reveal delay={60}>
-              <h3 className="font-display text-[clamp(28px,3.6vw,44px)] font-semibold tracking-[-0.015em] uppercase text-ink">
+              <h3 className="font-display text-[clamp(28px,3.6vw,44px)] font-bold tracking-[-0.015em] uppercase text-ink">
                 Our core values
               </h3>
             </Reveal>
@@ -210,7 +210,7 @@ export function CeoMessage() {
         <div className="flex flex-col gap-6 lg:w-[380px] lg:shrink-0">
           <Reveal><SectionLabel>CEO MESSAGE</SectionLabel></Reveal>
           <Reveal delay={80}>
-            <h2 className="font-display text-[clamp(26px,3.4vw,42px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] text-ink">
+            <h2 className="font-display text-[clamp(26px,3.4vw,42px)] font-bold tracking-[-0.015em] uppercase leading-[1.05] text-ink">
               {CEO_MESSAGE.heading}
             </h2>
           </Reveal>

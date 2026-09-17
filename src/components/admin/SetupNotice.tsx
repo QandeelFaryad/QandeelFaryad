@@ -5,7 +5,7 @@ export default function SetupNotice() {
       <div className="w-full max-w-[640px] rounded-3xl border border-line bg-white p-8 sm:p-10">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/assets/brand/qorliq-logo.svg" alt="QORLIQ" className="h-9 w-auto" />
-        <h1 className="mt-8 font-display text-[26px] font-semibold uppercase leading-[1.1] text-ink">Connect Supabase to use the admin panel</h1>
+        <h1 className="mt-8 font-display text-[26px] font-bold uppercase leading-[1.1] text-ink">Connect Supabase to use the admin panel</h1>
         <ol className="mt-6 flex list-decimal flex-col gap-3 pl-5 text-[15px] leading-[1.6] text-ink/80">
           <li>Create a project at supabase.com.</li>
           <li>

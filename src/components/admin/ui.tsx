@@ -49,7 +49,7 @@ export function PageHeader({
       ) : null}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="font-display text-[clamp(22px,3vw,30px)] font-semibold uppercase leading-[1.1] tracking-[-0.015em] text-ink">
+          <h1 className="font-display text-[clamp(22px,3vw,30px)] font-bold uppercase leading-[1.1] tracking-[-0.015em] text-ink">
             {title}
           </h1>
           {description ? <p className="text-[14px] text-muted">{description}</p> : null}

@@ -156,11 +156,11 @@ export default function Header() {
         <nav
           id="site-menu"
           aria-label="Main"
-          className={`absolute right-0 top-0 flex h-dvh w-full max-w-[460px] flex-col overflow-y-auto overscroll-contain bg-ink px-8 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          className={`absolute right-0 top-0 flex h-dvh w-full max-w-[460px] flex-col bg-ink px-8 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             open ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex shrink-0 items-center justify-between">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/assets/brand/qorliq-logo-white.svg" alt="QORLIQ" className="h-10 w-auto" />
             <button
@@ -173,7 +173,20 @@ export default function Header() {
             </button>
           </div>
 
-          <ul className="mt-12 flex flex-col gap-1">
+          {/* Only the link list scrolls: the close button and the CTA stay put, so they
+              are reachable even on a short screen where the list has to be scrolled.
+              min-h-0 is what lets a flex child shrink below its content and actually
+              scroll; -mx-6/px-6 keeps the active dot at -left-5 out of the clip.
+
+              data-lenis-prevent is what makes it scroll on a touch screen at all: we
+              stop Lenis while the menu is open, and a stopped Lenis preventDefaults
+              every touchmove on the page (lenis.mjs, "if (this.isStopped ...)"), which
+              takes nested scrollers down with it. The attribute makes Lenis skip the
+              gesture and leave it to the browser. */}
+          <ul
+            data-lenis-prevent
+            className="-mx-6 mt-8 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain px-6"
+          >
             {NAV_LINKS.map((l, i) => {
               const active = isActive(pathname, l.href);
               return (
@@ -203,7 +216,7 @@ export default function Header() {
             })}
           </ul>
 
-          <div className="mt-auto pt-10">
+          <div className="shrink-0 pt-6">
             <PillButton href="/contact">Start a Project</PillButton>
           </div>
         </nav>

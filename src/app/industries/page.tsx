@@ -62,7 +62,7 @@ export default async function IndustriesPage() {
                   <div className="flex items-center justify-between">
                     <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-spark">{s.no}</span>
                   </div>
-                  <h3 className="font-display text-[clamp(20px,2.4vw,28px)] font-semibold tracking-[-0.015em] uppercase text-ink transition-colors group-hover:text-accent">
+                  <h3 className="font-display text-[clamp(20px,2.4vw,28px)] font-bold tracking-[-0.015em] uppercase text-ink transition-colors group-hover:text-accent">
                     {s.title}
                   </h3>
                   <p className="text-[15px] leading-[1.6] text-ink/75">{s.body}</p>
@@ -86,7 +86,7 @@ export default async function IndustriesPage() {
         <div className="container-x flex flex-col gap-14 py-24 [padding-block:96px]">
           <Reveal><SectionLabel dark>WHY CHOOSE QORLIQ</SectionLabel></Reveal>
           <Reveal delay={80}>
-            <h2 className="max-w-[820px] font-display text-[clamp(28px,4vw,48px)] font-semibold tracking-[-0.015em] leading-[1.1] text-white">
+            <h2 className="max-w-[820px] font-display text-[clamp(28px,4vw,48px)] font-bold tracking-[-0.015em] leading-[1.1] text-white">
               A specialized approach for ambitious businesses
             </h2>
           </Reveal>
@@ -95,7 +95,7 @@ export default async function IndustriesPage() {
               <Reveal key={w.no} delay={i * 80}>
                 <div className="flex flex-col gap-4">
                   <span className="font-display text-[20px] font-semibold tracking-[-0.015em] text-spark">{w.no}</span>
-                  <h3 className="font-display text-[22px] font-semibold tracking-[-0.015em] uppercase text-white">{w.title}</h3>
+                  <h3 className="font-display text-[22px] font-bold tracking-[-0.015em] uppercase text-white">{w.title}</h3>
                   <p className="text-[15px] leading-[1.6] text-on-dark">{w.body}</p>
                 </div>
               </Reveal>

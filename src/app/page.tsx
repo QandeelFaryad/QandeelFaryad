@@ -25,7 +25,7 @@ export default async function HomePage() {
                 text={line}
                 delay={i * 140}
                 highlight={["GROWTH"]}
-                className="block font-display text-[clamp(24px,6.2vw,88px)] font-semibold tracking-[-0.015em] leading-[0.95] text-white"
+                className="block font-display text-[clamp(24px,6.2vw,88px)] font-bold tracking-[-0.015em] leading-[0.95] text-white"
               />
             ))}
           </h1>
@@ -140,7 +140,7 @@ export default async function HomePage() {
                     <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
                       <div className="flex min-w-0 items-center gap-6">
                         <span className="font-display text-[18px] font-bold text-spark">{s.no}</span>
-                        <h3 className="font-display text-[clamp(20px,2.3vw,30px)] font-semibold tracking-[-0.015em] leading-[1.05] text-ink transition-colors group-hover:text-accent">
+                        <h3 className="font-display text-[clamp(20px,2.3vw,30px)] font-bold tracking-[-0.015em] leading-[1.05] text-ink transition-colors group-hover:text-accent">
                           {s.title}
                         </h3>
                       </div>
@@ -166,7 +166,7 @@ export default async function HomePage() {
           <div className="flex flex-col gap-6 lg:max-w-[640px]">
             <Reveal><SectionLabel dark>MICROSOFT CSP</SectionLabel></Reveal>
             <Reveal delay={80}>
-              <h2 className="font-display text-[clamp(28px,4.4vw,52px)] font-semibold tracking-[-0.015em] uppercase leading-[1.05] text-white">
+              <h2 className="font-display text-[clamp(28px,4.4vw,52px)] font-bold tracking-[-0.015em] uppercase leading-[1.05] text-white">
                 Microsoft licensing, Azure, and a secure cloud workplace
               </h2>
             </Reveal>
@@ -206,7 +206,7 @@ export default async function HomePage() {
                   </ViewTransition>
                   <div>
                     <p className="font-display text-[13px] font-bold uppercase tracking-wide text-accent">{c.sector}</p>
-                    <h3 className="mt-2 font-display text-[clamp(20px,2.4vw,28px)] font-semibold tracking-[-0.015em] uppercase leading-[1.1] text-ink transition-colors group-hover:text-accent">
+                    <h3 className="mt-2 font-display text-[clamp(20px,2.4vw,28px)] font-bold tracking-[-0.015em] uppercase leading-[1.1] text-ink transition-colors group-hover:text-accent">
                       {c.name}
                     </h3>
                   </div>

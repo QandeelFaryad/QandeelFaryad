@@ -17,7 +17,7 @@ export default function BlogIndex({ posts: POSTS }: { posts: Post[] }) {
         <div className="container-x flex flex-col items-start gap-6 [padding-block:120px]">
           <Reveal><SectionLabel>COMING SOON</SectionLabel></Reveal>
           <Reveal delay={80}>
-            <h2 className="max-w-[760px] font-display text-[clamp(26px,3.6vw,44px)] font-semibold tracking-[-0.015em] uppercase leading-[1.08] text-ink">
+            <h2 className="max-w-[760px] font-display text-[clamp(26px,3.6vw,44px)] font-bold tracking-[-0.015em] uppercase leading-[1.08] text-ink">
               Our first articles are on the way
             </h2>
           </Reveal>
@@ -64,7 +64,7 @@ export default function BlogIndex({ posts: POSTS }: { posts: Post[] }) {
                   <span className="rounded-full bg-accent px-3 py-1 font-display text-[12px] font-bold uppercase text-ink">{featured.cat}</span>
                   <span className="text-[13px] text-muted">• {featured.date} • {featured.readTime}</span>
                 </div>
-                <h2 className="font-display text-[clamp(28px,3.6vw,44px)] font-semibold tracking-[-0.015em] leading-[1.1] text-ink transition-colors group-hover:text-accent">
+                <h2 className="font-display text-[clamp(28px,3.6vw,44px)] font-bold tracking-[-0.015em] leading-[1.1] text-ink transition-colors group-hover:text-accent">
                   {featured.title}
                 </h2>
                 <p className="text-[17px] leading-[1.6] text-muted">{featured.excerpt}</p>
@@ -127,7 +127,7 @@ export function PostCard({ post, seed }: { post: Post; seed: number }) {
         <span className="font-display text-[12px] font-bold uppercase text-accent">{post.cat}</span>
         <span className="text-[12px] text-muted">{post.date} · {post.readTime}</span>
       </div>
-      <h3 className="font-display text-[21px] font-semibold tracking-[-0.015em] leading-[1.15] text-ink transition-colors group-hover:text-accent">
+      <h3 className="font-display text-[21px] font-bold tracking-[-0.015em] leading-[1.15] text-ink transition-colors group-hover:text-accent">
         {post.title}
       </h3>
       <p className="text-[14px] leading-[1.6] text-muted">{post.excerpt}</p>

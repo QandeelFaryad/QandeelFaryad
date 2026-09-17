@@ -28,7 +28,7 @@ export default function PageHero({
             key={line}
             text={line}
             delay={i * 120}
-            className="block font-display text-[clamp(36px,8.5vw,104px)] font-semibold tracking-[-0.015em] uppercase leading-[0.95] text-white"
+            className="block font-display text-[clamp(36px,8.5vw,104px)] font-bold tracking-[-0.015em] uppercase leading-[0.95] text-white"
           />
         ))}
       </h1>

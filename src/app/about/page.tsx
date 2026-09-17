@@ -30,7 +30,7 @@ export default async function AboutPage() {
             <Reveal><SectionLabel>OUR PURPOSE</SectionLabel></Reveal>
             <ScrubText
               as="h2"
-              className="mt-6 font-display text-[clamp(26px,3.6vw,42px)] font-semibold tracking-[-0.015em] leading-[1.1] text-ink"
+              className="mt-6 font-display text-[clamp(26px,3.6vw,42px)] font-bold tracking-[-0.015em] leading-[1.1] text-ink"
               parts={[{ text: "Helping businesses grow through technology" }]}
             />
           </div>
