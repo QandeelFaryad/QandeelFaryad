@@ -68,6 +68,7 @@ export default function Header() {
     if (open) {
       wasOpen.current = true;
       getLenis()?.stop();
+      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
       closeButton.current?.focus();
       const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -75,6 +76,7 @@ export default function Header() {
       return () => window.removeEventListener("keydown", onKey);
     }
     getLenis()?.start();
+    document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
     if (wasOpen.current) {
       wasOpen.current = false;
@@ -149,12 +151,12 @@ export default function Header() {
       <div className={`fixed inset-0 z-50 transition ${open ? "visible" : "invisible"}`} inert={!open}>
         <div
           onClick={() => setOpen(false)}
-          className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 touch-none bg-black/50 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
         />
         <nav
           id="site-menu"
           aria-label="Main"
-          className={`absolute right-0 top-0 flex h-full w-full max-w-[460px] flex-col overflow-y-auto bg-ink px-8 py-6 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          className={`absolute right-0 top-0 flex h-dvh w-full max-w-[460px] flex-col overflow-y-auto overscroll-contain bg-ink px-8 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             open ? "translate-x-0" : "translate-x-full"
           }`}
         >

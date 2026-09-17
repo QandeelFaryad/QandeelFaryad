@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { PlusIcon } from "./icons";
 import { PillSubmit } from "./ui";
-import { PROJECT_STAGES, SERVICE_OPTIONS, SERVICE_QUESTIONS } from "@/lib/content";
+import { COUNTRIES, PROJECT_STAGES, SERVICE_OPTIONS, SERVICE_QUESTIONS } from "@/lib/content";
 import { SITE } from "@/lib/site";
 
 /* ----------------------------------------------------------------- Accordion */
@@ -127,6 +127,12 @@ async function submit(payload: Record<string, unknown>, file?: File | null) {
 const field =
   "w-full rounded-2xl border border-line bg-white px-5 py-4 text-[15px] text-ink outline-none transition-colors placeholder:text-muted/60 focus:border-accent";
 const labelClass = "font-display text-[13px] font-bold uppercase text-ink";
+
+/** Chevron for <select>, inlined so turning off the native appearance keeps the affordance. */
+const selectArrow = {
+  backgroundImage:
+    "url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%20fill=%27none%27%20stroke=%27%235a6283%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Cpath%20d=%27m6%209%206%206%206-6%27/%3E%3C/svg%3E)",
+};
 
 function Field({
   label,
@@ -464,13 +470,25 @@ export function ContactForm() {
               <Field label="Email address" htmlFor={`${id}-email`}>
                 <input id={`${id}-email`} name="email" type="email" className={field} placeholder="you@example.com" autoComplete="email" required />
               </Field>
-              <Field label="Company" htmlFor={`${id}-company`} optional>
-                <input id={`${id}-company`} name="company" className={field} placeholder="e.g. Acme Corp" autoComplete="organization" />
+              <Field label="Company" htmlFor={`${id}-company`}>
+                <input id={`${id}-company`} name="company" className={field} placeholder="e.g. Acme Corp" autoComplete="organization" required />
               </Field>
             </div>
+            <Field label="Country" htmlFor={`${id}-country`}>
+              <select id={`${id}-country`} name="country" className={`${field} appearance-none bg-[length:16px] bg-[right_1.25rem_center] bg-no-repeat pr-12`} style={selectArrow} defaultValue="" autoComplete="country-name" required>
+                <option value="" disabled>
+                  Select your country
+                </option>
+                {COUNTRIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </Field>
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="flex flex-col gap-3">
-                <Field label="Phone" htmlFor={`${id}-phone`} optional>
+                <Field label="Phone" htmlFor={`${id}-phone`}>
                   <input
                     id={`${id}-phone`}
                     name="phone"
@@ -479,6 +497,7 @@ export function ContactForm() {
                     placeholder="+44 7700 900123"
                     autoComplete="tel"
                     maxLength={30}
+                    required
                   />
                 </Field>
                 <label className="flex items-center gap-2.5 text-[14px] text-muted">
@@ -486,7 +505,7 @@ export function ContactForm() {
                   This number is on WhatsApp
                 </label>
               </div>
-              <Field label="Current website" htmlFor={`${id}-site`} optional>
+              <Field label="Current website" htmlFor={`${id}-site`}>
                 {/* Not type="url": that would reject "example.com" without https://. The server normalises it. */}
                 <input
                   id={`${id}-site`}
@@ -496,15 +515,17 @@ export function ContactForm() {
                   placeholder="yourcompany.com"
                   autoComplete="url"
                   maxLength={300}
+                  required
                 />
               </Field>
             </div>
-            <Field label="Tell us about the project" htmlFor={`${id}-message`} optional>
+            <Field label="Tell us about the project" htmlFor={`${id}-message`}>
               <textarea
                 id={`${id}-message`}
                 name="message"
                 className={`${field} min-h-[140px] resize-y`}
                 placeholder="Goals, links, anything that helps us understand what you're building…"
+                required
               />
             </Field>
             <p className="text-[13px] text-muted">{[services.join(", "), stage, budget, timeline].filter(Boolean).join(" · ")}</p>

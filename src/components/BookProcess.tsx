@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { getLenis } from "./experience";
 
 export type BookStep = { no: string; title: string; body: string };
@@ -21,12 +21,16 @@ function edges(pages: number, dir: 1 | -1) {
 
 /**
  * Process steps as a hardback book that opens and turns its pages while the
- * section is pinned. Desktop shows a two-page spread (chapter opener on the
- * left, the description on the right); small screens turn single pages.
- * Reduced-motion users get a plain grid.
+ * section is pinned, showing a two-page spread: chapter opener on the left,
+ * description on the right.
+ *
+ * Large screens only. Phones and reduced-motion users get a plain grid — pinning
+ * a section on a phone costs several screen-heights of scroll that look like the
+ * page has frozen, and the pinned box clips its own content on shorter handsets.
  */
 export default function BookProcess({ steps, header }: { steps: BookStep[]; header: ReactNode }) {
   const outer = useRef<HTMLDivElement | null>(null);
+  const pane = useRef<HTMLDivElement | null>(null);
   const book = useRef<HTMLDivElement | null>(null);
   const stackL = useRef<HTMLDivElement | null>(null);
   const stackR = useRef<HTMLDivElement | null>(null);
@@ -39,7 +43,7 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
   const last = steps[steps.length - 1];
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: no-preference)");
+    const mq = window.matchMedia("(min-width: 1024px) and (prefers-reduced-motion: no-preference)");
     const sync = () => setEnabled(mq.matches);
     sync();
     mq.addEventListener("change", sync);
@@ -48,7 +52,6 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
 
   useEffect(() => {
     if (!enabled) return;
-    const wide = window.matchMedia("(min-width: 1024px)");
     let raf = 0;
     let current = -1;
     let shadowL = "";
@@ -59,7 +62,7 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
       const o = outer.current;
       if (!o) return;
       const rect = o.getBoundingClientRect();
-      const span = o.offsetHeight - window.innerHeight;
+      const span = o.offsetHeight - (pane.current?.offsetHeight ?? window.innerHeight);
       const p = (span > 0 ? clamp(-rect.top / span, 0, 1) : 0) * flips;
 
       let open = 0;
@@ -82,7 +85,7 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
       if (book.current) {
         book.current.style.setProperty("--open", cover.toFixed(3));
         // A closed book sits centred on its cover, then slides over as it opens.
-        book.current.style.transform = wide.matches ? `translateX(${(-25 * (1 - cover)).toFixed(2)}%)` : "";
+        book.current.style.transform = `translateX(${(-25 * (1 - cover)).toFixed(2)}%)`;
       }
       // Paper pages still to turn thicken the right edge; turned ones build up on the left.
       const l = edges(turned, -1);
@@ -112,7 +115,7 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
   const goTo = (index: number) => {
     const o = outer.current;
     if (!o) return;
-    const span = o.offsetHeight - window.innerHeight;
+    const span = o.offsetHeight - (pane.current?.offsetHeight ?? window.innerHeight);
     const top = o.getBoundingClientRect().top + window.scrollY + (span * (index + 1)) / flips;
     const lenis = getLenis();
     if (lenis) lenis.scrollTo(top, { duration: 1.2 });
@@ -139,8 +142,11 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
   }
 
   return (
-    <div ref={outer} style={{ height: `calc(100svh + ${flips * 80}svh)` }}>
-      <div className="sticky top-0 flex h-[100svh] flex-col justify-center gap-8 overflow-hidden pt-20 lg:gap-10 lg:pt-24">
+    <div ref={outer} className="book-pin" style={{ "--flips": flips } as CSSProperties}>
+      <div
+        ref={pane}
+        className="sticky top-0 flex h-[100svh] flex-col justify-center gap-10 overflow-hidden pt-24"
+      >
         {header}
         <div className="container-x">
           <div ref={book} className="book">

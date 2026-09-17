@@ -21,7 +21,7 @@
  * submissions are logged in development and rejected in production.
  */
 
-import { PROJECT_STAGES, SERVICE_OPTIONS, SERVICE_QUESTIONS } from "@/lib/content";
+import { COUNTRIES, PROJECT_STAGES, SERVICE_OPTIONS, SERVICE_QUESTIONS } from "@/lib/content";
 import { createServiceClient, isServiceConfigured } from "@/lib/supabase/service";
 
 type Kind = "project" | "application" | "newsletter";
@@ -151,7 +151,7 @@ async function save(
   body: Record<string, unknown>,
   who: { name: string; email: string },
   cv: File | null,
-  project?: { phone: string; whatsapp: boolean; siteUrl: string; stage: string; details: Detail[] },
+  project?: { phone: string; whatsapp: boolean; siteUrl: string; country: string; stage: string; details: Detail[] },
 ): Promise<"saved" | "skipped" | "failed"> {
   if (!isServiceConfigured()) return "skipped";
   const db = createServiceClient();
@@ -164,6 +164,7 @@ async function save(
         phone: project?.phone || null,
         whatsapp: project?.whatsapp ?? false,
         site_url: project?.siteUrl || null,
+        country: project?.country || null,
         stage: project?.stage || null,
         details: project?.details ?? [],
         services: Array.isArray(body.services) ? body.services.map((s) => clean(s, 60)).filter(Boolean) : [],
@@ -256,19 +257,31 @@ export async function POST(request: Request) {
 
   let project: Parameters<typeof save>[4];
   if (kind === "project") {
+    // Every field on the final step is required, so mirror the browser check here.
+    if (!clean(body.company)) {
+      return Response.json({ error: "Please tell us your company name." }, { status: 400 });
+    }
+    const country = clean(body.country, 60);
+    if (!COUNTRIES.includes(country)) {
+      return Response.json({ error: "Please choose your country from the list." }, { status: 400 });
+    }
     const phone = clean(body.phone, 30);
-    if (phone && !validPhone(phone)) {
+    if (!phone || !validPhone(phone)) {
       return Response.json({ error: "Please check your phone number, including the country code." }, { status: 400 });
     }
     const siteUrl = normaliseUrl(clean(body.site_url));
-    if (siteUrl === null) {
+    if (!siteUrl) {
       return Response.json({ error: "Please check your website address, e.g. yourcompany.com." }, { status: 400 });
+    }
+    if (!clean(body.message, LIMITS.message)) {
+      return Response.json({ error: "Please tell us a little about the project." }, { status: 400 });
     }
     const stage = clean(body.stage);
     project = {
       phone,
-      whatsapp: Boolean(phone) && (body.whatsapp === "on" || body.whatsapp === true),
+      whatsapp: body.whatsapp === "on" || body.whatsapp === true,
       siteUrl,
+      country,
       stage: PROJECT_STAGES.includes(stage) ? stage : "",
       details: serviceDetails(body),
     };
@@ -281,6 +294,7 @@ export async function POST(request: Request) {
           ["Email", email],
           ["Phone", project.phone && `${project.phone}${project.whatsapp ? " (WhatsApp)" : ""}`],
           ["Company", clean(body.company)],
+          ["Country", project.country],
           ["Website", project.siteUrl],
           ["Services", Array.isArray(body.services) ? body.services.map((s) => clean(s, 60)).join(", ") : ""],
           ...project.details.map((d): [string, string] => [`${d.service} — ${d.question}`, d.answer]),

@@ -254,6 +254,13 @@
 /* ------------------------------------------------------------- Process book */
 /* BookProcess: a hardback whose pages turn around the spine as the pinned section scrolls.
    .book is the paper area; the boards overhang it by --pad. */
+
+/* The pinned track: one viewport to stand in, plus a stretch of scroll per page turn
+   (--flips is set from the step count). Only rendered at >= 1024px. */
+.book-pin {
+  height: calc(100svh + var(--flips) * 80svh);
+}
+
 .book {
   --pad: 8px;
   --paper: #fbfbf8;

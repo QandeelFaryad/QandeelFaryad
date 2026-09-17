@@ -31,6 +31,7 @@ export default async function InquiryPage({ params }: { params: Promise<{ id: st
       ) : null,
     ],
     ["Company", r.company],
+    ["Country", r.country],
     [
       "Website",
       r.site_url ? (

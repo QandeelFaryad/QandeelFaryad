@@ -48,6 +48,7 @@ create table if not exists public.inquiries (
   phone text,
   whatsapp boolean not null default false,
   site_url text,
+  country text,
   services text[] not null default '{}',
   -- Answers to service-specific questions: [{service, question, answer}]
   details jsonb not null default '[]',
@@ -67,6 +68,7 @@ alter table public.inquiries add column if not exists whatsapp boolean not null 
 alter table public.inquiries add column if not exists site_url text;
 alter table public.inquiries add column if not exists details jsonb not null default '[]';
 alter table public.inquiries add column if not exists stage text;
+alter table public.inquiries add column if not exists country text;
 create index if not exists inquiries_created_at_idx on public.inquiries (created_at desc);
 alter table public.inquiries enable row level security;
 
