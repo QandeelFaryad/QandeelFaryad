@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Geist, Syne } from "next/font/google";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -8,6 +9,12 @@ import Consent from "@/components/Consent";
 import RouteLoader from "@/components/RouteLoader";
 import SiteOnly from "@/components/SiteOnly";
 import { SITE } from "@/lib/site";
+
+// Self-hosted at build time, so the page makes no requests to Google and the fonts
+// arrive with the rest of the app. Both are variable fonts, so no weight list is
+// needed. globals.css maps --font-sans / --font-display onto these variables.
+const geist = Geist({ subsets: ["latin"], display: "swap", variable: "--font-geist" });
+const syne = Syne({ subsets: ["latin"], display: "swap", variable: "--font-syne" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -25,22 +32,17 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-// Runs before first paint: skip the intro for repeat visits and reduced motion.
-const introScript = `(function(){var d=document.documentElement;try{if(sessionStorage.getItem("qorliq-intro")||matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("intro-seen")}else{sessionStorage.setItem("qorliq-intro","1")}}catch(e){d.classList.add("intro-seen")}})()`;
+// Runs before first paint: mark this as a hard load (see .first-load in globals.css),
+// and skip the intro for repeat visits and reduced motion.
+const introScript = `(function(){var d=document.documentElement;d.classList.add("first-load");try{if(sessionStorage.getItem("qorliq-intro")||matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("intro-seen")}else{sessionStorage.setItem("qorliq-intro","1")}}catch(e){d.classList.add("intro-seen")}})()`;
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="en" className={`${geist.variable} ${syne.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: introScript }} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Syne:wght@600;700&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body>
         <SiteOnly>

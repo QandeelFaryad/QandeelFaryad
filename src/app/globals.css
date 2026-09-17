@@ -30,8 +30,8 @@
   --color-on-dark: #b4bcda;
 
   /* Typography */
-  --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -123,7 +123,7 @@
 .animate-float { animation: float 6s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal, .reveal-scale { opacity: 1 !important; transform: none !important; }
+  .reveal, .reveal-scale { opacity: 1 !important; transform: none !important; animation: none !important; }
   .animate-marquee, .animate-float, .brand-gradient-animated { animation: none !important; }
 }
 
@@ -181,6 +181,43 @@
 }
 .fade-words.is-visible .fade-word { opacity: 1; filter: none; transform: none; }
 
+/* Above-the-fold reveals (SplitReveal/FadeWords with onLoad) on a hard page load.
+   The class-based transitions above only start once React hydrates and sets
+   .is-visible, which on a slow phone leaves the hero invisible for seconds and
+   drags out Largest Contentful Paint. Keyframes run from first paint instead.
+   --d is each word's own stagger; --reveal-offset waits out the intro curtain
+   (the same 820ms coverRemaining() uses) unless the intro was skipped.
+   RouteLoader drops .first-load as soon as a client navigation starts, so later
+   pages fall back to the transitions, which wait for the route loader to lift.
+   Fill mode "both" holds the hidden frame through each word's delay, even if
+   hydration adds .is-visible first. */
+html { --reveal-offset: 820ms; }
+html.intro-seen { --reveal-offset: 0ms; }
+.first-load .fade-words[data-onload] .fade-word {
+  animation: fade-word-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--reveal-offset) + var(--d, 0ms));
+}
+.first-load .reveal[data-onload] {
+  animation: reveal-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--reveal-offset) + var(--d, 0ms));
+}
+.first-load .split[data-onload] .split-inner {
+  animation: split-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--reveal-offset) + var(--d, 0ms));
+}
+@keyframes reveal-in {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-word-in {
+  from { opacity: 0; filter: blur(8px); transform: translateY(0.45em); }
+  to { opacity: 1; filter: none; transform: none; }
+}
+@keyframes split-rise {
+  from { transform: translateY(110%) rotate(7deg); filter: blur(6px); }
+  to { transform: none; filter: none; }
+}
+
 /* ------------------------------------------------------------- Intro loader */
 .intro {
   position: fixed;
@@ -190,7 +227,10 @@
   align-items: center;
   justify-content: center;
   background: var(--color-ink);
-  animation: intro-out 0.75s cubic-bezier(0.76, 0, 0.24, 1) 1.65s forwards;
+  /* Starts as the wipe and bar finish. coverRemaining() in motion.tsx releases the
+     headline reveals 60% of the way through this lift (550 + 0.6 × 450 = 820ms) —
+     change the two together. */
+  animation: intro-out 0.45s cubic-bezier(0.76, 0, 0.24, 1) 0.55s forwards;
 }
 .intro-seen .intro { display: none; }
 
@@ -204,14 +244,14 @@
 /* One logo, revealed left to right: the mark lands first, then the wordmark */
 .intro-logo {
   width: min(62vw, 440px);
-  animation: intro-rise 0.6s cubic-bezier(0.34, 1.35, 0.5, 1) both;
+  animation: intro-rise 0.35s cubic-bezier(0.34, 1.35, 0.5, 1) both;
 }
 .intro-logo-img {
   display: block;
   width: 100%;
   height: auto;
   clip-path: inset(0 100% 0 0);
-  animation: intro-wipe 1.35s cubic-bezier(0.65, 0, 0.2, 1) 0.15s forwards;
+  animation: intro-wipe 0.5s cubic-bezier(0.65, 0, 0.2, 1) 0.05s forwards;
 }
 
 /* Loading bar underneath */
@@ -229,7 +269,7 @@
   background: var(--color-spark);
   transform-origin: left;
   transform: scaleX(0);
-  animation: intro-bar 1.5s cubic-bezier(0.45, 0, 0.15, 1) 0.15s forwards;
+  animation: intro-bar 0.5s cubic-bezier(0.45, 0, 0.15, 1) 0.05s forwards;
 }
 
 @keyframes intro-rise {
@@ -673,8 +713,8 @@
 @keyframes vt-blur { 30% { filter: blur(3px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .split-inner { transform: none !important; filter: none !important; transition: none !important; }
-  .fade-word { opacity: 1 !important; filter: none !important; transform: none !important; transition: none !important; }
+  .split-inner { transform: none !important; filter: none !important; transition: none !important; animation: none !important; }
+  .fade-word { opacity: 1 !important; filter: none !important; transform: none !important; transition: none !important; animation: none !important; }
   ::view-transition-old(*),
   ::view-transition-new(*),
   ::view-transition-group(*) {

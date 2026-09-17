@@ -24,8 +24,8 @@ export default function NotFound() {
         </span>
         <Reveal><SectionLabel dark>ERROR 404</SectionLabel></Reveal>
         <h1 className="mt-8 flex flex-col gap-2">
-          <SplitReveal text="LOST IN" className="block font-display text-[clamp(40px,11vw,128px)] font-bold tracking-[-0.015em] leading-[0.9] text-white" />
-          <SplitReveal text="THE PIXELS." delay={140} className="block font-display text-[clamp(40px,11vw,128px)] font-bold tracking-[-0.015em] leading-[0.9] text-white" />
+          <SplitReveal text="LOST IN" onLoad className="block font-display text-[clamp(40px,11vw,128px)] font-bold tracking-[-0.015em] leading-[0.9] text-white" />
+          <SplitReveal text="THE PIXELS." delay={140} onLoad className="block font-display text-[clamp(40px,11vw,128px)] font-bold tracking-[-0.015em] leading-[0.9] text-white" />
         </h1>
         <Reveal delay={240}>
           <p className="mt-8 max-w-[520px] text-[18px] leading-[1.6] text-white/85">

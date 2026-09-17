@@ -27,6 +27,7 @@ export default function RouteLoader() {
   const busy = useRef(false);
   const startedAt = useRef(0);
   const timers = useRef<number[]>([]);
+  const firstPath = useRef(pathname);
 
   const clearTimers = () => {
     timers.current.forEach((t) => clearTimeout(t));
@@ -60,6 +61,9 @@ export default function RouteLoader() {
 
       // Take over from <Link> (it skips clicks that are already prevented).
       e.preventDefault();
+      // From here on pages arrive client-side, under the curtain: their hero reveals
+      // must wait for it via holdRevealsUntil(), not run on CSS from mount.
+      document.documentElement.classList.remove("first-load");
       if (busy.current) return;
       busy.current = true;
       startedAt.current = performance.now();
@@ -76,6 +80,9 @@ export default function RouteLoader() {
   // The new page has rendered: hold its headline reveals until the curtain lifts.
   // (This component sits before the page in the tree, so this runs before their effects.)
   useEffect(() => {
+    // Back/forward skip the click handler; drop the flag here too so those pages
+    // use the JS reveals as well. (The initial render is a hard load and keeps it.)
+    if (pathname !== firstPath.current) document.documentElement.classList.remove("first-load");
     if (!busy.current) return;
     const wait = startedAt.current + MIN_MS - performance.now();
     holdRevealsUntil(performance.now() + Math.max(0, wait) + 250);

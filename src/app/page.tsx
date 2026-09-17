@@ -25,6 +25,7 @@ export default async function HomePage() {
                 text={line}
                 delay={i * 140}
                 highlight={["GROWTH"]}
+                onLoad
                 className="block font-display text-[clamp(24px,6.2vw,88px)] font-bold tracking-[-0.015em] leading-[0.95] text-white"
               />
             ))}
@@ -32,12 +33,13 @@ export default async function HomePage() {
         </ScrollFade>
 
         <div className="mt-16 flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
-          <Reveal delay={200} className="w-full max-w-[520px]">
+          <Reveal delay={200} onLoad className="w-full max-w-[520px]">
             <div className="h-px w-full bg-white/40" />
             <div className="mt-6 flex items-start gap-4">
               <ArrowDownRight className="size-6 shrink-0 text-spark" />
               <FadeWords
                 delay={500}
+                onLoad
                 className="text-[18px] leading-[1.5] text-white"
                 text={`${SITE.legal.brandLine}, supporting businesses with modern websites, e-commerce platforms, applications, digital marketing, brand identity, automation, AI, and Microsoft cloud services.`}
               />

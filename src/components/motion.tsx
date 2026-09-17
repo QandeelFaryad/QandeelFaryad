@@ -16,6 +16,7 @@ export function Reveal({
   delay = 0,
   scale = false,
   clip = false,
+  onLoad = false,
   className = "",
 }: {
   children: ReactNode;
@@ -24,6 +25,8 @@ export function Reveal({
   scale?: boolean;
   /** Curtain-wipe reveal for images. */
   clip?: boolean;
+  /** Above the fold: on a hard load, animate from first paint (see .first-load in globals.css). */
+  onLoad?: boolean;
   className?: string;
 }) {
   const ref = useRef<HTMLElement | null>(null);
@@ -49,7 +52,8 @@ export function Reveal({
     <Tag
       ref={ref}
       className={`${clip ? "reveal-clip" : scale ? "reveal-scale" : "reveal"} ${shown ? "is-visible" : ""} ${className}`}
-      style={clip ? undefined : { transitionDelay: `${delay}ms` }}
+      style={clip ? undefined : ({ transitionDelay: `${delay}ms`, "--d": `${delay}ms` } as React.CSSProperties)}
+      data-onload={(onLoad && !clip && !scale) || undefined}
     >
       {clip ? (
         // Clip an inner layer: IntersectionObserver treats a fully clipped target as invisible.
@@ -132,7 +136,9 @@ function coverRemaining() {
   const now = performance.now();
   const loader = Math.max(0, revealHold - now);
   if (document.documentElement.classList.contains("intro-seen")) return loader;
-  return Math.max(loader, 2100 - now);
+  // The intro curtain starts lifting at 550ms and takes 450ms (globals.css, .intro);
+  // release reveals 60% of the way up so they rise into view as it clears.
+  return Math.max(loader, 820 - now);
 }
 
 /* -------------------------------------------------------------- SplitReveal */
@@ -143,6 +149,7 @@ export function SplitReveal({
   delay = 0,
   stagger = 70,
   highlight = [],
+  onLoad = false,
   className = "",
 }: {
   text: string;
@@ -151,6 +158,8 @@ export function SplitReveal({
   stagger?: number;
   /** Words that get an orange underline drawn in after they appear. */
   highlight?: string[];
+  /** Above the fold: on a hard load, animate from first paint (see .first-load in globals.css). */
+  onLoad?: boolean;
   className?: string;
 }) {
   const ref = useRef<HTMLElement | null>(null);
@@ -176,7 +185,7 @@ export function SplitReveal({
 
   const words = text.split(" ");
   return (
-    <Tag ref={ref} className={`split ${shown ? "is-visible" : ""} ${className}`}>
+    <Tag ref={ref} className={`split ${shown ? "is-visible" : ""} ${className}`} data-onload={onLoad || undefined}>
       <span className="sr-only">{text}</span>
       <span aria-hidden="true">
         {words.map((w, i) => (
@@ -193,6 +202,7 @@ export function SplitReveal({
                   ...(highlight.includes(w)
                     ? ({ "--glint-delay": `${offset + delay + i * stagger + 1600}ms` } as React.CSSProperties)
                     : null),
+                  ...({ "--d": `${delay + i * stagger}ms` } as React.CSSProperties),
                 }}
               >
                 {w}
@@ -213,12 +223,15 @@ export function FadeWords({
   as: Tag = "p",
   delay = 0,
   stagger = 22,
+  onLoad = false,
   className = "",
 }: {
   text: string;
   as?: ElementType;
   delay?: number;
   stagger?: number;
+  /** Above the fold: on a hard load, animate from first paint (see .first-load in globals.css). */
+  onLoad?: boolean;
   className?: string;
 }) {
   const ref = useRef<HTMLElement | null>(null);
@@ -244,10 +257,13 @@ export function FadeWords({
 
   const words = text.split(" ").filter(Boolean);
   return (
-    <Tag ref={ref} className={`fade-words ${shown ? "is-visible" : ""} ${className}`}>
+    <Tag ref={ref} className={`fade-words ${shown ? "is-visible" : ""} ${className}`} data-onload={onLoad || undefined}>
       {words.map((w, i) => (
         <span key={i}>
-          <span className="fade-word" style={{ transitionDelay: `${offset + delay + i * stagger}ms` }}>
+          <span
+            className="fade-word"
+            style={{ transitionDelay: `${offset + delay + i * stagger}ms`, "--d": `${delay + i * stagger}ms` } as React.CSSProperties}
+          >
             {w}
           </span>
           {i < words.length - 1 ? " " : null}

@@ -28,6 +28,7 @@ export default function PageHero({
             key={line}
             text={line}
             delay={i * 120}
+            onLoad
             className="block font-display text-[clamp(36px,8.5vw,104px)] font-bold tracking-[-0.015em] uppercase leading-[0.95] text-white"
           />
         ))}
@@ -37,6 +38,7 @@ export default function PageHero({
         <FadeWords
           text={sub}
           delay={titleLines.length * 120 + 250}
+          onLoad
           className="mt-8 max-w-[720px] text-[clamp(16px,1.6vw,20px)] leading-[1.55] text-white/85"
         />
       ) : null}
