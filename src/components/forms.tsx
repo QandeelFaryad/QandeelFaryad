@@ -505,7 +505,7 @@ export function ContactForm() {
                   This number is on WhatsApp
                 </label>
               </div>
-              <Field label="Current website" htmlFor={`${id}-site`}>
+              <Field label="Current website" htmlFor={`${id}-site`} optional>
                 {/* Not type="url": that would reject "example.com" without https://. The server normalises it. */}
                 <input
                   id={`${id}-site`}
@@ -515,7 +515,6 @@ export function ContactForm() {
                   placeholder="yourcompany.com"
                   autoComplete="url"
                   maxLength={300}
-                  required
                 />
               </Field>
             </div>

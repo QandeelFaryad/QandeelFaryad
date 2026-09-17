@@ -257,7 +257,7 @@ export async function POST(request: Request) {
 
   let project: Parameters<typeof save>[4];
   if (kind === "project") {
-    // Every field on the final step is required, so mirror the browser check here.
+    // Mirror the browser's required fields (everything on the final step but the website).
     if (!clean(body.company)) {
       return Response.json({ error: "Please tell us your company name." }, { status: 400 });
     }
@@ -269,8 +269,9 @@ export async function POST(request: Request) {
     if (!phone || !validPhone(phone)) {
       return Response.json({ error: "Please check your phone number, including the country code." }, { status: 400 });
     }
+    // Optional: blank is fine, but anything typed has to be a real address.
     const siteUrl = normaliseUrl(clean(body.site_url));
-    if (!siteUrl) {
+    if (siteUrl === null) {
       return Response.json({ error: "Please check your website address, e.g. yourcompany.com." }, { status: 400 });
     }
     if (!clean(body.message, LIMITS.message)) {
@@ -342,7 +343,14 @@ export async function POST(request: Request) {
   const from = CONTACT_FROM_EMAIL || "QORLIQ <onboarding@resend.dev>";
 
   if (!RESEND_API_KEY || !CONTACT_TO_EMAIL) {
-    if (stored === "saved") return Response.json({ ok: true });
+    if (stored === "saved") {
+      // Still a success for the visitor, but nobody is notified, and the visitor gets no
+      // acknowledgement. Say so where it will be seen.
+      console.warn(
+        `[contact] Saved a ${kind} submission but sent no email: ${!RESEND_API_KEY ? "RESEND_API_KEY" : "CONTACT_TO_EMAIL"} is not set in this environment`,
+      );
+      return Response.json({ ok: true });
+    }
     if (process.env.NODE_ENV !== "production") {
       console.info(`[contact] Email not configured — would send:\n${subject}\n\n${text}`);
       return Response.json({ ok: true });
