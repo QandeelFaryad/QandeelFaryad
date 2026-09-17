@@ -9,6 +9,7 @@ import Consent from "@/components/Consent";
 import RouteLoader from "@/components/RouteLoader";
 import SiteOnly from "@/components/SiteOnly";
 import { SITE } from "@/lib/site";
+import { googleTagScript } from "@/lib/analytics";
 
 // Self-hosted at build time, so the page makes no requests to Google and the fonts
 // arrive with the rest of the app. Both are variable fonts, so no weight list is
@@ -43,6 +44,8 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable} ${syne.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: introScript }} />
+        {/* Google Tag Manager + Analytics, Consent Mode v2 (see lib/analytics.ts) */}
+        <script dangerouslySetInnerHTML={{ __html: googleTagScript }} />
       </head>
       <body>
         <SiteOnly>

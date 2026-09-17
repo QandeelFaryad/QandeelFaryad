@@ -2,9 +2,10 @@
 
 import Script from "next/script";
 import Link from "next/link";
+import { CONSENT_KEY, GA_ID, GTM_ID } from "@/lib/analytics";
 import { useCallback, useEffect, useState } from "react";
 
-const KEY = "qorliq-consent";
+const KEY = CONSENT_KEY;
 
 type Choice = "accepted" | "rejected" | null;
 
@@ -23,24 +24,12 @@ export function openCookieSettings() {
 }
 
 /**
- * Cookie banner plus consent-gated analytics. Plausible loads only after the
- * visitor accepts, and only if its environment variable is set:
+ * Cookie banner. Google Tag Manager and Google Analytics load from the root layout
+ * in Consent Mode (see lib/analytics.ts); choosing here updates their consent.
+ * Plausible, if configured, loads only after the visitor accepts:
  *
  *   NEXT_PUBLIC_PLAUSIBLE_DOMAIN — e.g. "qorliq.com" (no cookies, but gated anyway)
- *   NEXT_PUBLIC_GA_ID           — overrides the site's Google Analytics 4 property
- *   NEXT_PUBLIC_GTM_ID          — overrides the site's Google Tag Manager container
- *
- * Google Tag Manager and Google Analytics run in Consent Mode v2: both load on every
- * page (so Google can detect them) with all storage denied, and "Accept analytics" grants
- * analytics_storage only — the banner never asks about advertising, so ad_* stay
- * denied. Tags inside the container must respect these consent signals (GA4 tags
- * do by default) — and don't add a GA4 tag for G-WCQNF5TM5F in GTM as well, or
- * every page view is counted twice. There is no <noscript> iframe: without JavaScript this banner
- * can't ask, and the iframe ignores consent.
  */
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "GTM-TB8D8JWQ";
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-WCQNF5TM5F";
-
 /** Consent Mode's gtag(): the dataLayer expects the arguments object itself, not an array. */
 function gtag(..._args: unknown[]) {
   const w = window as unknown as { dataLayer?: unknown[] };
@@ -54,9 +43,7 @@ export default function Consent() {
   const [visible, setVisible] = useState(false);
 
   const plausible = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
-  const ga = GA_ID;
-  const gtm = GTM_ID;
-  const hasAnalytics = Boolean(plausible || ga || gtm);
+  const hasAnalytics = Boolean(plausible || GA_ID || GTM_ID);
 
   useEffect(() => {
     const saved = read();
@@ -89,20 +76,6 @@ export default function Consent() {
           strategy="afterInteractive"
         />
       ) : null}
-
-      {gtm || ga ? (
-        // One script so the consent defaults reach the dataLayer before GTM's container or
-        // GA's config — gtag.js replays the queue in order whenever it arrives. A returning
-        // visitor's stored choice is applied up front.
-        <Script id="google-consent-mode" strategy="afterInteractive">
-          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}var c=null;try{c=localStorage.getItem('${KEY}')}catch(e){}gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:c==='accepted'?'granted':'denied',wait_for_update:500});${
-            gtm
-              ? `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`
-              : ""
-          }${ga ? `gtag('js',new Date());gtag('config','${ga}');` : ""}`}
-        </Script>
-      ) : null}
-      {ga ? <Script src={`https://www.googletagmanager.com/gtag/js?id=${ga}`} strategy="afterInteractive" /> : null}
 
       {visible ? (
         <div
