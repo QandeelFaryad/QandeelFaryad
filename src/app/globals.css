@@ -917,3 +917,33 @@ footer,
   .split-hl .split-inner { background-size: 100% 0.075em; transition: none; }
   .split.is-visible .split-hl .split-inner::after { animation: none; }
 }
+
+/* ------------------------------------------------------ Service showcase */
+/* One entrance per service for the home page's sticky service image (ServiceShowcase).
+   Each runs when a picture becomes current, over the previous one. */
+.svc-in-wipe-up { animation: svc-wipe-up 0.9s cubic-bezier(0.76, 0, 0.24, 1) both; }
+.svc-in-wipe-down { animation: svc-wipe-down 0.9s cubic-bezier(0.76, 0, 0.24, 1) both; }
+.svc-in-wipe-left { animation: svc-wipe-left 0.9s cubic-bezier(0.76, 0, 0.24, 1) both; }
+.svc-in-circle { animation: svc-circle 1s cubic-bezier(0.65, 0, 0.35, 1) both; }
+.svc-in-split { animation: svc-split 0.9s cubic-bezier(0.76, 0, 0.24, 1) both; }
+.svc-in-diagonal { animation: svc-diagonal 1s cubic-bezier(0.65, 0, 0.35, 1) both; }
+.svc-in-slide { animation: svc-slide 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.svc-in-zoom { animation: svc-zoom 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.svc-in-blur { animation: svc-blur 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+/* The picture itself eases out of a slight zoom as it lands. */
+.svc-settle { animation: svc-settle 1.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes svc-wipe-up { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes svc-wipe-down { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes svc-wipe-left { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes svc-circle { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(75% at 50% 50%); } }
+@keyframes svc-split { from { clip-path: inset(0 50% 0 50%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes svc-diagonal { from { clip-path: polygon(0 0, 0 0, 0 0); } to { clip-path: polygon(0 0, 200% 0, 0 200%); } }
+@keyframes svc-slide { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes svc-zoom { from { opacity: 0; transform: scale(1.25); } to { opacity: 1; transform: none; } }
+@keyframes svc-blur { from { opacity: 0; filter: blur(24px); } to { opacity: 1; filter: none; } }
+@keyframes svc-settle { from { transform: scale(1.15); } to { transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="svc-in-"], .svc-settle { animation: none !important; }
+}

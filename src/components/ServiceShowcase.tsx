@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Reveal } from "./motion";
 import { ImageFill } from "./ui";
 import { SERVICE_IMAGES, type Service } from "@/lib/content";
@@ -12,9 +12,28 @@ import { SERVICE_IMAGES, type Service } from "@/lib/content";
  * list scrolls past, and to whichever one is hovered or focused. Small screens stack
  * the image under the list, so they show only the first one (the others are
  * display:none and never download).
+ *
+ * Each service has its own entrance (see .svc-in-* in globals.css): the incoming
+ * picture animates in on top while the previous one stays put underneath, so a
+ * wipe or reveal always uncovers the last image rather than a blank frame.
  */
+const ENTRANCES = [
+  "svc-in-wipe-up",
+  "svc-in-circle",
+  "svc-in-slide",
+  "svc-in-split",
+  "svc-in-diagonal",
+  "svc-in-zoom",
+  "svc-in-wipe-left",
+  "svc-in-blur",
+  "svc-in-wipe-down",
+];
 export default function ServiceShowcase({ services }: { services: Service[] }) {
-  const [active, setActive] = useState(0);
+  const [{ active, previous }, setShown] = useState({ active: 0, previous: -1 });
+  const setActive = useCallback(
+    (next: number) => setShown((cur) => (cur.active === next ? cur : { active: next, previous: cur.active })),
+    [],
+  );
   const rows = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -41,7 +60,7 @@ export default function ServiceShowcase({ services }: { services: Service[] }) {
       wide.removeEventListener("change", sync);
       io?.disconnect();
     };
-  }, []);
+  }, [setActive]);
 
   const current = services[active];
 
@@ -90,16 +109,23 @@ export default function ServiceShowcase({ services }: { services: Service[] }) {
                 <div
                   key={s.slug}
                   aria-hidden={i !== active}
-                  className={`absolute inset-0 transition-[opacity,scale] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
-                    i === active ? "scale-100 opacity-100" : "scale-105 opacity-0"
+                  className={`absolute inset-0 overflow-hidden ${
+                    i === active
+                      ? // The first paint has nothing underneath to reveal, so it just shows.
+                        `z-20 ${previous === -1 ? "" : ENTRANCES[i % ENTRANCES.length]}`
+                      : i === previous
+                        ? "z-10"
+                        : "z-0 opacity-0"
                   } ${i === 0 ? "" : "hidden lg:block"}`}
                 >
-                  <ImageFill label={img.alt} src={img.src} rounded="rounded-none" />
+                  <div className={`h-full w-full ${i === active && previous !== -1 ? "svc-settle" : ""}`}>
+                    <ImageFill label={img.alt} src={img.src} rounded="rounded-none" />
+                  </div>
                 </div>
               );
             })}
             {/* Which service the picture belongs to. */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-ink/80 to-transparent p-6 pt-16 lg:block">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 hidden bg-gradient-to-t from-ink/80 to-transparent p-6 pt-16 lg:block">
               <p key={current.slug} className="animate-step flex items-baseline gap-3 font-display text-[14px] font-bold uppercase text-white">
                 <span className="text-spark">{current.no}</span>
                 {current.title}
