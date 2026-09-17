@@ -9,6 +9,8 @@ export const SITE = {
   tagline: "Digital Solutions for Modern Business Growth",
   description:
     "QORLIQ is a professional digital services brand operated by HOORAB GROUP OF COMPANIES LTD, helping businesses grow with websites, e-commerce, applications, digital marketing, brand identity, automation, AI, and Microsoft cloud services.",
+  // www is the primary domain: Vercel must serve www and redirect the apex to it,
+  // or every sitemap, canonical and social URL built from this is a redirect.
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.qorliq.com",
 
   email: "support@qorliq.com",
