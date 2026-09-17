@@ -32,6 +32,7 @@ export default function CookiesPage() {
             "Analytics — only set if you accept them:",
             [
               "Which pages are viewed, how visitors arrive, and roughly where they are in the world. This tells us which services people care about. We do not use these to identify you personally.",
+              "These are set through Google Tag Manager, which loads Google's measurement tools (such as Google Analytics) only after you accept.",
             ],
             "We do not use advertising or tracking cookies on this site.",
           ],

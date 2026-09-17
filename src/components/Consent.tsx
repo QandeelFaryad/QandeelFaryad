@@ -28,14 +28,21 @@ export function openCookieSettings() {
  *
  *   NEXT_PUBLIC_PLAUSIBLE_DOMAIN — e.g. "qorliq.com" (no cookies, but gated anyway)
  *   NEXT_PUBLIC_GA_ID           — e.g. "G-XXXXXXXXXX"
+ *   NEXT_PUBLIC_GTM_ID          — overrides the site's Google Tag Manager container
+ *
+ * GTM has no <noscript> iframe: without JavaScript this banner can't ask, and the
+ * iframe would track those visitors without consent.
  */
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "GTM-TB8D8JWQ";
+
 export default function Consent() {
   const [choice, setChoice] = useState<Choice>(null);
   const [visible, setVisible] = useState(false);
 
   const plausible = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
   const ga = process.env.NEXT_PUBLIC_GA_ID;
-  const hasAnalytics = Boolean(plausible || ga);
+  const gtm = GTM_ID;
+  const hasAnalytics = Boolean(plausible || ga || gtm);
 
   useEffect(() => {
     const saved = read();
@@ -75,6 +82,12 @@ export default function Consent() {
             {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${ga}',{anonymize_ip:true});`}
           </Script>
         </>
+      ) : null}
+
+      {choice === "accepted" && gtm ? (
+        <Script id="gtm" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`}
+        </Script>
       ) : null}
 
       {visible ? (
