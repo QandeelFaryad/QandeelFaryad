@@ -334,18 +334,18 @@ export const CASE_STUDIES: CaseStudy[] = [
 ];
 
 /** Secondary imagery used in case study galleries. */
-export const DETAIL_IMAGES = [
-  { src: "/assets/detail/interface.jpg", alt: "Interface design on a laptop screen" },
-  { src: "/assets/detail/mobile.jpg", alt: "The product running on a phone" },
-  { src: "/assets/detail/workspace.jpg", alt: "Workspace mid-project" },
-  { src: "/assets/detail/sketch.jpg", alt: "Early wireframe sketches" },
-  { src: "/assets/detail/code.jpg", alt: "Front-end code for the build" },
-  { src: "/assets/detail/whiteboard.jpg", alt: "Mapping flows on a whiteboard" },
-];
-
-export function detailImage(i: number) {
-  return DETAIL_IMAGES[((i % DETAIL_IMAGES.length) + DETAIL_IMAGES.length) % DETAIL_IMAGES.length];
-}
+/** One picture per service, for the home page's scrolling service list (see ServiceShowcase). */
+export const SERVICE_IMAGES: Record<string, { src: string; alt: string }> = {
+  "website-design": { src: "/assets/detail/sketch.jpg", alt: "Website wireframes sketched on paper" },
+  "ecommerce-store": { src: "/assets/office/studio.jpg", alt: "A maker crafting products to sell" },
+  "application-development": { src: "/assets/detail/code.jpg", alt: "Application code on a screen" },
+  "microsoft-csp": { src: "/assets/work/microsoft-cloud.jpg", alt: "Cloud servers in a data centre" },
+  "lead-generation": { src: "/assets/detail/whiteboard.jpg", alt: "Mapping a sales funnel on a whiteboard" },
+  "seo-ranking": { src: "/assets/journal/web-performance-best-practices.jpg", alt: "Light trails from fast-moving traffic" },
+  "paid-ads": { src: "/assets/office/culture.jpg", alt: "A team planning a campaign with sticky notes" },
+  "brand-identity": { src: "/assets/journal/color-psychology-in-digital-design.jpg", alt: "A fan of brand colour swatches" },
+  "automation-ai": { src: "/assets/journal/future-of-digital-design-2026.jpg", alt: "Close-up of a circuit board" },
+};
 
 
 /* --------------------------------------------------------------------- Posts */

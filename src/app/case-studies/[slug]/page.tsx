@@ -5,9 +5,8 @@ import { ViewTransition } from "react";
 import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
 import { ImageFill, SectionLabel } from "@/components/ui";
-import { Parallax, Reveal, ScrubText } from "@/components/motion";
+import { Reveal, ScrubText } from "@/components/motion";
 import { CtaBanner } from "@/components/sections";
-import { detailImage } from "@/lib/content";
 import { getCaseStudies } from "@/lib/data";
 import { pageMeta } from "@/lib/site";
 
@@ -89,29 +88,6 @@ export default async function CaseStudyPage({ params }: Props) {
               )}
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Gallery */}
-      <section className="bg-cloud">
-        <div className="container-x grid gap-6 [padding-block:96px] md:grid-cols-2">
-          <Reveal clip className="h-[420px] md:h-[560px]">
-            <Parallax className="h-full w-full rounded-3xl">
-              <ImageFill label={detailImage(index).alt} src={detailImage(index).src} rounded="rounded-none" />
-            </Parallax>
-          </Reveal>
-          <div className="grid gap-6">
-            <Reveal clip delay={150} className="h-[260px]">
-              <Parallax strength={30} className="h-full w-full rounded-3xl">
-                <ImageFill label={detailImage(index + 1).alt} src={detailImage(index + 1).src} rounded="rounded-none" />
-              </Parallax>
-            </Reveal>
-            <Reveal clip delay={300} className="h-[260px]">
-              <Parallax strength={30} className="h-full w-full rounded-3xl">
-                <ImageFill label={detailImage(index + 2).alt} src={detailImage(index + 2).src} rounded="rounded-none" />
-              </Parallax>
-            </Reveal>
-          </div>
         </div>
       </section>
 

@@ -6,6 +6,7 @@ import { Reveal, Counter, FadeWords, SplitReveal, Parallax, PointerGlow, ScrollF
 import { StatsCounters, CtaBanner } from "@/components/sections";
 import { PartnerStrip, ProjectAreas, Strengths } from "@/components/profile";
 import { ArrowDownRight } from "@/components/icons";
+import ServiceShowcase from "@/components/ServiceShowcase";
 import { ABOUT, BADGES, PHOTOS, SERVICES } from "@/lib/content";
 import { getCaseStudies, getStats } from "@/lib/data";
 import { SITE } from "@/lib/site";
@@ -131,34 +132,7 @@ export default async function HomePage() {
               <PillButton href="/services">All Services</PillButton>
             </div>
           </Reveal>
-          <div className="flex flex-col gap-16 lg:flex-row lg:items-start">
-            <div className="flex flex-1 flex-col">
-              {SERVICES.map((s, i) => (
-                <Reveal key={s.no} delay={i * 60}>
-                  <Link
-                    href={`/services#${s.slug}`}
-                    className="group flex flex-col gap-4 border-b border-[#e7e7ea] py-8"
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-                      <div className="flex min-w-0 items-center gap-6">
-                        <span className="font-display text-[18px] font-bold text-spark">{s.no}</span>
-                        <h3 className="font-display text-[clamp(20px,2.3vw,30px)] font-bold tracking-[-0.015em] leading-[1.05] text-ink transition-colors group-hover:text-accent">
-                          {s.title}
-                        </h3>
-                      </div>
-                      <span className="text-ink/30 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-accent">↗</span>
-                    </div>
-                    <p className="max-w-[560px] text-[15px] leading-[1.6] text-ink/70">{s.body}</p>
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
-            <div className="h-[420px] w-full lg:sticky lg:top-24 lg:h-[600px] lg:w-[420px] lg:shrink-0">
-              <Reveal clip className="h-full w-full overflow-hidden rounded-3xl">
-                <ImageFill label={PHOTOS.studio.alt} src={PHOTOS.studio.src} />
-              </Reveal>
-            </div>
-          </div>
+          <ServiceShowcase services={SERVICES} />
         </div>
       </section>
 
