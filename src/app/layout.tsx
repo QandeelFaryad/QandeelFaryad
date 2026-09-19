@@ -7,6 +7,7 @@ import { CustomCursor, SmoothScroll } from "@/components/experience";
 import { BackToTop } from "@/components/motion";
 import Consent from "@/components/Consent";
 import RouteLoader from "@/components/RouteLoader";
+import BrandLoader from "@/components/BrandLoader";
 import SiteOnly from "@/components/SiteOnly";
 import { SITE } from "@/lib/site";
 import { googleTagScript } from "@/lib/analytics";
@@ -49,15 +50,9 @@ export default function RootLayout({
       </head>
       <body>
         <SiteOnly>
-          {/* First-visit brand intro (pure CSS; hidden via .intro-seen) */}
+          {/* First-visit brand intro: the signature loader (pure CSS; hidden via .intro-seen) */}
           <div className="intro" aria-hidden="true">
-            <div className="intro-stage">
-              <div className="intro-logo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/assets/brand/qorliq-logo-white.svg" alt="" className="intro-logo-img" />
-              </div>
-              <div className="intro-bar"><span /></div>
-            </div>
+            <BrandLoader />
           </div>
 
           {/* Before the page so its effect can hold the page's reveals */}

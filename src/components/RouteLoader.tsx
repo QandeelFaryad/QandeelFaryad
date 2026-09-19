@@ -3,12 +3,13 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { holdRevealsUntil } from "./motion";
+import BrandLoader from "./BrandLoader";
 
-/** Curtain closing, before the route change starts. */
+/** Loader fading in, before the route change starts. */
 const COVER_MS = 420;
 /** Shortest time the loader stays up, counted from the click. */
 const MIN_MS = 950;
-/** Curtain opening. Keep in sync with .route-loader.is-out in globals.css. */
+/** Loader fading out. Keep in sync with .route-loader.is-out in globals.css. */
 const EXIT_MS = 650;
 /** Lift the curtain anyway if the route never changes. */
 const GIVE_UP_MS = 8000;
@@ -16,8 +17,8 @@ const GIVE_UP_MS = 8000;
 type Phase = "idle" | "in" | "out";
 
 /**
- * Brand loader for moving between pages: a navy curtain closes, the QORLIQ
- * mark (from Loader.zip) assembles, and the curtain lifts on the new page.
+ * Brand loader for moving between pages: the signature loader (BrandLoader)
+ * fades in, the route changes underneath, and it fades out on the new page.
  * Covers internal link clicks; back/forward stay instant.
  */
 export default function RouteLoader() {
@@ -101,19 +102,7 @@ export default function RouteLoader() {
       style={{ viewTransitionName: "route-loader" }}
     >
       <span className="sr-only">Loading page</span>
-      <div className="route-loader-stage" aria-hidden="true">
-        <svg viewBox="0 0 64 64" className="route-loader-mark">
-          <path
-            className="route-loader-teal"
-            d="M54.02,30.88C65.07,0.46,40.66-7.87,23.46,16.73l1.32,4.71c19.2-19.02,19.22,12.36,6.01,21.41l3.6,12.85l15.72,5.98l-4.46-15.92C49.18,41.41,51.99,36.41,54.02,30.88z"
-          />
-          <path
-            className="route-loader-arc"
-            d="M27.96,34.02c-16.14,15.92-14.55-9.68-4.89-17.38l-1.19-4.22c-8.03,7.8-14.28,19.79-14.67,31.1C7.05,62.1,24.14,52.41,30.37,42.6C29.69,40.16,28.38,35.52,27.96,34.02z"
-          />
-        </svg>
-        <div className="route-loader-bar"><span /></div>
-      </div>
+      <BrandLoader />
     </div>
   );
 }
