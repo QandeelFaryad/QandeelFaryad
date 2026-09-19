@@ -1,6 +1,6 @@
 /**
  * QORLIQ's signature loader: the mark drawn in outline then filled, two orbits, an
- * ambient glow and an indeterminate bar. Shared by the first-visit intro (root
+ * ambient glow and an indeterminate bar, in the site's navy, teal and orange. Shared by the first-visit intro (root
  * layout) and the page-to-page RouteLoader, which only differ in how the overlay
  * around it arrives and leaves. Purely visual, so it's hidden from screen readers;
  * each host announces its own loading state. Styles: "Brand loader" in globals.css.
@@ -26,7 +26,11 @@ export default function BrandLoader() {
             />
           </svg>
         </div>
-        <p className="bl-caption">PREPARING YOUR EXPERIENCE</p>
+        {/* Styled like the site's section labels: pulsing orange dot, Syne capitals. */}
+        <p className="bl-caption">
+          <span className="bl-dot dot-ping" />
+          Preparing your experience
+        </p>
         <div className="bl-track">
           <span />
         </div>

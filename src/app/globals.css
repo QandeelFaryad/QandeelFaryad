@@ -227,7 +227,8 @@ html.intro-seen { --reveal-offset: 0ms; }
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 45%, #082326 0%, #040c0e 42%, #020506 80%);
+  /* The hero gradient's navy, lit a little brighter behind the mark. */
+  background: radial-gradient(ellipse at 50% 45%, var(--color-grad-4) 0%, var(--color-grad-2) 48%, var(--color-grad-1) 85%);
 }
 .intro {
   z-index: 100;
@@ -261,9 +262,21 @@ html.intro-seen { --reveal-offset: 0ms; }
   width: 280px;
   height: 280px;
   border-radius: 50%;
-  background: #19d9d512;
+  background: #19d9d51f;
   filter: blur(45px);
   animation: bl-breathe 4s ease-in-out infinite;
+}
+/* A faint orange glow drifting off-centre: the site's spark colour. */
+.bl-aura::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  bottom: 10px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #ff5a2c1f;
+  filter: blur(30px);
 }
 .bl-center { position: relative; display: flex; flex-direction: column; align-items: center; }
 .bl-emblem {
@@ -298,7 +311,7 @@ html.intro-seen { --reveal-offset: 0ms; }
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px solid #19d9d51c;
+  border: 1px solid #19d9d526;
   animation: bl-spin 4s linear infinite;
 }
 .bl-orbit::before {
@@ -318,30 +331,43 @@ html.intro-seen { --reveal-offset: 0ms; }
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #9afffb;
-  box-shadow: 0 0 12px 3px #19d9d588;
+  background: var(--color-spark);
+  box-shadow: 0 0 12px 3px #ff5a2c88;
 }
 .bl-orbit-two { inset: 17px; opacity: 0.35; animation-direction: reverse; animation-duration: 7s; }
-.bl-orbit-two::after { width: 3px; height: 3px; }
-.bl-caption { padding: 0 12px; font-size: 10px; letter-spacing: 3px; text-align: center; color: #c0dddd; }
+.bl-orbit-two::after { width: 3px; height: 3px; background: #9afffb; box-shadow: 0 0 10px 2px #19d9d588; }
+.bl-caption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  text-align: center;
+  color: #fff;
+}
+.bl-dot { width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: var(--color-spark); }
 .bl-track {
   width: 128px;
   height: 2px;
   margin-top: 21px;
   overflow: hidden;
   border-radius: 2px;
-  background: #ffffff12;
+  background: #ffffff1a;
 }
 .bl-track > span {
   display: block;
   width: 45%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  background: linear-gradient(90deg, transparent, var(--color-accent) 65%, var(--color-spark));
   animation: bl-loading 1.9s ease-in-out infinite;
 }
-.bl-subtitle { margin-top: 16px; font-size: 12px; letter-spacing: 0.3px; color: #6b8b8c; }
+.bl-subtitle { margin-top: 16px; font-size: 13px; letter-spacing: 0.2px; color: var(--color-on-dark); }
 @media (max-width: 420px) {
-  .bl-caption { letter-spacing: 2px; }
+  .bl-caption { letter-spacing: 1.5px; }
 }
 
 @keyframes bl-draw-in {
