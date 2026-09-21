@@ -1,4 +1,5 @@
 import { SectionLabel, PillButton } from "./ui";
+import { getMessages } from "@/i18n/server";
 import { Reveal, Counter, PointerGlow, Tilt } from "./motion";
 import BookProcess from "./BookProcess";
 
@@ -8,13 +9,13 @@ export type ProcessStep = { no: string; title: string; body: string };
 /** Process steps as a book whose pages turn while the section is pinned. */
 export function DesignProcess({
   steps,
-  label = "HOW WE WORK",
-  heading = "OUR DESIGN THINKING PROCESS",
+  label,
+  heading,
   dark = false,
 }: {
   steps: ProcessStep[];
-  label?: string;
-  heading?: string;
+  label: string;
+  heading: string;
   dark?: boolean;
 }) {
   const header = (
@@ -51,11 +52,11 @@ export type Stat = {
 };
 
 export function StatsCounters({
-  label = "METRICS",
+  label,
   stats,
   dark = false,
 }: {
-  label?: string;
+  label: string;
   stats: Stat[];
   dark?: boolean;
 }) {
@@ -101,69 +102,9 @@ export function StatsCounters({
   );
 }
 
-/* ---------------------------------------------------------------------- Awards */
-export type Award = { year: string; title: string; status: string };
-
-export function Awards({
-  label = "RECOGNITION",
-  tag = "( AWARDS! )",
-  awards,
-  dark = true,
-}: {
-  label?: string;
-  tag?: string;
-  awards: Award[];
-  dark?: boolean;
-}) {
-  return (
-    <section className={dark ? "bg-ink" : "bg-cloud"}>
-      <div className="container-x flex flex-col gap-12 py-24 [padding-block:96px]">
-        <Reveal>
-          <div className="flex items-center gap-4">
-            <SectionLabel dark={dark}>{label}</SectionLabel>
-            <span className="font-display text-[13px] font-bold uppercase text-accent">{tag}</span>
-          </div>
-        </Reveal>
-        <div className="flex flex-col">
-          {awards.map((a, i) => (
-            <Reveal key={i} delay={i * 70}>
-              <div
-                className={`group grid grid-cols-[80px_1fr_auto] items-center gap-4 border-t py-7 transition-colors sm:gap-8 ${
-                  dark ? "border-white/10 hover:bg-white/[0.03]" : "border-line hover:bg-white"
-                }`}
-              >
-                <span className="font-display text-[18px] font-bold text-accent">{a.year}</span>
-                <span
-                  className={`font-display text-[clamp(18px,2.4vw,28px)] font-bold uppercase transition-transform duration-300 group-hover:translate-x-2 ${
-                    dark ? "text-white" : "text-ink"
-                  }`}
-                >
-                  {a.title}
-                </span>
-                <span
-                  className={`text-[13px] font-semibold uppercase tracking-wide ${
-                    dark ? "text-on-dark" : "text-muted"
-                  }`}
-                >
-                  {a.status}
-                </span>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ------------------------------------------------------------------- CtaBanner */
-export function CtaBanner({
-  heading = "READY TO BUILD SOMETHING EXCEPTIONAL?",
-  sub = "Let's turn your vision into a digital experience that performs.",
-}: {
-  heading?: string;
-  sub?: string;
-}) {
+export async function CtaBanner({ heading, sub }: { heading?: string; sub?: string }) {
+  const t = await getMessages();
   return (
     <section className="container-x py-24 [padding-block:96px]">
       <Reveal scale>
@@ -171,11 +112,11 @@ export function CtaBanner({
           <PointerGlow />
           <div className="relative mx-auto flex max-w-[840px] flex-col items-center gap-8">
             <h2 className="font-display text-[clamp(32px,5.5vw,60px)] font-bold tracking-[-0.015em] uppercase leading-[1.02] text-white">
-              {heading}
+              {heading ?? t.sections.ctaHeading}
             </h2>
-            <p className="max-w-[520px] text-[17px] leading-[1.6] text-white/85">{sub}</p>
+            <p className="max-w-[520px] text-[17px] leading-[1.6] text-white/85">{sub ?? t.sections.ctaSub}</p>
             <PillButton href="/contact" className="bg-white">
-              Start a Project
+              {t.common.startProject}
             </PillButton>
           </div>
         </div>

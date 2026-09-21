@@ -1,7 +1,8 @@
 /**
- * Content for case studies, journal posts, and open roles.
- * NOTE: project details, results, and article copy are placeholder text —
- * replace with real client work before launch.
+ * Structural content and the values the contact form submits. Everything visitors
+ * read is in src/i18n/messages (one file per language); what's here is either
+ * data (slugs, images, partner names) or the English fallback for content the
+ * admin panel manages (case studies, posts, roles).
  */
 
 /* ------------------------------------------------------------------ Services */
@@ -51,6 +52,213 @@ export const COUNTRIES = [
   "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela",
   "Vietnam", "Yemen", "Zambia", "Zimbabwe",
 ];
+
+
+/**
+ * ISO 3166 codes for COUNTRIES, so the form can show each name in the page's
+ * language (Intl.DisplayNames) while still submitting the English name above.
+ */
+export const COUNTRY_CODES: Record<string, string> = {
+  "Afghanistan": "AF",
+  "Albania": "AL",
+  "Algeria": "DZ",
+  "Andorra": "AD",
+  "Angola": "AO",
+  "Antigua and Barbuda": "AG",
+  "Argentina": "AR",
+  "Armenia": "AM",
+  "Australia": "AU",
+  "Austria": "AT",
+  "Azerbaijan": "AZ",
+  "Bahamas": "BS",
+  "Bahrain": "BH",
+  "Bangladesh": "BD",
+  "Barbados": "BB",
+  "Belarus": "BY",
+  "Belgium": "BE",
+  "Belize": "BZ",
+  "Benin": "BJ",
+  "Bhutan": "BT",
+  "Bolivia": "BO",
+  "Bosnia and Herzegovina": "BA",
+  "Botswana": "BW",
+  "Brazil": "BR",
+  "Brunei": "BN",
+  "Bulgaria": "BG",
+  "Burkina Faso": "BF",
+  "Burundi": "BI",
+  "Cabo Verde": "CV",
+  "Cambodia": "KH",
+  "Cameroon": "CM",
+  "Canada": "CA",
+  "Central African Republic": "CF",
+  "Chad": "TD",
+  "Chile": "CL",
+  "China": "CN",
+  "Colombia": "CO",
+  "Comoros": "KM",
+  "Congo": "CG",
+  "Congo (DRC)": "CD",
+  "Costa Rica": "CR",
+  "Côte d'Ivoire": "CI",
+  "Croatia": "HR",
+  "Cuba": "CU",
+  "Cyprus": "CY",
+  "Czechia": "CZ",
+  "Denmark": "DK",
+  "Djibouti": "DJ",
+  "Dominica": "DM",
+  "Dominican Republic": "DO",
+  "Ecuador": "EC",
+  "Egypt": "EG",
+  "El Salvador": "SV",
+  "Equatorial Guinea": "GQ",
+  "Eritrea": "ER",
+  "Estonia": "EE",
+  "Eswatini": "SZ",
+  "Ethiopia": "ET",
+  "Fiji": "FJ",
+  "Finland": "FI",
+  "France": "FR",
+  "Gabon": "GA",
+  "Gambia": "GM",
+  "Georgia": "GE",
+  "Germany": "DE",
+  "Ghana": "GH",
+  "Greece": "GR",
+  "Grenada": "GD",
+  "Guatemala": "GT",
+  "Guinea": "GN",
+  "Guinea-Bissau": "GW",
+  "Guyana": "GY",
+  "Haiti": "HT",
+  "Honduras": "HN",
+  "Hong Kong": "HK",
+  "Hungary": "HU",
+  "Iceland": "IS",
+  "India": "IN",
+  "Indonesia": "ID",
+  "Iran": "IR",
+  "Iraq": "IQ",
+  "Ireland": "IE",
+  "Israel": "IL",
+  "Italy": "IT",
+  "Jamaica": "JM",
+  "Japan": "JP",
+  "Jordan": "JO",
+  "Kazakhstan": "KZ",
+  "Kenya": "KE",
+  "Kiribati": "KI",
+  "Kosovo": "XK",
+  "Kuwait": "KW",
+  "Kyrgyzstan": "KG",
+  "Laos": "LA",
+  "Latvia": "LV",
+  "Lebanon": "LB",
+  "Lesotho": "LS",
+  "Liberia": "LR",
+  "Libya": "LY",
+  "Liechtenstein": "LI",
+  "Lithuania": "LT",
+  "Luxembourg": "LU",
+  "Macao": "MO",
+  "Madagascar": "MG",
+  "Malawi": "MW",
+  "Malaysia": "MY",
+  "Maldives": "MV",
+  "Mali": "ML",
+  "Malta": "MT",
+  "Marshall Islands": "MH",
+  "Mauritania": "MR",
+  "Mauritius": "MU",
+  "Mexico": "MX",
+  "Micronesia": "FM",
+  "Moldova": "MD",
+  "Monaco": "MC",
+  "Mongolia": "MN",
+  "Montenegro": "ME",
+  "Morocco": "MA",
+  "Mozambique": "MZ",
+  "Myanmar": "MM",
+  "Namibia": "NA",
+  "Nauru": "NR",
+  "Nepal": "NP",
+  "Netherlands": "NL",
+  "New Zealand": "NZ",
+  "Nicaragua": "NI",
+  "Niger": "NE",
+  "Nigeria": "NG",
+  "North Korea": "KP",
+  "North Macedonia": "MK",
+  "Norway": "NO",
+  "Oman": "OM",
+  "Pakistan": "PK",
+  "Palau": "PW",
+  "Palestine": "PS",
+  "Panama": "PA",
+  "Papua New Guinea": "PG",
+  "Paraguay": "PY",
+  "Peru": "PE",
+  "Philippines": "PH",
+  "Poland": "PL",
+  "Portugal": "PT",
+  "Qatar": "QA",
+  "Romania": "RO",
+  "Russia": "RU",
+  "Rwanda": "RW",
+  "Saint Kitts and Nevis": "KN",
+  "Saint Lucia": "LC",
+  "Saint Vincent and the Grenadines": "VC",
+  "Samoa": "WS",
+  "San Marino": "SM",
+  "Sao Tome and Principe": "ST",
+  "Saudi Arabia": "SA",
+  "Senegal": "SN",
+  "Serbia": "RS",
+  "Seychelles": "SC",
+  "Sierra Leone": "SL",
+  "Singapore": "SG",
+  "Slovakia": "SK",
+  "Slovenia": "SI",
+  "Solomon Islands": "SB",
+  "Somalia": "SO",
+  "South Africa": "ZA",
+  "South Korea": "KR",
+  "South Sudan": "SS",
+  "Spain": "ES",
+  "Sri Lanka": "LK",
+  "Sudan": "SD",
+  "Suriname": "SR",
+  "Sweden": "SE",
+  "Switzerland": "CH",
+  "Syria": "SY",
+  "Taiwan": "TW",
+  "Tajikistan": "TJ",
+  "Tanzania": "TZ",
+  "Thailand": "TH",
+  "Timor-Leste": "TL",
+  "Togo": "TG",
+  "Tonga": "TO",
+  "Trinidad and Tobago": "TT",
+  "Tunisia": "TN",
+  "Türkiye": "TR",
+  "Turkmenistan": "TM",
+  "Tuvalu": "TV",
+  "Uganda": "UG",
+  "Ukraine": "UA",
+  "United Arab Emirates": "AE",
+  "United Kingdom": "GB",
+  "United States": "US",
+  "Uruguay": "UY",
+  "Uzbekistan": "UZ",
+  "Vanuatu": "VU",
+  "Vatican City": "VA",
+  "Venezuela": "VE",
+  "Vietnam": "VN",
+  "Yemen": "YE",
+  "Zambia": "ZM",
+  "Zimbabwe": "ZW",
+};
 
 /**
  * Follow-up questions shown only for the services a visitor picks. All optional.
@@ -152,54 +360,6 @@ export const SERVICES: Service[] = [
   },
 ];
 
-/** Microsoft solutions covered on the dedicated page (Company Profile, page 6). */
-export const MICROSOFT_SOLUTIONS = [
-  { title: "Microsoft 365", body: "Licensing, business email, and the productivity apps your team works in every day." },
-  { title: "Azure", body: "Cloud infrastructure and services, sized and configured around how your business actually runs." },
-  { title: "SharePoint", body: "Structured document storage with controlled access, so files are easy to find and safe to share." },
-  { title: "Microsoft Defender", body: "Threat protection across identities, devices, email, and cloud apps." },
-  { title: "Teams", body: "Internal communication and meetings, set up with the channels and permissions that suit your teams." },
-  { title: "Exchange Online", body: "Professional business email, hosted, secured, and supported." },
-  { title: "Security & Compliance", body: "User roles, data protection, and baseline compliance settings configured to your requirements." },
-  { title: "Cloud Migration", body: "Planning and moving your accounts, files, and services to the cloud with minimal disruption." },
-];
-
-/** Project areas (Company Profile, page 8). */
-export const PROJECT_AREAS = [
-  "Business websites",
-  "E-commerce stores",
-  "Web applications",
-  "Landing pages",
-  "Brand identity projects",
-  "Paid advertising campaigns",
-  "SEO improvement projects",
-  "Lead generation systems",
-  "Microsoft cloud and productivity support",
-  "Automation and AI workflow solutions",
-];
-
-/** Why businesses choose QORLIQ (Company Profile, page 9). */
-export const STRENGTHS = [
-  { title: "EXPERIENCED BUSINESS APPROACH", body: "QORLIQ operates under HOORAB GROUP OF COMPANIES LTD, giving the brand a strong business foundation and a professional approach to client service." },
-  { title: "COMPLETE DIGITAL SERVICES", body: "We provide a wide range of services under one brand, including websites, e-commerce, applications, branding, SEO, paid ads, lead generation, automation, AI, and Microsoft solutions." },
-  { title: "RELIABLE SERVICE", body: "We focus on clear timelines, proper communication, and professional delivery so clients can move forward with confidence." },
-  { title: "AFFORDABLE AND PRACTICAL SOLUTIONS", body: "Our services are designed to support businesses at different stages, from startups to growing companies, with solutions that match their goals and budget." },
-  { title: "FAST AND STRUCTURED DELIVERY", body: "We follow a clear process from consultation to planning, design, development, launch, and support. This helps projects stay organised and efficient." },
-  { title: "STRONG CUSTOMER SUPPORT", body: "We believe support is an important part of every service. Our team works closely with clients to understand their needs and provide guidance throughout the project." },
-  { title: "QUALITY STANDARDS", body: "Every project is handled with care, from design and content to functionality, performance, and user experience." },
-  { title: "CLIENT BENEFITS", body: "Working with QORLIQ helps businesses save time, build a professional image, reach more customers, improve digital performance, and prepare for long-term growth." },
-];
-
-export const BADGES = [
-  "UK REGISTERED COMPANY",
-  "GLOBAL SERVICE DELIVERY",
-  "MICROSOFT SOLUTIONS EXPERTISE",
-  "AI & AUTOMATION CAPABILITIES",
-  "DEDICATED SUPPORT",
-  "TRANSPARENT PRICING",
-  "END-TO-END DIGITAL SERVICES",
-];
-
 /** Partners and certifications (Company Profile, page 11). */
 export const PARTNERS = [
   "Microsoft",
@@ -216,63 +376,6 @@ export const PARTNERS = [
   "Makarim Altamayuz",
   "Nafth Safqa",
   "Aramak Real Estate",
-];
-
-/** Vision, mission, and values (Company Profile, page 3). */
-export const VISION =
-  "Our vision is to become a trusted digital solutions partner for businesses that want to grow with confidence, professionalism, and modern technology. We aim to support companies by building strong digital foundations that help them compete, expand, and succeed in their markets.";
-
-export const MISSION =
-  "Our mission is to deliver high-quality digital services that create real value for businesses. We work to provide practical, reliable, and effective solutions that help our clients improve their online presence, reach more customers, generate better leads, increase sales, and manage their digital operations more efficiently.";
-
-export const VALUES = [
-  "QUALITY",
-  "CUSTOMER SATISFACTION",
-  "PROFESSIONALISM",
-  "TRUST",
-  "INNOVATION",
-  "LONG-TERM GROWTH",
-];
-
-/** About copy (Company Profile, page 2). */
-export const ABOUT = {
-  whoWeAre: [
-    "QORLIQ is a digital services brand created to help businesses grow in a fast-changing digital world. Operated by HOORAB GROUP OF COMPANIES LTD, QORLIQ focuses on delivering practical, professional, and result-driven solutions for startups, small businesses, growing companies, and established organisations.",
-    "Our work is built around one clear purpose: helping businesses improve their online presence, attract customers, increase sales, and operate more efficiently through technology.",
-    "From website design and e-commerce development to lead generation, SEO, paid advertising, automation, AI, and Microsoft solutions, QORLIQ provides digital services that support real business growth.",
-  ],
-  ourStory:
-    "QORLIQ was developed under HOORAB GROUP with the vision of building a trusted digital services brand that combines creativity, technology, and business understanding. The company was established to meet the growing demand for professional digital solutions that are not only visually strong but also commercially effective. Many businesses need more than just a website; they need a complete digital foundation that supports marketing, customer communication, sales, automation, and long-term growth. QORLIQ was created to fill that gap by offering reliable, structured, and affordable digital services with a strong focus on quality, communication, and client satisfaction.",
-  whatWeDo:
-    "QORLIQ helps businesses design, build, promote, and improve their digital operations. We provide services across web development, e-commerce, application development, SEO, paid advertising, brand identity, lead generation, automation, AI, and Microsoft cloud solutions. Our approach is simple: understand the business, identify the goal, build the right solution, and support the client with professional service from start to finish.",
-};
-
-/** CEO message (Company Profile, page 10). */
-export const CEO_MESSAGE = {
-  heading: "BUILDING TRUST THROUGH QUALITY & INTEGRITY",
-  body: [
-    "At HOORAB GROUP, our journey is driven by a clear vision of building a business that stands for trust, quality, and long-term value. From the beginning, the goal has been to create more than just a company. The goal has been to build a strong business foundation that connects products, opportunities, and markets with professionalism and purpose.",
-    "Our CEO believes that real business success is built on commitment, consistency, and strong relationships. With a focus on retail, wholesale, sourcing, distribution, and digital business solutions, HOORAB GROUP was established to meet market needs through reliable supply solutions and customer-focused service.",
-    "Through QORLIQ, we are extending that same vision into the digital services sector. Businesses today need trusted partners who understand technology, branding, marketing, and growth. QORLIQ was created to support those needs with professional digital solutions that help companies move forward with confidence. The vision behind the company is simple: to grow through honesty, deliver through quality, and build partnerships that last.",
-  ],
-  quote:
-    "Our vision for HOORAB GROUP and QORLIQ is built on trust, quality, and long-term business growth. We believe in creating strong partnerships, delivering reliable solutions, and building a company that stands for professionalism and consistency in every market we serve.",
-  attribution: "CEO, HOORAB GROUP OF COMPANIES LTD",
-};
-
-/* ------------------------------------------------------------- Capabilities */
-/** Work QORLIQ has delivered — the capability list confirmed by the team. */
-export const DELIVERED = [
-  { title: "CRM", body: "CRM setup, customisation, and integration so sales and support teams work from a single record of the customer." },
-  { title: "Applications", body: "Web and business applications covering bookings, workflows, dashboards, and internal operations." },
-  { title: "Web Development", body: "Business websites, landing pages, and e-commerce stores built to be fast, responsive, and easy to update." },
-  { title: "Lead Generation", body: "Landing pages, forms, funnels, and campaign setup that turn traffic into qualified enquiries." },
-  { title: "Microsoft CSP", body: "Microsoft licensing through the Cloud Solution Provider programme, with Microsoft 365, Azure, security, and migration support." },
-  { title: "UX/UI", body: "Research-led interface design: user journeys, wireframes, prototypes, and design systems teams can build on." },
-  { title: "Government API Integration", body: "Connecting platforms to government and regulated APIs, including the authentication, data handling, and compliance that requires." },
-  { title: "Branding", body: "Logo design, colour direction, visual style, and brand assets that keep every touchpoint consistent." },
-  { title: "AI Integration", body: "Bringing AI into existing products and processes — assistants, content support, and customer response systems." },
-  { title: "Automation", body: "Automating manual workflows across the tools a business already uses, saving time and reducing errors." },
 ];
 
 /* -------------------------------------------------------------- Case studies */
@@ -335,7 +438,7 @@ export const CASE_STUDIES: CaseStudy[] = [
 
 /** Secondary imagery used in case study galleries. */
 /** One picture per service, for the home page's scrolling service list (see ServiceShowcase). */
-export const SERVICE_IMAGES: Record<string, { src: string; alt: string }> = {
+export const SERVICE_IMAGES: Record<string, { src: string; alt: string }> = { // alt text is translated in messages.services.<slug>.imageAlt
   "website-design": { src: "/assets/detail/sketch.jpg", alt: "Website wireframes sketched on paper" },
   "ecommerce-store": { src: "/assets/office/studio.jpg", alt: "A maker crafting products to sell" },
   "application-development": { src: "/assets/detail/code.jpg", alt: "Application code on a screen" },
@@ -360,7 +463,10 @@ export type Post = {
   /** Cover photo in /public/assets/journal. */
   image: string;
   cat: string;
+  /** Display date, in English. */
   date: string;
+  /** ISO date (YYYY-MM-DD), for formatting in the page's language. */
+  published?: string;
   readTime: string;
   title: string;
   excerpt: string;

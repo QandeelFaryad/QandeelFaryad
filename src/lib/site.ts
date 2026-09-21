@@ -45,43 +45,25 @@ export const SITE = {
   },
 };
 
-export type NavLink = { label: string; href: string };
+/** Navigation. Labels live in the messages (nav.<key>); hrefs are English paths. */
+export type NavLink = { key: "home" | "services" | "microsoftCsp" | "caseStudies" | "industries" | "about" | "blog" | "careers" | "contact"; href: string };
 
 export const NAV_LINKS: NavLink[] = [
-  { label: "Home", href: "/" },
-  { label: "Services", href: "/services" },
-  { label: "Microsoft CSP", href: "/microsoft-csp" },
-  { label: "Case Studies", href: "/case-studies" },
-  { label: "Industries", href: "/industries" },
-  { label: "About", href: "/about" },
-  { label: "Blog", href: "/blog" },
-  { label: "Careers", href: "/careers" },
-  { label: "Contact", href: "/contact" },
+  { key: "home", href: "/" },
+  { key: "services", href: "/services" },
+  { key: "microsoftCsp", href: "/microsoft-csp" },
+  { key: "caseStudies", href: "/case-studies" },
+  { key: "industries", href: "/industries" },
+  { key: "about", href: "/about" },
+  { key: "blog", href: "/blog" },
+  { key: "careers", href: "/careers" },
+  { key: "contact", href: "/contact" },
 ];
 
 /** Shown directly in the header bar (desktop); everything else is in the menu. */
-export const HEADER_LINKS: NavLink[] = [
-  { label: "Home", href: "/" },
-  { label: "Services", href: "/services" },
-  { label: "Microsoft CSP", href: "/microsoft-csp" },
-];
-
-/** Metadata helper so page titles and social previews stay in sync. */
-export function pageMeta(title: string, description: string) {
-  return {
-    title,
-    description,
-    // Child metadata replaces the parent's openGraph object, so re-attach the
-    // site-wide card; routes with their own opengraph-image file override it.
-    openGraph: {
-      title: `${title} — ${SITE.name}`,
-      description,
-      images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
-    },
-  };
-}
+export const HEADER_LINKS: NavLink[] = NAV_LINKS.slice(0, 3);
 
 /** Where to send someone who wants to talk: an email to arrange a time. */
-export function callHref() {
-  return `mailto:${SITE.email}?subject=${encodeURIComponent("Let's book a call")}`;
+export function callHref(subject: string) {
+  return `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}`;
 }

@@ -1,8 +1,9 @@
 "use client";
 
 import Script from "next/script";
-import Link from "next/link";
+import Link from "@/i18n/link";
 import { CONSENT_KEY, GA_ID, GTM_ID } from "@/lib/analytics";
+import { useMessages } from "@/i18n/client";
 import { useCallback, useEffect, useState } from "react";
 
 const KEY = CONSENT_KEY;
@@ -39,6 +40,7 @@ function gtag(..._args: unknown[]) {
 }
 
 export default function Consent() {
+  const t = useMessages().consent;
   const [choice, setChoice] = useState<Choice>(null);
   const [visible, setVisible] = useState(false);
 
@@ -80,30 +82,29 @@ export default function Consent() {
       {visible ? (
         <div
           role="dialog"
-          aria-label="Cookie choices"
+          aria-label={t.dialogLabel}
           className="fixed inset-x-3 bottom-3 z-[55] mx-auto max-w-[680px] rounded-3xl border border-white/10 bg-ink p-6 shadow-2xl sm:inset-x-5 sm:bottom-5 sm:p-7"
         >
-          <p className="font-display text-[15px] font-bold uppercase text-white">Cookies</p>
+          <p className="font-display text-[15px] font-bold uppercase text-white">{t.title}</p>
           <p className="mt-3 text-[14px] leading-[1.6] text-on-dark">
-            We use essential cookies to make this site work. With your permission we&apos;d also
-            like to measure which pages are useful. Read our{" "}
+            {t.before}{" "}
             <Link href="/legal/cookies" className="font-semibold text-white underline underline-offset-2">
-              cookie policy
+              {t.link}
             </Link>
-            .
+            {t.after}
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <button
               onClick={() => decide("accepted")}
               className="rounded-full bg-accent px-6 py-3 font-display text-[13px] font-bold uppercase text-ink transition-transform hover:-translate-y-0.5"
             >
-              Accept analytics
+              {t.accept}
             </button>
             <button
               onClick={() => decide("rejected")}
               className="rounded-full border border-white/25 px-6 py-3 font-display text-[13px] font-bold uppercase text-white transition-colors hover:border-white/60"
             >
-              Essential only
+              {t.reject}
             </button>
           </div>
         </div>

@@ -1,5 +1,8 @@
 "use client";
 
+import { useLocale, useMessages } from "@/i18n/client";
+import { dir } from "@/i18n/config";
+
 import {
   useEffect,
   useRef,
@@ -141,6 +144,17 @@ function coverRemaining() {
   return Math.max(loader, 820 - now);
 }
 
+/**
+ * Right-to-left text is animated as one block rather than word by word: each word
+ * would be its own inline-block, and that breaks the browser's bidirectional
+ * ordering, so an embedded Latin run (e.g. HOORAB GROUP OF COMPANIES LTD) comes
+ * out with its words reversed.
+ */
+function useWords(text: string): string[] {
+  const rtl = dir(useLocale()) === "rtl";
+  return rtl ? [text] : text.split(" ");
+}
+
 /* -------------------------------------------------------------- SplitReveal */
 /** Reveals a headline word by word, each word rising out of a clipping mask. */
 export function SplitReveal({
@@ -183,7 +197,7 @@ export function SplitReveal({
     return () => io.disconnect();
   }, []);
 
-  const words = text.split(" ");
+  const words = useWords(text);
   return (
     <Tag ref={ref} className={`split ${shown ? "is-visible" : ""} ${className}`} data-onload={onLoad || undefined}>
       <span className="sr-only">{text}</span>
@@ -255,7 +269,7 @@ export function FadeWords({
     return () => io.disconnect();
   }, []);
 
-  const words = text.split(" ").filter(Boolean);
+  const words = useWords(text).filter(Boolean);
   return (
     <Tag ref={ref} className={`fade-words ${shown ? "is-visible" : ""} ${className}`} data-onload={onLoad || undefined}>
       {words.map((w, i) => (
@@ -758,6 +772,7 @@ export function MarqueeTrack({ children, speed = 1.2 }: { children: ReactNode; s
 /* ---------------------------------------------------------------- BackToTop */
 /** Floating button with a ring that fills as you read down the page. */
 export function BackToTop() {
+  const label = useMessages().common.backToTop;
   const ring = useRef<SVGCircleElement | null>(null);
   const [shown, setShown] = useState(false);
   const C = 2 * Math.PI * 22;
@@ -794,7 +809,7 @@ export function BackToTop() {
   return (
     <button
       onClick={toTop}
-      aria-label="Back to top"
+      aria-label={label}
       tabIndex={shown ? 0 : -1}
       className={`group fixed bottom-5 right-5 z-40 flex size-14 items-center justify-center rounded-full bg-ink text-white shadow-lg transition-[opacity,translate,scale] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-110 ${
         shown ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"

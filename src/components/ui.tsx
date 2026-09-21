@@ -1,11 +1,11 @@
-import Link from "next/link";
+import Link from "@/i18n/link";
 import type { ReactNode } from "react";
 import { ArrowUpRight } from "./icons";
 import { Magnetic, MarqueeTrack } from "./motion";
 
 /* ---------------------------------------------------------------- PillButton */
 const pillClass =
-  "group inline-flex shrink-0 items-center gap-3 rounded-full bg-accent py-3 pl-6 pr-3 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-60";
+  "group inline-flex shrink-0 items-center gap-3 rounded-full bg-accent py-3 ps-6 pe-3 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-60";
 
 function PillInner({ children }: { children: ReactNode }) {
   return (
@@ -22,7 +22,7 @@ function PillInner({ children }: { children: ReactNode }) {
         </span>
       </span>
       <span className="flex size-7 items-center justify-center rounded-[14px] bg-ink text-white transition-[transform,background-color,color] duration-300 group-hover:rotate-45 group-hover:bg-spark group-hover:text-ink">
-        <ArrowUpRight className="size-3" />
+        <ArrowUpRight className="size-3 rtl:-scale-x-100" />
       </span>
     </>
   );

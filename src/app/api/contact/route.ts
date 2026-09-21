@@ -23,6 +23,9 @@
 
 import { COUNTRIES, PROJECT_STAGES, SERVICE_OPTIONS, SERVICE_QUESTIONS } from "@/lib/content";
 import { createServiceClient, isServiceConfigured } from "@/lib/supabase/service";
+import { DEFAULT_LOCALE, isLocale } from "@/i18n/config";
+import { loadMessages } from "@/i18n/load";
+import { fmt } from "@/i18n/format";
 
 type Kind = "project" | "application" | "newsletter";
 
@@ -210,7 +213,7 @@ async function save(
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
   if (throttled(ip)) {
-    return Response.json({ error: "Too many submissions. Please try again in a minute." }, { status: 429 });
+    return Response.json({ error: "Too many submissions. Please try again in a minute.", code: "throttled" }, { status: 429 });
   }
 
   let body: Record<string, unknown>;
@@ -225,57 +228,57 @@ export async function POST(request: Request) {
       body = await request.json();
     }
   } catch {
-    return Response.json({ error: "Invalid request." }, { status: 400 });
+    return Response.json({ error: "Invalid request.", code: "invalid" }, { status: 400 });
   }
 
   // Honeypot: real visitors never see this field.
   if (clean(body.website)) return Response.json({ ok: true });
 
   if (!(await botCheck(clean(body.turnstileToken, 4000), ip))) {
-    return Response.json({ error: "We couldn't verify that you're human. Please try again." }, { status: 400 });
+    return Response.json({ error: "We couldn't verify that you're human. Please try again.", code: "bot" }, { status: 400 });
   }
 
   const kind = clean(body.kind) as Kind;
   if (!["project", "application", "newsletter"].includes(kind)) {
-    return Response.json({ error: "Unknown form." }, { status: 400 });
+    return Response.json({ error: "Unknown form.", code: "unknownForm" }, { status: 400 });
   }
 
   const email = clean(body.email);
   const name = clean(body.name);
   if (!EMAIL_RE.test(email)) {
-    return Response.json({ error: "Please enter a valid email address." }, { status: 400 });
+    return Response.json({ error: "Please enter a valid email address.", code: "email" }, { status: 400 });
   }
   if (kind !== "newsletter" && !name) {
-    return Response.json({ error: "Please tell us your name." }, { status: 400 });
+    return Response.json({ error: "Please tell us your name.", code: "name" }, { status: 400 });
   }
   if (cv && (kind !== "application" || !CV_TYPES[cv.type])) {
-    return Response.json({ error: "Please upload your CV as a PDF or Word document." }, { status: 400 });
+    return Response.json({ error: "Please upload your CV as a PDF or Word document.", code: "cvType" }, { status: 400 });
   }
   if (cv && cv.size > CV_MAX_BYTES) {
-    return Response.json({ error: "Your CV is larger than 10MB. Please upload a smaller file." }, { status: 400 });
+    return Response.json({ error: "Your CV is larger than 10MB. Please upload a smaller file.", code: "cvSize" }, { status: 400 });
   }
 
   let project: Parameters<typeof save>[4];
   if (kind === "project") {
     // Mirror the browser's required fields (everything on the final step but the website).
     if (!clean(body.company)) {
-      return Response.json({ error: "Please tell us your company name." }, { status: 400 });
+      return Response.json({ error: "Please tell us your company name.", code: "company" }, { status: 400 });
     }
     const country = clean(body.country, 60);
     if (!COUNTRIES.includes(country)) {
-      return Response.json({ error: "Please choose your country from the list." }, { status: 400 });
+      return Response.json({ error: "Please choose your country from the list.", code: "country" }, { status: 400 });
     }
     const phone = clean(body.phone, 30);
     if (!phone || !validPhone(phone)) {
-      return Response.json({ error: "Please check your phone number, including the country code." }, { status: 400 });
+      return Response.json({ error: "Please check your phone number, including the country code.", code: "phone" }, { status: 400 });
     }
     // Optional: blank is fine, but anything typed has to be a real address.
     const siteUrl = normaliseUrl(clean(body.site_url));
     if (siteUrl === null) {
-      return Response.json({ error: "Please check your website address, e.g. yourcompany.com." }, { status: 400 });
+      return Response.json({ error: "Please check your website address, e.g. yourcompany.com.", code: "website" }, { status: 400 });
     }
     if (!clean(body.message, LIMITS.message)) {
-      return Response.json({ error: "Please tell us a little about the project." }, { status: 400 });
+      return Response.json({ error: "Please tell us a little about the project.", code: "message" }, { status: 400 });
     }
     const stage = clean(body.stage);
     project = {
@@ -328,7 +331,7 @@ export async function POST(request: Request) {
         : `Newsletter sign-up — ${email}`;
   const stored = await save(kind, body, { name, email }, cv, project);
   if (stored === "failed" && cv) {
-    return Response.json({ error: "We couldn't upload your CV. Please try again, or share a link instead." }, { status: 502 });
+    return Response.json({ error: "We couldn't upload your CV. Please try again, or share a link instead.", code: "cvUpload" }, { status: 502 });
   }
   if (cv && stored === "saved") fields.push(["CV", "Uploaded — download it from the admin panel"]);
 
@@ -356,7 +359,7 @@ export async function POST(request: Request) {
       return Response.json({ ok: true });
     }
     console.error("[contact] Neither Supabase nor RESEND_API_KEY / CONTACT_TO_EMAIL are set");
-    return Response.json({ error: "Our form is temporarily unavailable." }, { status: 503 });
+    return Response.json({ error: "Our form is temporarily unavailable.", code: "unavailable" }, { status: 503 });
   }
 
   try {
@@ -370,21 +373,21 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("[contact] Resend error", err);
     // Already saved for the admin panel, so the visitor's submission still counts.
-    if (stored !== "saved") return Response.json({ error: "We couldn't send your message." }, { status: 502 });
+    if (stored !== "saved") return Response.json({ error: "We couldn't send your message.", code: "send" }, { status: 502 });
   }
 
   // Acknowledge the sender so they know it arrived. Never block on this.
   if (kind !== "newsletter") {
     const first = name.split(" ")[0];
+    const lang = clean(body.lang, 5);
+    const t = (await loadMessages(isLocale(lang) ? lang : DEFAULT_LOCALE)).email;
     const acknowledgement =
-      kind === "project"
-        ? `Hi ${first},\n\nThanks for getting in touch with QORLIQ. We've received your enquiry and a member of our team will reply within one business day.\n\nHere's what you sent us:\n\n${text}\n\nIf anything changes in the meantime, just reply to this email.\n\n— QORLIQ\nsupport@qorliq.com\nA digital services brand operated by HOORAB GROUP OF COMPANIES LTD`
-        : `Hi ${first},\n\nThanks for applying to QORLIQ. We've received your application and review every one — we'll be in touch within two weeks.\n\n— QORLIQ\nsupport@qorliq.com`;
+      kind === "project" ? fmt(t.projectBody, { first, summary: text }) : fmt(t.applicationBody, { first });
     try {
       await send({
         from,
         to: [email],
-        subject: kind === "project" ? "We've received your enquiry — QORLIQ" : "We've received your application — QORLIQ",
+        subject: kind === "project" ? t.projectSubject : t.applicationSubject,
         text: acknowledgement,
       });
     } catch (err) {

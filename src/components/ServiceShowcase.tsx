@@ -1,10 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/i18n/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Reveal } from "./motion";
 import { ImageFill } from "./ui";
-import { SERVICE_IMAGES, type Service } from "@/lib/content";
+import { SERVICE_IMAGES } from "@/lib/content";
+
+/** A service as shown here, already in the page's language. */
+export type ShowcaseService = { slug: string; no: string; title: string; body: string; imageAlt: string };
 
 /**
  * The home page's service list beside a sticky image. On large screens the image
@@ -28,7 +31,7 @@ const ENTRANCES = [
   "svc-in-blur",
   "svc-in-wipe-down",
 ];
-export default function ServiceShowcase({ services }: { services: Service[] }) {
+export default function ServiceShowcase({ services }: { services: ShowcaseService[] }) {
   const [{ active, previous }, setShown] = useState({ active: 0, previous: -1 });
   const setActive = useCallback(
     (next: number) => setShown((cur) => (cur.active === next ? cur : { active: next, previous: cur.active })),
@@ -90,7 +93,7 @@ export default function ServiceShowcase({ services }: { services: Service[] }) {
                       {s.title}
                     </h3>
                   </div>
-                  <span className="text-ink/30 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-accent">↗</span>
+                  <span className="text-ink/30 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-accent rtl:-scale-x-100 rtl:group-hover:-translate-x-1">↗</span>
                 </div>
                 <p className="max-w-[560px] text-[15px] leading-[1.6] text-ink/70">{s.body}</p>
               </Link>
@@ -119,7 +122,7 @@ export default function ServiceShowcase({ services }: { services: Service[] }) {
                   } ${i === 0 ? "" : "hidden lg:block"}`}
                 >
                   <div className={`h-full w-full ${i === active && previous !== -1 ? "svc-settle" : ""}`}>
-                    <ImageFill label={img.alt} src={img.src} rounded="rounded-none" />
+                    <ImageFill label={s.imageAlt} src={img.src} rounded="rounded-none" />
                   </div>
                 </div>
               );

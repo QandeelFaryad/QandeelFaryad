@@ -34,6 +34,25 @@
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* ------------------------------------------------------------ Languages */
+/* Syne (display) has no Cyrillic or Arabic, so those languages swap the stacks. The
+   extra fonts aren't preloaded (lib/fonts.ts), so other languages never fetch them. */
+html:lang(ru) {
+  --font-display: var(--font-unbounded), var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+}
+html:lang(ar) {
+  --font-display: var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+}
+/* Arabic letters join; any letter-spacing pulls them apart. The site tracks its
+   capitals everywhere, so reset it wholesale, and give the script room to breathe. */
+html:lang(ar) * {
+  letter-spacing: 0 !important;
+}
+html:lang(ar) body {
+  line-height: 1.7;
+}
+
 @layer base {
   * {
     box-sizing: border-box;

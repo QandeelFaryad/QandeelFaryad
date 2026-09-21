@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { holdRevealsUntil } from "./motion";
 import BrandLoader from "./BrandLoader";
+import { useMessages } from "@/i18n/client";
 
 /** Loader fading in, before the route change starts. */
 const COVER_MS = 420;
@@ -23,6 +24,7 @@ type Phase = "idle" | "in" | "out";
  */
 export default function RouteLoader() {
   const router = useRouter();
+  const t = useMessages();
   const pathname = usePathname();
   const [phase, setPhase] = useState<Phase>("idle");
   const busy = useRef(false);
@@ -101,8 +103,8 @@ export default function RouteLoader() {
       role="status"
       style={{ viewTransitionName: "route-loader" }}
     >
-      <span className="sr-only">Loading page</span>
-      <BrandLoader />
+      <span className="sr-only">{t.common.loadingPage}</span>
+      <BrandLoader caption={t.loader.caption} subtitle={t.loader.subtitle} />
     </div>
   );
 }

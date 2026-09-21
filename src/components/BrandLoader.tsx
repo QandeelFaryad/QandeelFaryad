@@ -5,7 +5,7 @@
  * around it arrives and leaves. Purely visual, so it's hidden from screen readers;
  * each host announces its own loading state. Styles: "Brand loader" in globals.css.
  */
-export default function BrandLoader() {
+export default function BrandLoader({ caption, subtitle }: { caption: string; subtitle: string }) {
   return (
     <div className="brand-loader" aria-hidden="true">
       <div className="bl-aura" />
@@ -29,12 +29,12 @@ export default function BrandLoader() {
         {/* Styled like the site's section labels: pulsing orange dot, Syne capitals. */}
         <p className="bl-caption">
           <span className="bl-dot dot-ping" />
-          Preparing your experience
+          {caption}
         </p>
         <div className="bl-track">
           <span />
         </div>
-        <p className="bl-subtitle">A moment of possibility.</p>
+        <p className="bl-subtitle">{subtitle}</p>
       </div>
     </div>
   );

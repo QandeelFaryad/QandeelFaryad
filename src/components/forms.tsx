@@ -1,11 +1,16 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import Link from "@/i18n/link";
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { PlusIcon } from "./icons";
 import { PillSubmit } from "./ui";
-import { COUNTRIES, PROJECT_STAGES, SERVICE_OPTIONS, SERVICE_QUESTIONS } from "@/lib/content";
+import { COUNTRIES, COUNTRY_CODES, PROJECT_STAGES, SERVICE_OPTIONS, SERVICE_QUESTIONS } from "@/lib/content";
 import { SITE } from "@/lib/site";
+import { useLocale, useMessages } from "@/i18n/client";
+import { fmt } from "@/i18n/format";
+import type { Locale } from "@/i18n/config";
+
+type FormMessages = ReturnType<typeof useMessages>["form"];
 
 /* ----------------------------------------------------------------- Accordion */
 export function Accordion({ items }: { items: { q: string; a: string }[] }) {
@@ -23,16 +28,10 @@ export function Accordion({ items }: { items: { q: string; a: string }[] }) {
                 aria-expanded={isOpen}
                 aria-controls={`${id}-a${i}`}
                 onClick={() => setOpen(isOpen ? null : i)}
-                className="flex w-full items-center justify-between gap-6 py-7 text-left"
+                className="flex w-full items-center justify-between gap-6 py-7 text-start"
               >
-                <span className="font-display text-[clamp(18px,2.2vw,24px)] font-bold tracking-[-0.015em] text-ink">
-                  {it.q}
-                </span>
-                <PlusIcon
-                  className={`size-6 shrink-0 text-accent transition-transform duration-300 ${
-                    isOpen ? "rotate-45" : ""
-                  }`}
-                />
+                <span className="font-display text-[clamp(18px,2.2vw,24px)] font-bold tracking-[-0.015em] text-ink">{it.q}</span>
+                <PlusIcon className={`size-6 shrink-0 text-accent transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`} />
               </button>
             </h3>
             <div
@@ -40,10 +39,7 @@ export function Accordion({ items }: { items: { q: string; a: string }[] }) {
               role="region"
               aria-labelledby={`${id}-q${i}`}
               className="grid transition-all duration-400 ease-out"
-              style={{
-                gridTemplateRows: isOpen ? "1fr" : "0fr",
-                opacity: isOpen ? 1 : 0,
-              }}
+              style={{ gridTemplateRows: isOpen ? "1fr" : "0fr", opacity: isOpen ? 1 : 0 }}
               inert={!isOpen}
             >
               <div className="overflow-hidden">
@@ -108,20 +104,34 @@ function leadContext() {
   };
 }
 
-async function submit(payload: Record<string, unknown>, file?: File | null) {
+/** Thrown by submit(); `code` picks the translated message (see form.errors). */
+class SubmitError extends Error {
+  constructor(message: string, readonly code?: string) {
+    super(message);
+  }
+}
+
+/** `lang` rides along so the visitor's acknowledgement email is in their language. */
+async function submit(payload: Record<string, unknown>, lang: Locale, file?: File | null) {
+  const body = { ...payload, lang };
   let init: RequestInit;
   if (file && file.size > 0) {
     // Files need multipart; everything else rides along as a JSON field.
-    const body = new FormData();
-    body.set("payload", JSON.stringify(payload));
-    body.set("cv", file);
-    init = { method: "POST", body };
+    const form = new FormData();
+    form.set("payload", JSON.stringify(body));
+    form.set("cv", file);
+    init = { method: "POST", body: form };
   } else {
-    init = { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) };
+    init = { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
   }
   const res = await fetch("/api/contact", init);
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Something went wrong.");
+  if (!res.ok) throw new SubmitError(data.error || "", data.code);
+}
+
+function errorText(err: unknown, t: FormMessages) {
+  const code = err instanceof SubmitError ? err.code : undefined;
+  return (code && t.errors[code]) || (err instanceof Error && err.message) || t.errors.generic;
 }
 
 const field =
@@ -133,6 +143,10 @@ const selectArrow = {
   backgroundImage:
     "url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%20fill=%27none%27%20stroke=%27%235a6283%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Cpath%20d=%27m6%209%206%206%206-6%27/%3E%3C/svg%3E)",
 };
+
+function OptionalTag() {
+  return <span className="font-sans text-[12px] font-medium normal-case text-muted">{useMessages().form.optional}</span>;
+}
 
 function Field({
   label,
@@ -148,7 +162,7 @@ function Field({
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor={htmlFor} className={labelClass}>
-        {label} {optional ? <span className="font-sans text-[12px] font-medium normal-case text-muted">(optional)</span> : null}
+        {label} {optional ? <OptionalTag /> : null}
       </label>
       {children}
     </div>
@@ -168,9 +182,10 @@ function Honeypot() {
 }
 
 function ErrorNote({ message }: { message: string }) {
+  const t = useMessages().form;
   return (
     <p role="alert" className="rounded-2xl bg-accent/10 px-5 py-4 text-[15px] text-ink">
-      {message} You can also email us at{" "}
+      {message} {t.emailFallback}{" "}
       <a href={`mailto:${SITE.email}`} className="font-semibold underline">
         {SITE.email}
       </a>
@@ -196,10 +211,8 @@ function Chip({
       role={role}
       aria-checked={selected}
       onClick={onClick}
-      className={`rounded-2xl border px-5 py-4 text-left font-display text-[14px] font-bold uppercase transition-all duration-200 ${
-        selected
-          ? "border-accent bg-accent text-ink"
-          : "border-line bg-white text-ink hover:-translate-y-0.5 hover:border-accent"
+      className={`rounded-2xl border px-5 py-4 text-start font-display text-[14px] font-bold uppercase transition-all duration-200 ${
+        selected ? "border-accent bg-accent text-ink" : "border-line bg-white text-ink hover:-translate-y-0.5 hover:border-accent"
       }`}
     >
       {children}
@@ -207,23 +220,44 @@ function Chip({
   );
 }
 
+/**
+ * Country names in the page's language, sorted in that language, each carrying the
+ * English name as its value so the API and admin panel see the same thing.
+ */
+function useCountryOptions(locale: Locale) {
+  return useMemo(() => {
+    let names: Intl.DisplayNames | null = null;
+    try {
+      names = new Intl.DisplayNames([locale], { type: "region" });
+    } catch {
+      names = null;
+    }
+    return COUNTRIES.map((value) => {
+      const code = COUNTRY_CODES[value];
+      let label = value;
+      try {
+        label = (code && names?.of(code)) || value;
+      } catch {
+        label = value;
+      }
+      return { value, label };
+    }).sort((a, b) => a.label.localeCompare(b.label, locale));
+  }, [locale]);
+}
+
 /* ----------------------------------------------------------- ProjectInquiry */
+/** Submitted as-is; only the labels are translated (form.budgets / form.timelines). */
 const BUDGETS = ["$0 – $1k", "$1k – $5k", "$5k – $15k", "$15k – $40k", "$40k – $100k", "$100k+"];
 const TIMELINES = ["As soon as possible", "1 – 3 months", "3 – 6 months", "Flexible"];
-const STEP_TITLES = {
-  services: "What do you need?",
-  specifics: "A few specifics",
-  scope: "Scope & budget",
-  you: "About you",
-};
-type StepKey = keyof typeof STEP_TITLES;
+type StepKey = "services" | "specifics" | "scope" | "you";
 /** Service slug → question id → answer (several for multi-choice questions). */
 type Answers = Record<string, Record<string, string | string[]>>;
 
-const optionalTag = <span className="font-sans text-[12px] font-medium normal-case text-muted">(optional)</span>;
-
 /** Multi-step project inquiry with a confirmation screen. The specifics step only appears when a picked service has follow-up questions. */
 export function ContactForm() {
+  const t = useMessages().form;
+  const locale = useLocale();
+  const countries = useCountryOptions(locale);
   const [step, setStep] = useState(0);
   const [services, setServices] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Answers>({});
@@ -242,6 +276,7 @@ export function ContactForm() {
   const steps: StepKey[] = ["services", ...(asked.length ? (["specifics"] as const) : []), "scope", "you"];
   const current = steps[step];
   const last = step === steps.length - 1;
+  const serviceLabel = (slug: string, fallback: string) => t.serviceOptions[slug] ?? fallback;
 
   // Pre-select a service when arriving from e.g. /contact?service=branding.
   useEffect(() => {
@@ -262,8 +297,8 @@ export function ContactForm() {
   };
 
   const nextFromStep = () => {
-    if (current === "services" && services.length === 0) return setHint("Pick at least one service to continue.");
-    if (current === "scope" && !budget) return setHint("Choose a budget range to continue.");
+    if (current === "services" && services.length === 0) return setHint(t.pickService);
+    if (current === "scope" && !budget) return setHint(t.chooseBudget);
     go(step + 1);
   };
 
@@ -279,23 +314,26 @@ export function ContactForm() {
     setStatus("sending");
     setError("");
     try {
-      await submit({
-        kind: "project",
-        services,
-        details,
-        stage,
-        budget,
-        timeline,
-        ...leadContext(),
-        ...data,
-        turnstileToken: turnstileToken(e.currentTarget),
-      });
+      await submit(
+        {
+          kind: "project",
+          services,
+          details,
+          stage,
+          budget,
+          timeline,
+          ...leadContext(),
+          ...data,
+          turnstileToken: turnstileToken(e.currentTarget),
+        },
+        locale,
+      );
       setName(String(data.name ?? "").split(" ")[0]);
       moved.current = true;
       setStatus("sent");
     } catch (err) {
       setStatus("error");
-      setError((err as Error).message);
+      setError(errorText(err, t));
     }
   };
 
@@ -307,20 +345,25 @@ export function ContactForm() {
         </span>
         <div className="flex flex-col gap-4">
           <h3 ref={heading} tabIndex={-1} className="font-display text-[clamp(28px,4vw,44px)] font-bold tracking-[-0.015em] uppercase leading-[1.05] text-ink outline-none">
-            Thanks{name ? `, ${name}` : ""}. We&apos;re on it.
+            {name ? fmt(t.thanksNamed, { name }) : t.thanks}
           </h3>
-          <p className="max-w-[520px] text-[17px] leading-[1.6] text-muted">
-            A strategist will reply within one business day with next steps.
-          </p>
+          <p className="max-w-[520px] text-[17px] leading-[1.6] text-muted">{t.reply}</p>
         </div>
         <div className="flex flex-wrap items-center gap-6">
           <Link href="/case-studies" className="font-display text-[14px] font-bold uppercase text-ink underline-offset-4 hover:text-accent hover:underline">
-            Browse our work while you wait →
+            {t.browseWork}
           </Link>
         </div>
       </div>
     );
   }
+
+  const summary = [
+    services.map((label) => serviceLabel(SERVICE_OPTIONS.find((s) => s.label === label)?.slug ?? "", label)).join(", "),
+    stage && (t.stages[stage] ?? stage),
+    budget && (t.budgets[budget] ?? budget),
+    timeline && (t.timelines[timeline] ?? timeline),
+  ];
 
   return (
     <form onSubmit={onSubmit} className="relative flex flex-col gap-8" noValidate={!last}>
@@ -329,16 +372,14 @@ export function ContactForm() {
       {/* Progress */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between text-[13px] font-semibold uppercase tracking-wide text-muted">
-          <span>
-            Step {step + 1} of {steps.length}
-          </span>
-          <span className="hidden sm:inline">{STEP_TITLES[current]}</span>
+          <span>{fmt(t.stepOf, { n: step + 1, total: steps.length })}</span>
+          <span className="hidden sm:inline">{t.steps[current]}</span>
         </div>
         <div className="flex gap-2" aria-hidden="true">
           {steps.map((key, i) => (
             <span key={key} className="h-1 flex-1 overflow-hidden rounded-full bg-line">
               <span
-                className="block h-full origin-left bg-accent transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                className="block h-full origin-left bg-accent transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] rtl:origin-right"
                 style={{ transform: `scaleX(${i <= step ? 1 : 0})` }}
               />
             </span>
@@ -351,21 +392,19 @@ export function ContactForm() {
         tabIndex={-1}
         className="font-display text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.015em] uppercase leading-[1.1] text-ink outline-none"
       >
-        {STEP_TITLES[current]}
+        {t.steps[current]}
       </h3>
 
       <div key={current} className="animate-step flex flex-col gap-6">
         {current === "services" ? (
-          <div role="group" aria-label="Services" className="grid gap-3 sm:grid-cols-2">
+          <div role="group" aria-label={t.servicesLabel} className="grid gap-3 sm:grid-cols-2">
             {SERVICE_OPTIONS.map((s) => (
               <Chip
                 key={s.slug}
                 selected={services.includes(s.label)}
-                onClick={() =>
-                  setServices((cur) => (cur.includes(s.label) ? cur.filter((x) => x !== s.label) : [...cur, s.label]))
-                }
+                onClick={() => setServices((cur) => (cur.includes(s.label) ? cur.filter((x) => x !== s.label) : [...cur, s.label]))}
               >
-                {s.label}
+                {serviceLabel(s.slug, s.label)}
               </Chip>
             ))}
           </div>
@@ -373,20 +412,22 @@ export function ContactForm() {
 
         {current === "specifics" ? (
           <>
-            <p className="text-[15px] text-muted">All optional — answer what you can so our first reply is more useful.</p>
+            <p className="text-[15px] text-muted">{t.specificsNote}</p>
             {asked.map((s) => (
               <div key={s.slug} className="flex flex-col gap-5 border-t border-line pt-6">
-                <p className="text-[12px] font-semibold uppercase tracking-wide text-accent">{s.label}</p>
+                <p className="text-[12px] font-semibold uppercase tracking-wide text-accent">{serviceLabel(s.slug, s.label)}</p>
                 {SERVICE_QUESTIONS[s.slug].map((q) => {
+                  const tq = t.questions[s.slug]?.[q.id];
+                  const qLabel = tq?.label ?? q.label;
                   const value = answers[s.slug]?.[q.id];
                   const qid = `${id}-${s.slug}-${q.id}`;
                   if (!q.options) {
                     return (
-                      <Field key={q.id} label={q.label} htmlFor={qid}>
+                      <Field key={q.id} label={qLabel} htmlFor={qid}>
                         <input
                           id={qid}
                           className={field}
-                          placeholder={q.placeholder}
+                          placeholder={tq?.placeholder ?? q.placeholder}
                           maxLength={200}
                           value={typeof value === "string" ? value : ""}
                           onChange={(e) => answer(s.slug, q.id, e.target.value)}
@@ -397,8 +438,8 @@ export function ContactForm() {
                   const picked = Array.isArray(value) ? value : value ? [value] : [];
                   return (
                     <div key={q.id} className="flex flex-col gap-3">
-                      <p className={labelClass}>{q.label}</p>
-                      <div role={q.multi ? "group" : "radiogroup"} aria-label={q.label} className="flex flex-wrap gap-3">
+                      <p className={labelClass}>{qLabel}</p>
+                      <div role={q.multi ? "group" : "radiogroup"} aria-label={qLabel} className="flex flex-wrap gap-3">
                         {q.options.map((o) => (
                           <Chip
                             key={o}
@@ -408,13 +449,11 @@ export function ContactForm() {
                               answer(
                                 s.slug,
                                 q.id,
-                                q.multi
-                                  ? picked.includes(o) ? picked.filter((x) => x !== o) : [...picked, o]
-                                  : value === o ? "" : o,
+                                q.multi ? (picked.includes(o) ? picked.filter((x) => x !== o) : [...picked, o]) : value === o ? "" : o,
                               )
                             }
                           >
-                            {o}
+                            {tq?.options[o] ?? o}
                           </Chip>
                         ))}
                       </div>
@@ -429,31 +468,35 @@ export function ContactForm() {
         {current === "scope" ? (
           <>
             <div className="flex flex-col gap-3">
-              <p className={labelClass}>Is this a new project? {optionalTag}</p>
-              <div role="radiogroup" aria-label="Project stage" className="grid gap-3 sm:grid-cols-2">
+              <p className={labelClass}>
+                {t.isNew} <OptionalTag />
+              </p>
+              <div role="radiogroup" aria-label={t.stageLabel} className="grid gap-3 sm:grid-cols-2">
                 {PROJECT_STAGES.map((p) => (
                   <Chip key={p} role="radio" selected={stage === p} onClick={() => setStage(stage === p ? "" : p)}>
-                    {p}
+                    {t.stages[p] ?? p}
                   </Chip>
                 ))}
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <p className={labelClass}>Project budget</p>
-              <div role="radiogroup" aria-label="Project budget" className="grid gap-3 sm:grid-cols-2">
+              <p className={labelClass}>{t.budget}</p>
+              <div role="radiogroup" aria-label={t.budget} className="grid gap-3 sm:grid-cols-2">
                 {BUDGETS.map((b) => (
                   <Chip key={b} role="radio" selected={budget === b} onClick={() => setBudget(b)}>
-                    {b}
+                    <span dir="ltr">{t.budgets[b] ?? b}</span>
                   </Chip>
                 ))}
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <p className={labelClass}>Timeline {optionalTag}</p>
-              <div role="radiogroup" aria-label="Timeline" className="grid gap-3 sm:grid-cols-2">
-                {TIMELINES.map((t) => (
-                  <Chip key={t} role="radio" selected={timeline === t} onClick={() => setTimeline(timeline === t ? "" : t)}>
-                    {t}
+              <p className={labelClass}>
+                {t.timeline} <OptionalTag />
+              </p>
+              <div role="radiogroup" aria-label={t.timeline} className="grid gap-3 sm:grid-cols-2">
+                {TIMELINES.map((tl) => (
+                  <Chip key={tl} role="radio" selected={timeline === tl} onClick={() => setTimeline(timeline === tl ? "" : tl)}>
+                    {t.timelines[tl] ?? tl}
                   </Chip>
                 ))}
               </div>
@@ -463,36 +506,45 @@ export function ContactForm() {
 
         {current === "you" ? (
           <>
-            <Field label="Your name" htmlFor={`${id}-name`}>
-              <input id={`${id}-name`} name="name" className={field} placeholder="Full name" autoComplete="name" required />
+            <Field label={t.name} htmlFor={`${id}-name`}>
+              <input id={`${id}-name`} name="name" className={field} placeholder={t.namePlaceholder} autoComplete="name" required />
             </Field>
             <div className="grid gap-6 sm:grid-cols-2">
-              <Field label="Email address" htmlFor={`${id}-email`}>
-                <input id={`${id}-email`} name="email" type="email" className={field} placeholder="you@example.com" autoComplete="email" required />
+              <Field label={t.email} htmlFor={`${id}-email`}>
+                <input id={`${id}-email`} name="email" type="email" dir="ltr" className={field} placeholder={t.emailPlaceholder} autoComplete="email" required />
               </Field>
-              <Field label="Company" htmlFor={`${id}-company`}>
-                <input id={`${id}-company`} name="company" className={field} placeholder="e.g. Acme Corp" autoComplete="organization" required />
+              <Field label={t.company} htmlFor={`${id}-company`}>
+                <input id={`${id}-company`} name="company" className={field} placeholder={t.companyPlaceholder} autoComplete="organization" required />
               </Field>
             </div>
-            <Field label="Country" htmlFor={`${id}-country`}>
-              <select id={`${id}-country`} name="country" className={`${field} appearance-none bg-[length:16px] bg-[right_1.25rem_center] bg-no-repeat pr-12`} style={selectArrow} defaultValue="" autoComplete="country-name" required>
+            <Field label={t.country} htmlFor={`${id}-country`}>
+              <select
+                id={`${id}-country`}
+                name="country"
+                className={`${field} appearance-none bg-[length:16px] bg-[right_1.25rem_center] bg-no-repeat pe-12 rtl:bg-[left_1.25rem_center]`}
+                style={selectArrow}
+                defaultValue=""
+                autoComplete="country-name"
+                required
+              >
                 <option value="" disabled>
-                  Select your country
+                  {t.selectCountry}
                 </option>
-                {COUNTRIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+                {countries.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
                   </option>
                 ))}
               </select>
             </Field>
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="flex flex-col gap-3">
-                <Field label="Phone" htmlFor={`${id}-phone`}>
+                <Field label={t.phone} htmlFor={`${id}-phone`}>
                   <input
                     id={`${id}-phone`}
                     name="phone"
                     type="tel"
+                    dir="ltr"
                     className={field}
                     placeholder="+44 7700 900123"
                     autoComplete="tel"
@@ -502,32 +554,27 @@ export function ContactForm() {
                 </Field>
                 <label className="flex items-center gap-2.5 text-[14px] text-muted">
                   <input type="checkbox" name="whatsapp" className="size-4 accent-accent" />
-                  This number is on WhatsApp
+                  {t.whatsapp}
                 </label>
               </div>
-              <Field label="Current website" htmlFor={`${id}-site`} optional>
+              <Field label={t.website} htmlFor={`${id}-site`} optional>
                 {/* Not type="url": that would reject "example.com" without https://. The server normalises it. */}
                 <input
                   id={`${id}-site`}
                   name="site_url"
                   inputMode="url"
+                  dir="ltr"
                   className={field}
-                  placeholder="yourcompany.com"
+                  placeholder={t.websitePlaceholder}
                   autoComplete="url"
                   maxLength={300}
                 />
               </Field>
             </div>
-            <Field label="Tell us about the project" htmlFor={`${id}-message`}>
-              <textarea
-                id={`${id}-message`}
-                name="message"
-                className={`${field} min-h-[140px] resize-y`}
-                placeholder="Goals, links, anything that helps us understand what you're building…"
-                required
-              />
+            <Field label={t.message} htmlFor={`${id}-message`}>
+              <textarea id={`${id}-message`} name="message" className={`${field} min-h-[140px] resize-y`} placeholder={t.messagePlaceholder} required />
             </Field>
-            <p className="text-[13px] text-muted">{[services.join(", "), stage, budget, timeline].filter(Boolean).join(" · ")}</p>
+            <p className="text-[13px] text-muted">{summary.filter(Boolean).join(" · ")}</p>
           </>
         ) : null}
       </div>
@@ -542,9 +589,9 @@ export function ContactForm() {
 
       <div className="flex flex-wrap items-center gap-6">
         {!last ? (
-          <PillSubmit>Continue</PillSubmit>
+          <PillSubmit>{t.continue}</PillSubmit>
         ) : (
-          <PillSubmit disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Send Inquiry"}</PillSubmit>
+          <PillSubmit disabled={status === "sending"}>{status === "sending" ? t.sending : t.send}</PillSubmit>
         )}
         {step > 0 ? (
           <button
@@ -552,7 +599,7 @@ export function ContactForm() {
             onClick={() => go(step - 1)}
             className="font-display text-[14px] font-bold uppercase text-muted transition-colors hover:text-ink"
           >
-            ← Back
+            {t.back}
           </button>
         ) : null}
       </div>
@@ -564,7 +611,11 @@ export function ContactForm() {
 const CV_TYPES = ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const CV_MAX_MB = 10;
 
+/** `role` is the job title as stored; it's sent with the application unchanged. */
 export function ApplicationForm({ role, allowCv = false }: { role: string; allowCv?: boolean }) {
+  const all = useMessages().form;
+  const t = all.application;
+  const locale = useLocale();
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const id = useId();
@@ -577,17 +628,17 @@ export function ApplicationForm({ role, allowCv = false }: { role: string; allow
     const file = cv instanceof File && cv.size > 0 ? cv : null;
     if (file && file.size > CV_MAX_MB * 1024 * 1024) {
       setStatus("error");
-      setError(`Your CV is larger than ${CV_MAX_MB}MB. Please upload a smaller file or share a link instead.`);
+      setError(fmt(t.cvTooLarge, { mb: CV_MAX_MB }));
       return;
     }
     const data = Object.fromEntries(form);
     setStatus("sending");
     try {
-      await submit({ kind: "application", role, ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) }, file);
+      await submit({ kind: "application", role, ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) }, locale, file);
       setStatus("sent");
     } catch (err) {
       setStatus("error");
-      setError((err as Error).message);
+      setError(errorText(err, all));
     }
   };
 
@@ -595,12 +646,10 @@ export function ApplicationForm({ role, allowCv = false }: { role: string; allow
     return (
       <div className="flex flex-col gap-5" aria-live="polite">
         <span className="flex size-12 items-center justify-center rounded-full bg-accent font-display text-[20px] font-semibold tracking-[-0.015em] text-ink">✓</span>
-        <h3 className="font-display text-[28px] font-bold tracking-[-0.015em] uppercase leading-[1.05] text-ink">Application received</h3>
-        <p className="text-[16px] leading-[1.6] text-muted">
-          Thanks for applying. Our team reviews every application and will get back to you within two weeks.
-        </p>
+        <h3 className="font-display text-[28px] font-bold tracking-[-0.015em] uppercase leading-[1.05] text-ink">{t.received}</h3>
+        <p className="text-[16px] leading-[1.6] text-muted">{t.receivedBody}</p>
         <Link href="/about" className="font-display text-[14px] font-bold uppercase text-ink hover:text-accent">
-          Meet the team →
+          {t.meetTeam}
         </Link>
       </div>
     );
@@ -609,42 +658,45 @@ export function ApplicationForm({ role, allowCv = false }: { role: string; allow
   return (
     <form onSubmit={onSubmit} className="relative flex flex-col gap-5">
       <Honeypot />
-      <Field label="Full name" htmlFor={`${id}-name`}>
+      <Field label={t.fullName} htmlFor={`${id}-name`}>
         <input id={`${id}-name`} name="name" className={field} autoComplete="name" required />
       </Field>
-      <Field label="Email" htmlFor={`${id}-email`}>
-        <input id={`${id}-email`} name="email" type="email" className={field} autoComplete="email" required />
+      <Field label={t.email} htmlFor={`${id}-email`}>
+        <input id={`${id}-email`} name="email" type="email" dir="ltr" className={field} autoComplete="email" required />
       </Field>
-      <Field label="Portfolio / GitHub" htmlFor={`${id}-portfolio`}>
-        <input id={`${id}-portfolio`} name="portfolio" type="url" className={field} placeholder="https://" required />
+      <Field label={t.portfolio} htmlFor={`${id}-portfolio`}>
+        <input id={`${id}-portfolio`} name="portfolio" type="url" dir="ltr" className={field} placeholder="https://" required />
       </Field>
-      <Field label="LinkedIn" htmlFor={`${id}-linkedin`} optional>
-        <input id={`${id}-linkedin`} name="linkedin" type="url" className={field} placeholder="https://" />
+      <Field label={t.linkedin} htmlFor={`${id}-linkedin`} optional>
+        <input id={`${id}-linkedin`} name="linkedin" type="url" dir="ltr" className={field} placeholder="https://" />
       </Field>
       {allowCv ? (
-        <Field label="CV" htmlFor={`${id}-cv`} optional>
+        <Field label={t.cv} htmlFor={`${id}-cv`} optional>
           <input
             id={`${id}-cv`}
             name="cv"
             type="file"
             accept={CV_TYPES}
-            className={`${field} file:mr-4 file:rounded-full file:border-0 file:bg-cloud file:px-4 file:py-2 file:font-display file:text-[12px] file:font-bold file:uppercase file:text-ink`}
+            className={`${field} file:me-4 file:rounded-full file:border-0 file:bg-cloud file:px-4 file:py-2 file:font-display file:text-[12px] file:font-bold file:uppercase file:text-ink`}
           />
-          <span className="text-[12px] text-muted">PDF or Word, up to {CV_MAX_MB}MB.</span>
+          <span className="text-[12px] text-muted">{fmt(t.cvHint, { mb: CV_MAX_MB })}</span>
         </Field>
       ) : null}
-      <Field label="Why QORLIQ?" htmlFor={`${id}-message`} optional>
+      <Field label={t.why} htmlFor={`${id}-message`} optional>
         <textarea id={`${id}-message`} name="message" className={`${field} min-h-[120px] resize-y`} />
       </Field>
       {status === "error" ? <ErrorNote message={error} /> : null}
       <Turnstile />
-      <PillSubmit disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Submit Application"}</PillSubmit>
+      <PillSubmit disabled={status === "sending"}>{status === "sending" ? all.sending : t.submit}</PillSubmit>
     </form>
   );
 }
 
 /* ----------------------------------------------------------- NewsletterForm */
 export function NewsletterForm() {
+  const all = useMessages().form;
+  const t = all.newsletter;
+  const locale = useLocale();
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -653,18 +705,18 @@ export function NewsletterForm() {
     const data = Object.fromEntries(new FormData(e.currentTarget));
     setStatus("sending");
     try {
-      await submit({ kind: "newsletter", ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) });
+      await submit({ kind: "newsletter", ...leadContext(), ...data, turnstileToken: turnstileToken(e.currentTarget) }, locale);
       setStatus("sent");
     } catch (err) {
       setStatus("error");
-      setError((err as Error).message);
+      setError(errorText(err, all));
     }
   };
 
   if (status === "sent") {
     return (
       <p aria-live="polite" className="font-display text-[18px] font-bold uppercase text-accent">
-        You&apos;re in. See you in your inbox. ✓
+        {t.done}
       </p>
     );
   }
@@ -674,7 +726,7 @@ export function NewsletterForm() {
       <Honeypot />
       <div className="flex flex-col gap-3 sm:flex-row">
         <label htmlFor="newsletter-email" className="sr-only">
-          Email address
+          {t.emailLabel}
         </label>
         <input
           id="newsletter-email"
@@ -682,10 +734,10 @@ export function NewsletterForm() {
           type="email"
           required
           autoComplete="email"
-          placeholder="Enter your email address"
+          placeholder={t.placeholder}
           className="flex-1 rounded-full border border-white/15 bg-white/[0.06] px-6 py-4 text-[15px] text-white outline-none placeholder:text-white/40 focus:border-accent"
         />
-        <PillSubmit disabled={status === "sending"}>{status === "sending" ? "…" : "Subscribe"}</PillSubmit>
+        <PillSubmit disabled={status === "sending"}>{status === "sending" ? "…" : t.subscribe}</PillSubmit>
       </div>
       <Turnstile />
       {status === "error" ? (

@@ -78,6 +78,7 @@ const toPost = (r: PostRow): Post => ({
   image: r.image ?? "",
   readTime: r.read_time,
   date: formatDate(r.published_on),
+  published: r.published_on.slice(0, 10),
   featured: r.featured,
   body: Array.isArray(r.body) ? r.body : [],
 });

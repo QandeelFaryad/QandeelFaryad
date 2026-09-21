@@ -1,8 +1,11 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/i18n/link";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { getLenis } from "./experience";
+import { useLocale, useMessages } from "@/i18n/client";
+import { dir } from "@/i18n/config";
+import { fmt } from "@/i18n/format";
 
 export type BookStep = { no: string; title: string; body: string };
 
@@ -29,6 +32,7 @@ function edges(pages: number, dir: 1 | -1) {
  * page has frozen, and the pinned box clips its own content on shorter handsets.
  */
 export default function BookProcess({ steps, header }: { steps: BookStep[]; header: ReactNode }) {
+  const stepsLabel = useMessages().process.stepsLabel;
   const outer = useRef<HTMLDivElement | null>(null);
   const pane = useRef<HTMLDivElement | null>(null);
   const book = useRef<HTMLDivElement | null>(null);
@@ -149,7 +153,8 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
       >
         {header}
         <div className="container-x">
-          <div ref={book} className="book">
+          {/* Page-turn transforms assume left-to-right; each page sets its own text direction. */}
+          <div ref={book} className="book" dir="ltr">
             <div className="book-floor" aria-hidden="true" />
             <div className="book-board" aria-hidden="true" />
             <div className="book-spine" aria-hidden="true" />
@@ -191,7 +196,7 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
             </div>
           </div>
 
-          <ol className="mx-auto mt-12 flex max-w-[760px] flex-wrap justify-center gap-x-6 gap-y-2" aria-label="Steps">
+          <ol className="mx-auto mt-12 flex max-w-[760px] flex-wrap justify-center gap-x-6 gap-y-2" aria-label={stepsLabel}>
             {steps.map((s, i) => {
               const active = spread === i + 1;
               return (
@@ -219,33 +224,34 @@ export default function BookProcess({ steps, header }: { steps: BookStep[]; head
 }
 
 function Cover({ count }: { count: number }) {
+  const t = useMessages().process;
   return (
-    <div className="book-cover relative flex h-full flex-col items-center justify-between px-[clamp(28px,3.6vw,48px)] py-[clamp(28px,3.6vw,48px)] text-center text-white">
+    <div dir={dir(useLocale())} className="book-cover relative flex h-full flex-col items-center justify-between px-[clamp(28px,3.6vw,48px)] py-[clamp(28px,3.6vw,48px)] text-center text-white">
       <div className="book-cover-glow" aria-hidden="true" />
       <div className="book-cover-frame" aria-hidden="true" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/assets/brand/qorliq-mark-white.svg" alt="" aria-hidden="true" className="book-cover-emboss" />
 
       <span className="relative mt-3 font-display text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-        The QORLIQ Method
+        {t.brand}
       </span>
       <div className="relative flex flex-col items-center gap-5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/assets/brand/qorliq-mark-white.svg" alt="" className="h-11 w-auto" />
         <p className="font-display text-[clamp(30px,3.4vw,46px)] font-bold uppercase leading-[0.95] tracking-[-0.015em]">
-          How we
+          {t.coverTop}
           <br />
-          work
+          {t.coverBottom}
         </p>
         <span className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white/55">
           <span className="h-px w-6 bg-white/30" />
-          {pad2(count)} chapters
+          {fmt(t.chapters, { n: pad2(count) })}
           <span className="h-px w-6 bg-white/30" />
         </span>
       </div>
       <span className="relative mb-3 flex items-center gap-2 text-[12px] text-white/60">
         <span className="book-scroll-hint h-[2px] w-6 rounded-full bg-spark" />
-        Scroll to open
+        {t.scrollToOpen}
       </span>
     </div>
   );
@@ -265,10 +271,11 @@ function Progress({ index, total }: { index: number; total: number }) {
 }
 
 function LeftPage({ step, index, total }: { step: BookStep; index: number; total: number }) {
+  const t = useMessages().process;
   return (
-    <div className="book-paper flex h-full flex-col justify-between p-[clamp(24px,3.2vw,44px)]">
+    <div dir={dir(useLocale())} className="book-paper flex h-full flex-col justify-between p-[clamp(24px,3.2vw,44px)]">
       <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.2em]">
-        <span className="text-spark-deep">Chapter {step.no}</span>
+        <span className="text-spark-deep">{fmt(t.chapter, { n: step.no })}</span>
         <span className="text-muted">
           {step.no} / {pad2(total)}
         </span>
@@ -293,13 +300,14 @@ function LeftPage({ step, index, total }: { step: BookStep; index: number; total
 }
 
 function RightPage({ step, index, next, total }: { step: BookStep; index: number; next?: BookStep; total: number }) {
+  const t = useMessages().process;
   return (
-    <div className="book-paper relative flex h-full flex-col justify-between p-[clamp(24px,3.2vw,44px)]">
+    <div dir={dir(useLocale())} className="book-paper relative flex h-full flex-col justify-between p-[clamp(24px,3.2vw,44px)]">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/assets/brand/qorliq-mark.svg" alt="" aria-hidden="true" className="book-watermark" />
 
       <div className="relative flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.2em]">
-        <span className="text-muted">QORLIQ · How we work</span>
+        <span className="text-muted">{t.running}</span>
         {/* Small screens show one page at a time, so the chapter lives here too. */}
         <span className="text-spark-deep lg:hidden">
           {step.no} / {pad2(total)}
@@ -308,7 +316,7 @@ function RightPage({ step, index, next, total }: { step: BookStep; index: number
 
       <div className="relative flex flex-col gap-6">
         <div className="flex flex-col gap-3 lg:hidden">
-          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-spark-deep">Chapter {step.no}</span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-spark-deep">{fmt(t.chapter, { n: step.no })}</span>
           <h3 className="font-display text-[clamp(26px,7vw,34px)] font-bold uppercase leading-[1.02] tracking-[-0.015em] text-ink">
             {step.title}
           </h3>
@@ -324,12 +332,12 @@ function RightPage({ step, index, next, total }: { step: BookStep; index: number
       <div className="relative flex items-center justify-between gap-4 border-t border-ink/10 pt-4 text-[12px] font-bold uppercase tracking-wide">
         {next ? (
           <span className="flex items-center gap-2">
-            <span className="text-muted">Next</span>
-            <span className="font-display text-ink">{next.title} →</span>
+            <span className="text-muted">{t.next}</span>
+            <span className="font-display text-ink">{next.title} {t.arrow}</span>
           </span>
         ) : (
           <Link href="/contact" className="font-display text-accent-deep underline-offset-4 hover:underline">
-            Start your project →
+            {t.startProject}
           </Link>
         )}
         <span className="font-display font-semibold text-muted">{(index + 1) * 2 + 1}</span>

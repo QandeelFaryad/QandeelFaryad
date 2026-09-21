@@ -124,6 +124,31 @@ an on-brand gradient, so nothing breaks if a file is missing.
 Images are served as-is (`images: { unoptimized: true }` in `next.config.ts`), so keep
 files around 1400px wide and compressed.
 
+## Languages
+
+English, Arabic, Russian, Spanish, French and Portuguese (Brazil).
+
+- **URLs.** English keeps its original, unprefixed paths (`/services`); every other
+  language is prefixed (`/ar/services`). `src/proxy.ts` rewrites unprefixed paths
+  onto `app/[lang]` as English and redirects `/en/...` back, so each page has one
+  URL per language. A visitor's choice in the switcher is remembered in the
+  `NEXT_LOCALE` cookie and applied when they next arrive at an unprefixed URL.
+- **Text.** One file per language in `src/i18n/messages/`. `en.ts` is the source of
+  truth: the others are typed `Messages`, so a missing or extra key fails the build.
+  `{placeholders}` are filled with `fmt()` from `src/i18n/format.ts`.
+  Server components read strings with `getMessages()`; client components use
+  `useMessages()` from `src/i18n/client.tsx`, which the root layout feeds.
+- **Links.** Import `Link` from `@/i18n/link` rather than `next/link` so site paths
+  stay in the current language.
+- **Adding a language.** Add it to `LOCALES` in `src/i18n/config.ts` (plus its name,
+  `og`/date locale, and `RTL_LOCALES` if it reads right to left), then copy `en.ts`
+  to `<code>.ts` and translate. If its script isn't Latin or Cyrillic, add a font in
+  `src/lib/fonts.ts` and a `html:lang(<code>)` block in `globals.css`.
+- **Not translated.** Content written in `/admin` (case studies, posts, roles) shows
+  in the language it was written in. Form submissions, notification emails and the
+  admin panel stay English; visitors see translated labels but submit English values.
+  Social preview images are English (the image renderer has no Arabic or Cyrillic font).
+
 ## Design tokens
 
 Colors and fonts live in `src/app/globals.css` under `@theme`, so
