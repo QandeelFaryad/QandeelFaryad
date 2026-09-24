@@ -360,22 +360,27 @@ export const SERVICES: Service[] = [
   },
 ];
 
-/** Partners and certifications (Company Profile, page 11). */
-export const PARTNERS = [
-  "Microsoft",
-  "Stripe",
-  "Google",
-  "Meta",
-  "TikTok Marketing Partner",
-  "Snapchat",
-  "Shopify",
-  "WooCommerce",
-  "Ingram Micro",
-  "Infinigate Cloud",
-  "Zylliq",
-  "Makarim Altamayuz",
-  "Nafth Safqa",
-  "Aramak Real Estate",
+/** Partners and certifications (Company Profile, page 11).
+ *  `w`/`h` are the logo's own display size in CSS pixels; the files are drawn at
+ *  twice that for retina. Sizes are optically balanced, not uniform — a square
+ *  mark reads heavier than a wordmark, so it is set shorter on purpose. */
+export type Partner = { name: string; logo: string; w: number; h: number };
+
+export const PARTNERS: Partner[] = [
+  { name: "Microsoft", logo: "/assets/partners/microsoft.webp", w: 126, h: 27 },
+  { name: "Stripe", logo: "/assets/partners/stripe.webp", w: 91, h: 38 },
+  { name: "Google", logo: "/assets/partners/google.webp", w: 115, h: 38 },
+  { name: "Meta", logo: "/assets/partners/meta.webp", w: 126, h: 26 },
+  { name: "TikTok Marketing Partner", logo: "/assets/partners/tiktok.webp", w: 126, h: 29 },
+  { name: "Snapchat", logo: "/assets/partners/snapchat.webp", w: 40, h: 40 },
+  { name: "Shopify", logo: "/assets/partners/shopify.webp", w: 126, h: 37 },
+  { name: "WooCommerce", logo: "/assets/partners/woocommerce.webp", w: 126, h: 25 },
+  { name: "Ingram Micro", logo: "/assets/partners/ingram-micro.webp", w: 126, h: 21 },
+  { name: "Infinigate Cloud", logo: "/assets/partners/infinigate-cloud.webp", w: 126, h: 34 },
+  { name: "Zylliq", logo: "/assets/partners/zylliq.webp", w: 125, h: 38 },
+  { name: "Makarim Altamayuz", logo: "/assets/partners/makarim.webp", w: 126, h: 23 },
+  { name: "Nafth Safqa", logo: "/assets/partners/nafth-safqa.webp", w: 93, h: 38 },
+  { name: "Aramak Real Estate", logo: "/assets/partners/aramak.webp", w: 98, h: 38 },
 ];
 
 /* -------------------------------------------------------------- Case studies */
