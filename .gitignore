@@ -5,10 +5,13 @@
 .DS_Store
 *.pem
 npm-debug.log*
-.env*
 /next-env.d.ts
 !.env.example
 
 # local env
-.env.local
 .vercel
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
+config.bat
