@@ -115,12 +115,18 @@ export async function PartnerStrip({ dark = false }: { dark?: boolean }) {
             <span className="font-display text-[13px] font-bold uppercase text-spark">{fmt(t.partnersCount, { n: PARTNERS.length })}</span>
           </div>
         </Reveal>
-        <div className="flex flex-wrap items-center gap-x-12 gap-y-6">
+        <div className="flex flex-wrap items-center gap-x-10 gap-y-8 sm:gap-x-14">
           {PARTNERS.map((p, i) => (
-            <Reveal key={p} delay={(i % 6) * 60}>
-              <span dir="ltr" className={`font-display text-[clamp(16px,1.8vw,22px)] font-semibold tracking-[-0.015em] uppercase transition-colors ${dark ? "text-white/40 hover:text-white" : "text-ink/35 hover:text-ink"}`}>
-                {p}
-              </span>
+            <Reveal key={p.name} delay={(i % 6) * 60}>
+              <img
+                src={p.logo}
+                alt={p.name}
+                width={p.w}
+                height={p.h}
+                loading="lazy"
+                decoding="async"
+                className={`partner-logo${dark ? " partner-logo--dark" : ""}`}
+              />
             </Reveal>
           ))}
         </div>
